@@ -1,0 +1,2505 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"da0",
+				"drawingArea0"
+			],
+			[
+				"cu",
+				"currTab"
+			],
+			[
+				"go",
+				"g_object_get_data"
+			],
+			[
+				"g_o",
+				"g_object_set_data"
+			],
+			[
+				"cent",
+				"centerLevel"
+			],
+			[
+				"_z",
+				"_zoomFollowsMouse"
+			],
+			[
+				"sk",
+				"skewX()\ttransform"
+			],
+			[
+				"border-b",
+				"border-bottom-color\tproperty"
+			],
+			[
+				"box-s",
+				"box-shadow\tproperty"
+			],
+			[
+				"back",
+				"background-color\tproperty"
+			],
+			[
+				"paddin",
+				"padding-right\tproperty"
+			],
+			[
+				"margin",
+				"margin-right\tproperty"
+			],
+			[
+				"g_obj",
+				"g_object_set_data"
+			],
+			[
+				"gtk_b",
+				"gtk_builder_get_object"
+			],
+			[
+				"_til",
+				"_tileTileset"
+			],
+			[
+				"g_ob",
+				"g_object_set_data"
+			],
+			[
+				"dra",
+				"drawingArea"
+			],
+			[
+				"event",
+				"event_changeTab"
+			],
+			[
+				"sr",
+				"SRCD"
+			],
+			[
+				"n",
+				"notebookTabLabel"
+			],
+			[
+				"O",
+				"GTK_ORIENTATION_HORIZONTAL"
+			],
+			[
+				"gtk_gr",
+				"gtk_grid_attach"
+			],
+			[
+				"no",
+				"notebookTabContents"
+			],
+			[
+				"note",
+				"notebookTabButton"
+			],
+			[
+				"noteb",
+				"notebookTabLabel"
+			],
+			[
+				"scro",
+				"scrolledWindow"
+			],
+			[
+				"scr",
+				"scrolledWindow"
+			],
+			[
+				"g_appli",
+				"gtk_application_new"
+			],
+			[
+				"array",
+				"\\arraystretch                                     \tlatex-dev"
+			],
+			[
+				"vs",
+				"\\vsize                                            \ttex"
+			],
+			[
+				"hyp",
+				"\\hyphenpenalty                                    \ttex"
+			],
+			[
+				"cap",
+				"\\caption{title}                                   \tlatex-document"
+			],
+			[
+				"graphin",
+				"\\includegraphics[options]{name}                   \tlatex-document"
+			],
+			[
+				"bfig",
+				"\\begin{figure}                                    \tlatex-document"
+			],
+			[
+				"vfi",
+				"\\vfill                                            \ttex"
+			],
+			[
+				"supsc",
+				"\\textsuperscript                                  \tlatex-document"
+			],
+			[
+				"mathcl",
+				"\\mathclap{math}                                   \tmathtools"
+			],
+			[
+				"par",
+				"\\paragraph*{title}                                \tlatex-document"
+			],
+			[
+				"pa",
+				"\\paragraph*{title}                                \tlatex-document"
+			],
+			[
+				"cop",
+				"\\copyright                                        \ttex"
+			],
+			[
+				"title",
+				"\\title{text}                                      \tlatex-document"
+			],
+			[
+				"txt",
+				"textbf"
+			],
+			[
+				"ta",
+				"\\tabskip                                          \ttex"
+			],
+			[
+				"line",
+				"\\centerline{text}                                 \tlatex-l2tabu"
+			],
+			[
+				"sl",
+				"\\slash                                            \ttex"
+			],
+			[
+				"frac",
+				"\\frac{num}{den}                                   \tlatex-document"
+			],
+			[
+				"top",
+				"\\topmark                                          \ttex"
+			],
+			[
+				"ref",
+				"\\ref{key}                                         \tlatex-document"
+			],
+			[
+				"rvet",
+				"\\rvert                                            \tamsmath"
+			],
+			[
+				"at",
+				"\\atto                                             \tsiunitx"
+			],
+			[
+				"tild",
+				"\\widetilde{}"
+			],
+			[
+				"til",
+				"\\tilde"
+			],
+			[
+				"over",
+				"\\overset{}{}"
+			],
+			[
+				"rarr",
+				"\\Rightarrow                                       \tlatex-mathsymbols"
+			],
+			[
+				"spa",
+				"\\smallskipamount                                  \ttex"
+			],
+			[
+				"script",
+				"script_commands"
+			],
+			[
+				"sqrt",
+				"\\sqrt{arg}                                        \tlatex-document"
+			],
+			[
+				"sqr",
+				"\\sqrt{arg}                                        \tlatex-document"
+			],
+			[
+				"sq",
+				"\\sqrt{arg}                                        \tlatex-document"
+			],
+			[
+				"normt",
+				"\\mathnormal{text}                                 \tlatex-document"
+			],
+			[
+				"item",
+				"\\item[label]                                      \tlatex-document"
+			],
+			[
+				"ssec",
+				"\\subsection{title}                                \tlatex-document"
+			],
+			[
+				"SI",
+				"\\SI{value}{unit commands}                         \tsiunitx"
+			],
+			[
+				"sssec",
+				"\\subsubsection{title}                             \tlatex-document"
+			],
+			[
+				"pdfla",
+				"pdflatexBuildDir"
+			],
+			[
+				"pdf",
+				"pdflatexBuildDir"
+			],
+			[
+				"ren",
+				"\\renewenvironment{nam}[args][default]{begdef}{enddef}\tlatex-document"
+			],
+			[
+				"makegl",
+				"\\makeglossaries                                   \tglossaries"
+			],
+			[
+				"USB_",
+				"USB_ClassInfo_HID_Device_t"
+			],
+			[
+				"Versi",
+				"VERSION_BCD"
+			],
+			[
+				"Rep",
+				"ReportSize"
+			],
+			[
+				"bf",
+				"\\textbf{text}                                     \tlatex-document"
+			],
+			[
+				"appr",
+				"\\approxeq                                         \tamssymb"
+			],
+			[
+				"width",
+				"\\labelwidth                                       \tlatex-dev"
+			],
+			[
+				"gamma",
+				"\\digamma                                          \tamssymb"
+			],
+			[
+				"bdoc",
+				"\\begin{document}                                  \tlatex-document"
+			],
+			[
+				"table",
+				"\\tableofcontents                                  \tlatex-document"
+			],
+			[
+				"arrow",
+				"\\rightarrow                                       \tlatex-mathsymbols"
+			],
+			[
+				"beginminipa",
+				"\\begin{minipage}{width}                           \tlatex-document"
+			],
+			[
+				"sec",
+				"\\section{title}                                   \tlatex-document"
+			],
+			[
+				"doc",
+				"\\end{document}                                    \tlatex-document"
+			],
+			[
+				"figu",
+				"\\begin{figure}                                    \tlatex-document"
+			],
+			[
+				"equa",
+				"\\begin{equation}                                  \tlatex-document"
+			],
+			[
+				"renew",
+				"\\renewcommand{cmd}{def}                           \tlatex-document"
+			],
+			[
+				"cont",
+				"\\contentsname{name}                               \tlatex-document"
+			],
+			[
+				"make",
+				"\\makeindex                                        \tlatex-document"
+			],
+			[
+				"height",
+				"\\paperheight                                      \tlatex-dev"
+			],
+			[
+				"incl",
+				"\\includegraphics[options]{name}                   \tlatex-document"
+			],
+			[
+				"begine",
+				"\\begin{equation}                                  \tlatex-document"
+			],
+			[
+				"tit",
+				"\\title{text}                                      \tlatex-document"
+			],
+			[
+				"titlep",
+				"\\begin{titlepage}                                 \tlatex-document"
+			],
+			[
+				"abstract",
+				"\\begin{abstract}                                  \tlatex-document"
+			],
+			[
+				"tab",
+				"\\tableofcontents                                  \tlatex-document"
+			],
+			[
+				"usepack",
+				"\\usepackage{package}                              \tlatex-document"
+			],
+			[
+				"usep",
+				"\\usepackage{package}                              \tlatex-document"
+			],
+			[
+				"subpar",
+				"\\subparagraph{title}                              \tlatex-document"
+			],
+			[
+				"para",
+				"\\paragraph{title}                                 \tlatex-document"
+			],
+			[
+				"subsubs",
+				"\\subsubsection{title}                             \tlatex-document"
+			],
+			[
+				"part",
+				"\\part[short]{title}                               \tlatex-document"
+			],
+			[
+				"inf",
+				"\\infty                                            \tlatex-mathsymbols"
+			],
+			[
+				"under",
+				"\\mathunderscore                                   \tlatex-document"
+			],
+			[
+				"dots",
+				"\\ddots                                            \tlatex-document"
+			],
+			[
+				"pr",
+				"printf\tprintf …"
+			],
+			[
+				"pre",
+				"prependString"
+			],
+			[
+				"The",
+				"ThreadedNode"
+			],
+			[
+				"ar",
+				"arrivalTime"
+			],
+			[
+				"process",
+				"processes"
+			],
+			[
+				"prece",
+				"processes"
+			],
+			[
+				"multip",
+				"Mulitprogramming"
+			],
+			[
+				"in",
+				"integer1"
+			],
+			[
+				"int",
+				"integer"
+			],
+			[
+				"pri",
+				"print"
+			],
+			[
+				"cons",
+				"constant"
+			],
+			[
+				"child",
+				"children"
+			],
+			[
+				"AR",
+				"Arithmatic"
+			],
+			[
+				"func",
+				"funcString"
+			],
+			[
+				"Fu",
+				"Function"
+			],
+			[
+				"UN",
+				"UNLV-Secure"
+			],
+			[
+				"D",
+				"Disabling"
+			],
+			[
+				"Hello",
+				"HelloWorld"
+			],
+			[
+				"h",
+				"helloworld"
+			],
+			[
+				"Hell",
+				"HelloWorld"
+			],
+			[
+				"els",
+				"else\telse"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "src/settings.h",
+			"settings":
+			{
+				"buffer_size": 2270,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/ui.h",
+			"settings":
+			{
+				"buffer_size": 1155,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/ui.cpp",
+			"settings":
+			{
+				"buffer_size": 12249,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/settings.cpp",
+			"settings":
+			{
+				"buffer_size": 6022,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/dungeonCartographer.cpp",
+			"settings":
+			{
+				"buffer_size": 313,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					""
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Traditional"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"PdfLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"XeLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"LuaLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - PdfLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - XeLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - LuaLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Script Builder"
+				]
+			],
+			[
+				"Packages/LaTeXTools/LaTeX.sublime-build",
+				"Script Builder"
+			]
+		],
+		[
+			[
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					""
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Traditional"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"PdfLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"XeLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"LuaLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - PdfLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - XeLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - LuaLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Script Builder"
+				],
+				[
+					"Packages/User/pdflatexWithGlossary.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/LaTeXTools/LaTeX.sublime-build",
+				"PdfLaTeX"
+			]
+		],
+		[
+			[
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				]
+			],
+			[
+				"Packages/Makefile/Make.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				],
+				[
+					"Packages/User/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/User/make.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/Makefile/Make.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				],
+				[
+					"Packages/User/make.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/Makefile/Make.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 323.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"close",
+				"Project: Close"
+			],
+			[
+				"clos",
+				"Project: Close"
+			],
+			[
+				"c++",
+				"Set Syntax: C++"
+			],
+			[
+				"main\t",
+				"BracketHighlighter: Find Matching Offscreen Bracket"
+			],
+			[
+				"css",
+				"Set Syntax: CSS"
+			],
+			[
+				"xml",
+				"Set Syntax: XML"
+			],
+			[
+				"clea",
+				"Build With: Make - Clean"
+			],
+			[
+				"syn text",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"cle",
+				"Build With: Make - Clean"
+			],
+			[
+				"x",
+				"Set Syntax: XML"
+			],
+			[
+				"clean",
+				"Build With: Make - Clean"
+			],
+			[
+				"make ui",
+				"Build With: Make"
+			],
+			[
+				"cl",
+				"Build With: Make - Clean"
+			],
+			[
+				"make",
+				"Set Syntax: Makefile"
+			],
+			[
+				"buil",
+				"Build With: LaTeX - Basic Builder"
+			],
+			[
+				"scri",
+				"Build With: LaTeX - Script Builder"
+			],
+			[
+				"scrib",
+				"Build With: LaTeX - Script Builder"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"pack",
+				"Package Control: List Packages"
+			],
+			[
+				"c",
+				"Set Syntax: C"
+			],
+			[
+				"syn la",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"latex",
+				"LaTeXTools: Check system"
+			],
+			[
+				"doc",
+				"LaTeXTools: View TeX package documentation"
+			],
+			[
+				"latextools",
+				"LaTeXTools: Show toggles"
+			],
+			[
+				"temp",
+				"LaTeXTools: Delete temporary files"
+			],
+			[
+				"clear",
+				"LaTeXTools: Clear cache"
+			],
+			[
+				"math",
+				"Snippet: Display Math — \\[ … \\]"
+			],
+			[
+				"lx vi",
+				"LaTeXTools: View PDF"
+			],
+			[
+				"snipe lay",
+				"Snippet: Display Math — \\[ … \\]"
+			],
+			[
+				"Snippet: latex",
+				"Snippet: Insert a LaTeX environment"
+			],
+			[
+				"sy lat",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"packa",
+				"Package Control: Install Package"
+			],
+			[
+				"layte",
+				"LaTeXTools: Check system"
+			],
+			[
+				"lx v doc",
+				"LaTeXTools: View TeX package documentation"
+			],
+			[
+				"latext",
+				"LaTeXTools: Check system"
+			],
+			[
+				"sy la",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"package control instal",
+				"Package Control: Install Package"
+			],
+			[
+				"bash",
+				"Set Syntax: Shell Script (Bash)"
+			],
+			[
+				"char",
+				"HTML: Encode Special Characters"
+			],
+			[
+				"mat",
+				"Set Syntax: MATLAB"
+			],
+			[
+				"Package Control: in",
+				"Package Control: List Unmanaged Packages"
+			],
+			[
+				"cpp",
+				"Set Syntax: cpp"
+			],
+			[
+				"mak",
+				"Set Syntax: Makefile"
+			],
+			[
+				"plain",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"plai",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"ansi",
+				"Set Syntax: ANSI"
+			],
+			[
+				"asm",
+				"Set Syntax: x86-64 asm"
+			],
+			[
+				"C++",
+				"Set Syntax: C++"
+			]
+		],
+		"width": 497.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"ls .",
+			"ls",
+			"ld",
+			"./dun",
+			"mkdir",
+			"mkdir ./aux",
+			"mkdir aux",
+			"dir",
+			"ls",
+			"clear",
+			"terminator"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/alex/documents/DungeonCartographer"
+	],
+	"file_history":
+	[
+		"/home/alex/documents/DungeonCartographer/doxyfile",
+		"/home/alex/Documents/DungeonCartographer/DungeonCartographer.sublime-workspace",
+		"/home/alex/Documents/DungeonCartographer/src/DungeonCartographer.sublime-project",
+		"/home/alex/Documents/DungeonCartographer/tiles/defaultSet",
+		"/home/alex/scripts/racc",
+		"/home/alex/Documents/DungeonCartographer/ui/dungeonCartographer.ui",
+		"/home/alex/.config/sublime-text-3/Packages/User/DocumentationComment.sublime-snippet",
+		"/home/alex/Documents/DungeonCartographer/doxyfile",
+		"/home/alex/Documents/DungeonCartographer/makefile",
+		"/home/alex/Desktop/test.cpp",
+		"/home/alex/Documents/DungeonCartographer/Doxyfile",
+		"/usr/include/c++/8.1.1/ext/new_allocator.h",
+		"/home/alex/Documents/DungeonCartographer/ui/dungeonCartographer.css",
+		"/home/alex/Desktop/test/test.glade",
+		"/usr/include/glib-2.0/gobject/gsignal.h",
+		"/usr/include/c++/8.1.1/bits/vector.tcc",
+		"/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-core.h",
+		"/usr/include/glib-2.0/gobject/gobject.h",
+		"/usr/include/sigc++-2.0/sigc++/adaptors/adaptor_trait.h",
+		"/home/alex/Documents/DungeonCartographer/src/events.h",
+		"/usr/include/gtk-3.0/gtk/gtkfilechooserbutton.h",
+		"/home/alex/Documents/DungeonCartographer/src/events.cpp",
+		"/docs/unlv/archive/CS302/hw11/src/coreTest.cpp",
+		"/docs/unlv/archive/CS302/hw11/makefile",
+		"/docs/unlv/combustion/CombustionNotes.tex",
+		"/docs/unlv/combustion/CombustionReport.tex",
+		"/usr/share/yakyak/app/node_modules/hangupsjs/lib/init.js",
+		"/docs/unlv/combustion/latexBuild/CombustionReport.log",
+		"/home/alex/.config/sublime-text-3/Packages/User/LaTeXTools.sublime-settings",
+		"/home/alex/.config/sublime-text-3/Packages/User/newglossary.sublime-snippet",
+		"/home/alex/.config/sublime-text-3/Packages/User/mathSnippets/derivitive.sublime-snippet",
+		"/home/alex/.config/sublime-text-3/Packages/User/mathSnippets/text.sublime-snippet",
+		"/home/alex/.config/sublime-text-3/Packages/LaTeXYZ/support/Default.sublime-keymap",
+		"/home/alex/.config/sublime-text-3/Packages/User/mathSnippets/specificHeatConstPressure.sublime-snippet",
+		"/home/alex/.config/sublime-text-3/Packages/LaTeXTools/Beamer boxes.sublime-snippet",
+		"/home/alex/.config/sublime-text-3/Packages/User/pdflatexWithGlossary.sublime-build",
+		"/docs/unlv/combustion/test/CombustionNotes.glsdefs",
+		"/docs/unlv/combustion/test/CombustionNotes.log",
+		"/home/alex/.config/sublime-text-3/Packages/LaTeXTools/LaTeXTools.sublime-settings",
+		"/docs/unlv/combustion/CombustionNotes.aux",
+		"/docs/unlv/combustion/CombustionNotes.pdf",
+		"/docs/unlv/combustion/pdflatexBuildDir/CombustionNotes.gls",
+		"/home/alex/.streamlinkrc",
+		"/home/alex/latexTest/test2.tex",
+		"/docs/unlv/combustion/CombustionNotes.log",
+		"/home/alex/.libao",
+		"/home/alex/Desktop/Arch Linux - UEFI",
+		"/etc/dhcpcd.conf",
+		"/home/alex/.config/conky/conky.conf",
+		"/home/alex/.cal.rem",
+		"/home/alex/.config/sublime-text-3/Packages/User/Terminal.sublime-settings",
+		"/home/alex/scripts/notes",
+		"/home/alex/games/MomodoraReverieUnderTheMoonlight/game/Installation Notes.pdf",
+		"/home/alex/games/MomodoraReverieUnderTheMoonlight/docs/installer_readme.txt",
+		"/home/alex/games/MomodoraReverieUnderTheMoonlight/gameinfo",
+		"/home/alex/games/MomodoraReverieUnderTheMoonlight/deps.txt",
+		"/usr/include/c++/7.3.1/cmath",
+		"/home/alex/Desktop/gog_com-Transistor_1.desktop",
+		"/home/alex/games/Transistor/game/Linux.README",
+		"/docs/games/MomodoraRiverieUnderTheMoonlight/MomodoraRiverieUnderTheMoonlight_Installer.sh",
+		"/home/alex/games/Transistor/docs/installer_readme.txt",
+		"/home/alex/Downloads/AR2.1.5_arduino_sketch/AR2.1.5_arduino_sketch.ino",
+		"/home/alex/Downloads/Simultaneous Motion Motor 3 and 1.txt",
+		"/usr/avr/include/avr/interrupt.h",
+		"/usr/avr/include/avr/common.h",
+		"/home/alex/Arduino/libraries/Servo/src/avr/Servo.cpp",
+		"/home/alex/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml",
+		"/home/alex/.xbindkeysrc",
+		"/mnt/manjaroToArchLaptop/alex/.xinitrc",
+		"/docs/unlv/me315/NumericalProj/hopper_me315NumProj.txt",
+		"/docs/unlv/me315/NumericalProj/hopper_me315NumProj.m",
+		"/etc/fstab",
+		"/etc/grub.d/40_custom",
+		"/boot/grub/grub.cfg",
+		"/home/alex/at90usb646/pcb/out.txt",
+		"/home/alex/.config/kicad/pcbnew",
+		"/home/alex/at90usb646/pcb/1825027-5/1825027-5.lib",
+		"/home/alex/at90usb646/pcb/ptr901-2015k-b103/ptr901-2015k-b103.lib",
+		"/home/alex/at90usb646/pcb/at90usb646ControllerPCB.erc",
+		"/home/alex/atmega16u2Gamepad/atmega16u2PCB.pro",
+		"/home/alex/atmega16u2Gamepad/firmware/lufa/LUFA/CodeTemplates/DriverStubs/Joystick.h",
+		"/home/alex/atmega16u2Gamepad/firmware/lufa/LUFA/Drivers/Peripheral/AVR8/Serial_AVR8.h",
+		"/home/alex/atmega16u2Gamepad/firmware/Descriptors.h",
+		"/home/alex/atmega16u2Gamepad/firmware/Descriptors.c",
+		"/home/alex/atmega16u2Gamepad/firmware/lufa/LUFA/Drivers/Peripheral/AVR8/Serial_AVR8.c",
+		"/home/alex/atmega16u2Gamepad/firmware/lufa/LUFA/Drivers/USB/Class/Device/HIDClassDevice.h",
+		"/home/alex/atmega16u2Gamepad/firmware/lufa/LUFA/Drivers/USB/Core/AVR8/Device_AVR8.h",
+		"/home/alex/atmega16u2Gamepad/firmware/makefile",
+		"/home/alex/atmega16u2Gamepad/firmware/lufa/LUFA/Drivers/USB/Core/AVR8/USBController_AVR8.c",
+		"/home/alex/atmega16u2Gamepad/firmware/LUFAConfig.h",
+		"/home/alex/atmega16u2Gamepad/reference/gamepadUsageCodes.txt",
+		"/home/alex/atmega16u2Gamepad/reference/xbox.txt",
+		"/home/alex/atmega16u2Gamepad/reference/atmega16u2GamepadDescriptor.txt",
+		"/sys/devices/uncore_cbox_5/format/event",
+		"/sys/kernel/debug/hid",
+		"/sys/module/tpm_tis/parameters/hid",
+		"/home/alex/Documents/GamePad/atmega16u2Gamepad/makefile",
+		"/home/alex/Documents/GamePad/atmega16u2Gamepad/atmega16u2Gamepad.c",
+		"/home/alex/Documents/GamePad/atmega16u2Gamepad/Descriptors.h",
+		"/home/alex/Documents/GamePad/atmega16u2Gamepad/atmega16u2Gamepad.h",
+		"/home/alex/Documents/GamePad/atmega16u2Gamepad/Descriptors.c",
+		"/home/alex/Documents/GamePad/lufa/LUFA/Drivers/USB/Class/Common/HIDClassCommon.h",
+		"/home/alex/Documents/GamePad/lufa/LUFA/Drivers/USB/Core/StdDescriptors.h",
+		"/home/alex/Documents/GamePad/arduino-usb/LUFA/Drivers/USB/HighLevel/StdDescriptors.h",
+		"/home/alex/Documents/GamePad/arduino-usb/LUFA/Drivers/USB/Class/Common/HID.h",
+		"/home/alex/Documents/GamePad/atmega16u2Gamepad/Arduino-joystick.c",
+		"/home/alex/Documents/GamePad/atmega16u2Gamepad/Arduino-joystick.h",
+		"/home/alex/Documents/GamePad/atmega16u2Gamepad/LUFAConfig.h",
+		"/usr/avr/include/avr/iom16u2.h",
+		"/home/alex/Documents/GamePad/gamePadTest/firmware/atmega16u2Gamepad.c",
+		"/home/alex/Documents/GamePad/arduino-usb/firmwares/arduino-joystick/makefile",
+		"/home/alex/Documents/GamePad/lufa/Demos/Device/ClassDriver/Mouse/makefile",
+		"/home/alex/Documents/GamePad/arduino-usb/firmwares/arduino-joystick/Descriptors.c",
+		"/home/alex/Documents/GamePad/gamePadTest/firmware/atmega16u2Gamepad.h",
+		"/home/alex/Documents/GamePad/gamePadTest/firmware/Descriptors.h",
+		"/home/alex/Documents/GamePad/gamePadTest/firmware/Descriptors.c",
+		"/home/alex/Documents/GamePad/gamePadTest/firmware/LUFAConfig.h",
+		"/home/alex/Documents/GamePad/lufa/Demos/Device/ClassDriver/Joystick/makefile",
+		"/home/alex/Documents/GamePad/lufa/Demos/Device/ClassDriver/GenericHID/makefile",
+		"/home/alex/Documents/GamePad/arduino-usb/firmwares/arduino-joystick/Arduino-joystick.h",
+		"/home/alex/Documents/GamePad/arduino-usb/firmwares/arduino-joystick/Arduino-joystick.c",
+		"/home/alex/Documents/GamePad/arduino-usb/firmwares/arduino-joystick/Descriptors.h",
+		"/home/alex/Documents/GamePad/arduino-usb/firmwares/arduino-usbserial/Descriptors.h",
+		"/home/alex/Documents/GamePad/lufa/Bootloaders/HID/Descriptors.h",
+		"/home/alex/Documents/GamePad/lufa/Demos/Device/ClassDriver/Joystick/Config/LUFAConfig.h",
+		"/home/alex/Documents/GamePad/lufa/Demos/Device/ClassDriver/Joystick/Joystick.h",
+		"/home/alex/Documents/GamePad/lufa/Demos/Device/ClassDriver/Joystick/Joystick.c",
+		"/home/alex/Documents/GamePad/lufa/Demos/Device/ClassDriver/Joystick/Descriptors.h"
+	],
+	"find":
+	{
+		"height": 39.8803589232
+	},
+	"find_in_files":
+	{
+		"height": 103.700897308,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"class",
+			"include",
+			"external",
+			"overload",
+			"drawLevel",
+			"event_tileClick",
+			"loadTileset",
+			"folders",
+			"YES",
+			"file_patterns",
+			"cpp",
+			"private",
+			"sw",
+			"pdflatex",
+			"!*/",
+			"event_zoomSpeed",
+			"eventBtn_zoomOut",
+			"]);\n",
+			"eventBtn_zoomIn",
+			"\n\t",
+			"eventBtn_zoomFit",
+			"event_canvasScroll",
+			"';",
+			"event_canvasScroll",
+			">\n",
+			"50px",
+			"stack",
+			"defaultMapSize",
+			"uiFile",
+			"defaultMapSize",
+			"defaultMapSizedefaultMapSizedefaultMapSize",
+			"defaultMapSize",
+			"object",
+			"child",
+			"mod",
+			"png",
+			"\nemplace_back",
+			"emplace_back",
+			"emplace_back\n",
+			"emplace_back",
+			"_lvl->getDrawingArea(i)",
+			"tile",
+			"drawingArea[8]",
+			"drawingArea[0]",
+			"drawingArea[i]",
+			"->",
+			"new",
+			"_lvl.",
+			"pixbuf",
+			"pixbuf\t\t",
+			"settings",
+			"]);\n\t\t\t\t\t\tid[8]=g_signal_connect(drawingArea[8],\"draw\",",
+			"Tile",
+			"tile[",
+			"UI_H",
+			"SETTINGS_H"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"**/",
+			"mapSize",
+			"svg",
+			"da",
+			"getDrawingArea(8)",
+			"getDrawingArea(0)",
+			"getDrawingArea(i)",
+			".",
+			"_lvl->",
+			"_map",
+			"Tileset",
+			"tileset[",
+			""
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "src/settings.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2270,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								609,
+								609
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										997,
+										998
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										517,
+										518
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										993,
+										994
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										517,
+										518
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/ui.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1155,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1144,
+								1144
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										1219,
+										1220
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/round_bracket.png",
+										"region.yellowish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										1167,
+										1168
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										1145,
+										1146
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										639,
+										640
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"spell_check": false,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 134.596211366,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 2,
+					"file": "src/ui.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12249,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								15,
+								15
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										14,
+										15
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/double_quote.png",
+										"region.greenish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										9,
+										10
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"spell_check": false,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/settings.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6022,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4632,
+								4632
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										4656,
+										4657
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/round_bracket.png",
+										"region.yellowish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										4632,
+										4633
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										4656,
+										4657
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/round_bracket.png",
+										"region.yellowish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										4632,
+										4633
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2406.77966102,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/dungeonCartographer.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 313,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								175,
+								175
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										197,
+										198
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										168,
+										169
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										312,
+										313
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										50,
+										51
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 24.925224327
+	},
+	"input":
+	{
+		"height": 39.8923230309
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.422418693337,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 131.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.latextools":
+	{
+		"height": 192.0
+	},
+	"output.mdpopups":
+	{
+		"height": 0.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 27.0
+	},
+	"pinned_build_system": "Packages/Makefile/Make.sublime-build",
+	"project": "DungeonCartographer.sublime-project",
+	"replace":
+	{
+		"height": 45.8624127617
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"uli",
+				"ulib.c"
+			],
+			[
+				"user",
+				"user.h"
+			],
+			[
+				"trap",
+				"traps.h"
+			],
+			[
+				"usr",
+				"user.h"
+			],
+			[
+				"pwd",
+				"pwd.c"
+			],
+			[
+				"vm.c",
+				"vm.c"
+			],
+			[
+				"mem",
+				"memlayout.h"
+			],
+			[
+				"exec",
+				"exec.c"
+			],
+			[
+				"kern",
+				"kernel.ld"
+			],
+			[
+				"kerne",
+				"kernel.asm"
+			],
+			[
+				"bootasm",
+				"bootblock.asm"
+			],
+			[
+				"pwd.asm",
+				"pwd.asm"
+			],
+			[
+				"boot",
+				"bootasm.S"
+			],
+			[
+				"main",
+				"bootmain.c"
+			],
+			[
+				"mall",
+				"umalloc.c"
+			],
+			[
+				"mkdir",
+				"mkdir.c"
+			],
+			[
+				"ls",
+				"ls.c"
+			],
+			[
+				"ls.c",
+				"ls.c"
+			],
+			[
+				"make",
+				"Makefile"
+			],
+			[
+				"user.h",
+				"user.h"
+			],
+			[
+				"usertes",
+				"usertests.c"
+			],
+			[
+				"traps",
+				"traps.h"
+			],
+			[
+				"umal",
+				"umalloc.c"
+			],
+			[
+				"mal",
+				"umalloc.c"
+			],
+			[
+				"tra",
+				"traps.h"
+			],
+			[
+				"cat",
+				"cat.c"
+			],
+			[
+				"stat",
+				"stat.h"
+			],
+			[
+				"fs",
+				"fs.c"
+			],
+			[
+				"ui",
+				"ulib.c"
+			],
+			[
+				"ul",
+				"ulib.c"
+			],
+			[
+				"ulib",
+				"ulib.c"
+			],
+			[
+				"type",
+				"types.h"
+			],
+			[
+				"file",
+				"file.c"
+			],
+			[
+				"def",
+				"defs.h"
+			],
+			[
+				"sys",
+				"syscall.h"
+			],
+			[
+				"us",
+				"usys.S"
+			],
+			[
+				"fs.c",
+				"fs.c"
+			],
+			[
+				"mkfs",
+				"mkfs.c"
+			],
+			[
+				"syscall",
+				"syscall.c"
+			],
+			[
+				"sh",
+				"sh.c"
+			],
+			[
+				"sta",
+				"stat.h"
+			],
+			[
+				"",
+				"helloworld/helloworld.h"
+			],
+			[
+				"hel",
+				"helloworld/helloworld.h"
+			],
+			[
+				"h",
+				"helloworld/helloworld.cpp"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 501.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/Documents/DungeonCartographer/DungeonCartographer.sublime-project"
+			],
+			[
+				"hw3",
+				"~/unlv/CS302/hw3/hw3.sublime-project"
+			]
+		],
+		"width": 381.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 1,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 257.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

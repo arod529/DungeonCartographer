@@ -1,0 +1,28 @@
+button {
+	padding: 0px;
+	margin: 0px;
+}
+
+scale {
+	min-width: 100px;
+}
+
+.zoomBox {
+	padding-right: 10px;
+	padding-left: 5px;
+}
+
+stack {
+	background-color: #999999;
+}
+
+tab {
+	border-radius: 10px 10px 0px 0px;
+	background-image: linear-gradient(white, #999999),
+	linear-gradient(to bottom right, transparent 50%, red 50%),
+    linear-gradient(to bottom left, transparent 50%, red 50%);
+	box-shadow: 2px 0px 5px grey;
+	border-bottom-color: black;
+	margin-right: -8px;
+	border-color: blue;
+}
