@@ -1,7 +1,36 @@
 #include "settings.h"
+#include "constants.h"
 
-int Tileset::count;
+//--------------------------
+//----- Tileset Struct -----
+//--------------------------
+int Tileset::count = 0;
 
+/*!
+  Default empty initilizers for tileset struct
+**/
+Tileset::Tileset()
+{
+	id = 0;
+	name = "";
+	filePath = NULL;
+	pixbuf = NULL;
+}
+
+/*!
+  Assignment initilizer for tileset struct
+**/
+Tileset::Tileset(uint _id, std::string _name, char* _filePath, GdkPixbuf* _pixbuf)
+{
+	id = _id;
+	name = _name;
+	filePath = _filePath;
+	pixbuf = _pixbuf;
+}
+
+//-----------------------
+//----- Tile Struct -----
+//-----------------------
 Tile::Tile(int _gridId, Level* _tileLvl, Tileset* _tileTileset)
 {
 	gridId = _gridId;
@@ -108,35 +137,52 @@ void Settings::setZoomFollowsMouse(bool _zoomFollowsMouse)
 
 void Settings::writeDefaultTilesetFile()
 {
-	//ONES IN ID REPRESENT WALL PLACEMENT AS SWNE
+	/* 
+	id:
+		bit[0-3] = wall bits
+		bit[4-6] = corner bits
+	*/
 
 	//tileset definition
-	int count = 17;
+	int count = BACKGROUND+1;
 	Tileset tileset[count];
 	tileset[0].count = count;
-	tileset[0b10000] = (Tileset){0b10000,"Background",(char *)"./tiles/bg.svg",NULL};
+	tileset[E_WALL] = (Tileset){E_WALL, "E Wall", (char *)"./tiles/eWall.svg", NULL};
+	tileset[E_HALL] = (Tileset){E_HALL, "E Hall", (char *)"./tiles/eHall.svg", NULL};
+	tileset[N_WALL] = (Tileset){N_WALL, "N Wall", (char *)"./tiles/nWall.svg", NULL};
+	tileset[N_HALL] = (Tileset){N_HALL, "N Hall", (char *)"./tiles/nHall.svg", NULL};
+	tileset[W_WALL] = (Tileset){W_WALL, "W Wall", (char *)"./tiles/wWall.svg", NULL};
+	tileset[W_HALL] = (Tileset){W_HALL, "W Hall", (char *)"./tiles/wHall.svg", NULL};
+	tileset[S_WALL] = (Tileset){S_WALL, "S Wall", (char *)"./tiles/sWall.svg", NULL};
+	tileset[S_HALL] = (Tileset){S_HALL, "S Hall", (char *)"./tiles/sHall.svg", NULL};
 
-	tileset[0b1111] = (Tileset){0b1111,"NSEW Wall",(char *)"./tiles/nsewWall.svg",NULL};
+	tileset[NE_WALL] = (Tileset){NE_WALL, "NE Wall", (char *)"./tiles/neWall.svg", NULL};
+	tileset[NE_HALL] = (Tileset){NE_HALL, "NE Hall", (char *)"./tiles/neHall.svg", NULL};
+	tileset[SE_WALL] = (Tileset){SE_WALL, "SE Wall", (char *)"./tiles/seWall.svg", NULL};
+	tileset[SE_HALL] = (Tileset){SE_HALL, "SE Hall", (char *)"./tiles/seHall.svg", NULL};
+	tileset[NW_WALL] = (Tileset){NW_WALL, "NW Wall", (char *)"./tiles/nwWall.svg", NULL};
+	tileset[NW_HALL] = (Tileset){NW_HALL, "NW Hall", (char *)"./tiles/nwHall.svg", NULL};
+	tileset[SW_WALL] = (Tileset){SW_WALL, "SW Wall", (char *)"./tiles/swWall.svg", NULL};
+	tileset[SW_HALL] = (Tileset){SW_HALL, "SW Hall", (char *)"./tiles/swHall.svg", NULL};
+	
+	tileset[WE_WALL] = (Tileset){WE_WALL, "EW Wall", (char *)"./tiles/ewWall.svg", NULL};
+	tileset[NS_HALL] = (Tileset){NS_HALL, "NS Wall", (char *)"./tiles/nsWall.svg", NULL};
 
-	tileset[0b1110] = (Tileset){0b1110,"NSW Wall",(char *)"./tiles/nswWall.svg",NULL};
-	tileset[0b1101] = (Tileset){0b1101,"SEW Wall",(char *)"./tiles/sewWall.svg",NULL};
-	tileset[0b1011] = (Tileset){0b1011,"NSE Wall",(char *)"./tiles/nseWall.svg",NULL};
-	tileset[0b0111] = (Tileset){0b0111,"NEW Wall",(char *)"./tiles/newWall.svg",NULL};
+	tileset[NEW_WALL] = (Tileset){NEW_WALL, "NEW Wall", (char *)"./tiles/newWall.svg", NULL};
+	tileset[NSE_WALL] = (Tileset){NSE_WALL, "NSE Wall", (char *)"./tiles/nseWall.svg", NULL};
+	tileset[SEW_WALL] = (Tileset){SEW_WALL, "SEW Wall", (char *)"./tiles/sewWall.svg", NULL};
+	tileset[NSW_WALL] = (Tileset){NSW_WALL, "NSW Wall", (char *)"./tiles/nswWall.svg", NULL};
 
-	tileset[0b1010] = (Tileset){0b1010,"NS Wall",(char *)"./tiles/nsWall.svg",NULL};
-	tileset[0b0101] = (Tileset){0b0101,"EW Wall",(char *)"./tiles/ewWall.svg",NULL};
-	tileset[0b0011] = (Tileset){0b0011,"NE Wall",(char *)"./tiles/neWall.svg",NULL};
-	tileset[0b0110] = (Tileset){0b0110,"NW Wall",(char *)"./tiles/nwWall.svg",NULL};
-	tileset[0b1100] = (Tileset){0b1100,"SW Wall",(char *)"./tiles/swWall.svg",NULL};
-	tileset[0b1001] = (Tileset){0b1001,"SE Wall",(char *)"./tiles/seWall.svg",NULL};
+	tileset[NSEW_WALL] = (Tileset){NSEW_WALL, "NSEW Wall", (char *)"./tiles/nsewWall.svg", NULL};
 
-	tileset[0b0001] = (Tileset){0b0001,"E Wall",(char *)"./tiles/eWall.svg",NULL};
-	tileset[0b0010] = (Tileset){0b0010,"N Wall",(char *)"./tiles/nWall.svg",NULL};
-	tileset[0b0100] = (Tileset){0b0100,"W Wall",(char *)"./tiles/wWall.svg",NULL};
-	tileset[0b1000] = (Tileset){0b1000,"S Wall",(char *)"./tiles/sWall.svg",NULL};
+	tileset[OPEN]   	 = (Tileset){OPEN, 	 		"Open",		(char *)"./tiles/open.svg", NULL};
+	tileset[E_OPEN] 	 = (Tileset){E_OPEN, 		"E Open", (char *)"./tiles/nseHall.svg", NULL};
+	tileset[N_OPEN] 	 = (Tileset){N_OPEN, 		"N Open", (char *)"./tiles/newHall.svg", NULL};
+	tileset[W_OPEN] 	 = (Tileset){W_OPEN, 		"W Open", (char *)"./tiles/nswHall.svg", NULL};
+	tileset[S_OPEN] 	 = (Tileset){S_OPEN, 		"S Open", (char *)"./tiles/sewHall.svg", NULL};
+	tileset[NSEW_OPEN] = (Tileset){NSEW_OPEN, "NSEW Open", (char *)"./tiles/nsewHall.svg", NULL};
 
-	tileset[0b0000] = (Tileset){0b0000,"Open",(char *)"./tiles/open.svg",NULL};	
-
+	tileset[BACKGROUND] = (Tileset){BACKGROUND, "Background", (char *)"./tiles/bg.svg", NULL};
 
 	//open file
 	std::ofstream file;
@@ -144,8 +190,11 @@ void Settings::writeDefaultTilesetFile()
 	
 	//write to file
 	file << count << '\n';
-	for(int i = 0; i < count; i++)
-		file << tileset[i].id << ',' << tileset[i].name << ',' << tileset[i].filePath << '\0' <<'\n';
+	for(int i = 0; i < count; i++) {
+		if(tileset[i].filePath != NULL) {
+			file << tileset[i].id << ',' << tileset[i].name << ',' << tileset[i].filePath << '\0' <<'\n';
+		}
+	}
 	
 	//close file
 	file.close();
@@ -177,7 +226,9 @@ Map::~Map()
 	for(int i = 0; i < tileset[0].count; i++)
 	{
 		delete[] tileset[i].filePath;
-		g_object_unref(tileset[i].pixbuf);
+		if(tileset[i].pixbuf != NULL) {
+			g_object_unref(tileset[i].pixbuf);
+		}
 	}
 
 	delete[] tileset;
@@ -185,6 +236,8 @@ Map::~Map()
 
 /*!
 	Load a tileset from a file
+
+	\bug doesn't check if file exists
 
 	@param[in] tileSetFile file name for the tile set to load
 **/
@@ -204,23 +257,28 @@ void Map::loadTileset(std::string tileSetFile)
 
 	//read tileset
 	std::string tmp;
-	for(int i = 0; i < count; i++)
+	uint _id;
+	do
 	{
-		file >> tileset[i].id;
+		file >> _id;
+		tileset[_id].id = _id;
 		std::getline(file, tmp, ','); //eat comma
-		std::getline(file, tileset[i].name, ',');
+		std::getline(file, tileset[_id].name, ',');
 		std::getline(file, tmp);
-		tileset[i].filePath = new char[tmp.size()];
-		tmp.copy(tileset[i].filePath,tmp.size(),0);
-	}
+		tileset[_id].filePath = new char[tmp.size()];
+		tmp.copy(tileset[_id].filePath, tmp.size(), 0);
+	} while(!file.eof());
 
 	//close file
 	file.close();
 
 	//create pixbufs
 	GError *err = NULL;
-	for(int i = 0; i < count; i++)
-		tileset[i].pixbuf = gdk_pixbuf_new_from_file(tileset[i].filePath, &err);
+	for(int i = 0; i < count; i++) {
+		if(tileset[i].filePath != NULL) {
+			tileset[i].pixbuf = gdk_pixbuf_new_from_file(tileset[i].filePath, &err);
+		}
+	}
 }
 
 //-----------------------
@@ -234,7 +292,7 @@ Level::Level(int _size, Tileset* _tileset)
 
 	//set all tiles to background tile
 	for(int i = 0; i < size*size; i++)
-		tile.emplace_back(i, this, &tileset[0b10000]);
+		tile.emplace_back(i, this, &tileset[BACKGROUND]);
 
 	//initilize drawing areas for map
 	for(int i = 0; i < size*size; i++)

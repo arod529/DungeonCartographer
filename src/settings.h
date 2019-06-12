@@ -12,6 +12,9 @@ class Settings;
 
 struct Tileset
 {
+	Tileset();
+	Tileset(uint, std::string, char*, GdkPixbuf*);
+
 	static int 	count;
 	uint 				id;
 	std::string	name;
@@ -56,8 +59,8 @@ class Map
 class Level
 {
 	public:
-		Tileset* tileset;	//default level tileset
-		std::vector<Tile> tile; 				//tile for map
+		Tileset* tileset;											//default level tileset
+		std::vector<Tile> tile; 							//tile for map
 		std::vector<GtkWidget*>	drawingArea; 	//drawing areas for map
 
 		Level(int size, Tileset* tileset);
@@ -75,7 +78,7 @@ class Level
 	
 	private:
 		//settings
-		int 		 size; 		//default level size
+		int size; 		//default level size
 	
 		//working data
 		

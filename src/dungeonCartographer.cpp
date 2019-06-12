@@ -7,7 +7,7 @@ int main(int argc, char **argv)
 	gtk_init(&argc, &argv);
 
 	Settings settings;
-	// settings.writeDefaultTilesetFile();
+	settings.writeDefaultTilesetFile();
 	Map map(&settings);
 	try
 	{

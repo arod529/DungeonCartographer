@@ -12,6 +12,10 @@ scale {
 	padding-left: 5px;
 }
 
+grid {
+	box-shadow: 0 0 15px 10px black;
+}
+
 stack {
 	background-color: #999999;
 }

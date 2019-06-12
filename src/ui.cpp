@@ -1,4 +1,5 @@
 #include "ui.h"
+#include "constants.h"
 
 //-----------------------------
 //-----STATIC DECLARATIONS-----
@@ -213,6 +214,8 @@ bool event_drawTile(GtkWidget* drawingArea, cairo_t* cr)
 	The click event for a tile. Intelligently sets the new tile and updates the
 	surrounding tiles by adding or removing walls as required.
 
+	\bug needs updating to include full tileset
+
 	@param[in] *drawingArea  the drawing area calling the event
 	@param[in] *event	       unused; required for overload
 	@param[in] *tile			   the tile contained in the drawing area
@@ -227,7 +230,7 @@ void event_tileClick(GtkWidget* drawingArea, GdkEvent* event, void* tile)
 	int _gridId 		 	= _tile->gridId; 		 //this tile's gridId
 	int c 					 	= _gridId%gridSize;  //this tile's column number
 	int r 					 	= _gridId/gridSize;  //this tile's row number
-	uint newTilesetId = 0b1111; 					 //new base tile id for this tile
+	uint newTilesetId = NSEW_WALL; 			 	 //new base tile id for this tile is closed room
 
 	Tile* aTile;  	//adjacent tile
 	GtkWidget* aDA; //adjacent drawing area
@@ -248,21 +251,23 @@ void event_tileClick(GtkWidget* drawingArea, GdkEvent* event, void* tile)
 		_gridId-gridSize	//north tile
 	};
 
-	uint compare = 0b0001; //compare value for wall
+	uint compare = E_WALL; //compare value for wall
 
-	if(_tile->tileTileset->id <= 0b1111) //this tile is already a base room
+	if(_tile->tileTileset->id < BACKGROUND) //this tile is already a room
 	{
-		newTilesetId = 0b10000;	//set to background
+		newTilesetId = BACKGROUND;	//set to background
 
 		//check for and update adjacent tiles
-		for(int i = 0; i < 4; i++)
+		//cycles through each adjacent tile starting with west tile
+		//compare and adjacent tile are opposites
+		for(int i = 0; i < 4; i++) 
 		{
 			if(tileExists[i])	//adjacent tile exists
 			{
 				aTile = &_lvl->tile[a[i]];			//set adjacent tile
 				aDA = _lvl->drawingArea[a[i]];	//set adjacent tile drawing area
 
-				if(aTile->tileTileset->id <= 0b1111) //has adjacent base room to current tile
+				if(aTile->tileTileset->id < BACKGROUND) //has adjacent base room to current tile
 				{
 					aTile->tileTileset = &_lvl->tileset[aTile->tileTileset->id | compare];	//add previously shared wall of adjacent tile
 					g_object_set_data(G_OBJECT(aDA),"tile",aTile);													//update drawing area data of adjacent tile
@@ -272,7 +277,7 @@ void event_tileClick(GtkWidget* drawingArea, GdkEvent* event, void* tile)
 			compare <<= 1; //shift compare to next wall
 		}
 	}
-	else
+	else //this tile is a background tile
 	{
 		//check for and update adjacent tiles
 		for(int i = 0; i < 4; i++)
@@ -318,6 +323,9 @@ void event_canvasScroll(GtkWidget* layout, GdkEvent* event, void* eventData)
 	zoom(ed->settings, ed->level[eI], ed->layout[eI], ed->grid[eI], ed->drawingArea0[eI], dyScroll);
 }
 
+/*!
+  
+**/
 UI::UI(Settings* _settings, Map* _map)
 {
 	//read ui file
@@ -394,7 +402,7 @@ void UI::drawLevel(Map* _map, int i)
 
 void UI::drawLevel(GtkWidget* _grid, Level* _lvl)
 {
-	//size var for convinience and call reduction
+	//size var for convenience and call reduction
 	int lvlSize = _lvl->getSize();
 	int tileNum = lvlSize*lvlSize;
 	GtkWidget* da;
