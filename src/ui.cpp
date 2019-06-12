@@ -230,7 +230,6 @@ void event_tileClick(GtkWidget* drawingArea, GdkEvent* event, void* tile)
 	int _gridId 		 	= _tile->gridId; 		 //this tile's gridId
 	int c 					 	= _gridId%gridSize;  //this tile's column number
 	int r 					 	= _gridId/gridSize;  //this tile's row number
-	uint newTilesetId = NSEW_WALL; 			 	 //new base tile id for this tile is closed room
 
 	Tile* aTile;  	//adjacent tile
 	GtkWidget* aDA; //adjacent drawing area
@@ -251,56 +250,42 @@ void event_tileClick(GtkWidget* drawingArea, GdkEvent* event, void* tile)
 		_gridId-gridSize	//north tile
 	};
 
-	uint compare = E_WALL; //compare value for wall
+	uint compare = E_WALL; 					//compare value for wall
+	uint newTilesetId = NSEW_WALL;	//new base tile id for this tile is closed room
 
 	if(_tile->tileTileset->id < BACKGROUND) //this tile is already a room
+		{newTilesetId = BACKGROUND;}	//set to background
+
+	//check for and update adjacent tiles
+	//cycles through each adjacent tile starting with west tile
+	//compare and adjacent tile are opposites
+	for(int i = 0; i < 4; i++) 
 	{
-		newTilesetId = BACKGROUND;	//set to background
-
-		//check for and update adjacent tiles
-		//cycles through each adjacent tile starting with west tile
-		//compare and adjacent tile are opposites
-		for(int i = 0; i < 4; i++) 
+		if(tileExists[i])	//adjacent tile exists
 		{
-			if(tileExists[i])	//adjacent tile exists
-			{
-				aTile = &_lvl->tile[a[i]];			//set adjacent tile
-				aDA = _lvl->drawingArea[a[i]];	//set adjacent tile drawing area
+			aTile = &_lvl->tile[a[i]];			//get adjacent tile
+			aDA = _lvl->drawingArea[a[i]];	//get adjacent tile drawing area
 
-				if(aTile->tileTileset->id < BACKGROUND) //has adjacent base room to current tile
-				{
-					aTile->tileTileset = &_lvl->tileset[aTile->tileTileset->id | compare];	//add previously shared wall of adjacent tile
-					g_object_set_data(G_OBJECT(aDA),"tile",aTile);													//update drawing area data of adjacent tile
-					gtk_widget_queue_draw(aDA);																							//queue redraw of adjacent tile
-				}
-			}
-			compare <<= 1; //shift compare to next wall
-		}
-	}
-	else //this tile is a background tile
-	{
-		//check for and update adjacent tiles
-		for(int i = 0; i < 4; i++)
-		{
-			if(tileExists[i])	//adjacent tile exists
+			if (aTile->tileTileset->id < BACKGROUND) //adjacent tile is a room
 			{
-				aTile = &_lvl->tile[a[i]];			//set adjacent tile
-				aDA = _lvl->drawingArea[a[i]];	//set adjacent tile drawing area
-
-				if(aTile->tileTileset->id & compare) //has adjacent wall to current tile
+				if(_tile->tileTileset->id < BACKGROUND) //this tile was a room
 				{
-					aTile->tileTileset = &_lvl->tileset[aTile->tileTileset->id ^ compare];	//remove shared wall of adjacent tile
-					g_object_set_data(G_OBJECT(aDA),"tile",aTile);													//update drawing area data of adjacent tile
-					gtk_widget_queue_draw(aDA);																							//queue redraw of adjacent tile
-					newTilesetId ^= (1 << (i+2)%4);																					//remove shared wall of this tile
+					aTile->tileTileset = &_lvl->tileset[aTile->tileTileset->id | compare]; //add previously shared wall of adjacent tile
 				}
+				else //this tile was not a room
+				{
+					aTile->tileTileset = &_lvl->tileset[aTile->tileTileset->id ^ compare]; //remove shared wall of adjacent tile
+					newTilesetId ^= (1 << (i+2)%4); //remove shared wall of this tile
+				}
+				g_object_set_data(G_OBJECT(aDA),"tile",aTile);	//update drawing area data of adjacent tile
+				gtk_widget_queue_draw(aDA);											//queue redraw of adjacent tile
 			}
-			compare <<= 1; //shift compare to next wall
 		}
+		compare <<= 1; //shift compare to next wall
 	}
 
 	_tile->tileTileset = &_lvl->tileset[newTilesetId];			//update this tile's tileset id
-	g_object_set_data(G_OBJECT(drawingArea),"tile",_tile);	//update this tile's dreawing area
+	g_object_set_data(G_OBJECT(drawingArea),"tile",_tile);	//update this tile's drawing area
 	gtk_widget_queue_draw(drawingArea);											//queue redraw of this tile
 }
 
