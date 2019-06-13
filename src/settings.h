@@ -1,3 +1,10 @@
+/*!
+  \bug clean up classes and structs,
+  	make variables private,
+  	write accessor and mutator functions
+	\bug make sure objects are only copied if needed, otherwise point
+**/
+
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
@@ -6,6 +13,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <unordered_map>
 
 class Level;
 class Settings;
@@ -15,7 +23,11 @@ struct Tileset
 	Tileset();
 	Tileset(uint, std::string, char*, GdkPixbuf*);
 
-	static int 	count;
+	/*!
+	id: |se|sw|nw|ne|s|w|n|e|
+		bit[0-3] = wall bits
+		bit[4-7] = corner bits
+	**/
 	uint 				id;
 	std::string	name;
 	char* 			filePath;
@@ -31,11 +43,12 @@ struct Tile
 	Tile(int _gridId, Level* _tileLvl, Tileset* _tileTileset);
 };
 
+/*!
+	\bug make level private
+**/
 class Map
 {
 	public:
-		std::vector<Level> level;		//array of levels for a map
-
 		Map(Settings*);						//default map
 		Map(std::string mapFile);	//map from file
 		~Map();										//close a map
@@ -44,44 +57,42 @@ class Map
 		void loadTileset(std::string tileSetFile);
 
 		//accessors
-		int 			getSize();
-		Tileset* 	getTileset();
+		int getSize();
 
 		//mutators
 		void setTileset(std::string tileSetFile);
 		void setSize(int s);
 
+		std::vector<Level> level;		//array of levels for a map
+
 	private:
 		int 		 size; 		//default level size
-		Tileset* tileset;	//default level tileset
+		std::unordered_map<uint, Tileset> tileset;	//default level tileset
 };
 
 class Level
 {
 	public:
-		Tileset* tileset;											//default level tileset
+		std::unordered_map<uint, Tileset> tileset;											//default level tileset
 		std::vector<Tile> tile; 							//tile for map
 		std::vector<GtkWidget*>	drawingArea; 	//drawing areas for map
 
-		Level(int size, Tileset* tileset);
+		Level(int size, std::unordered_map<uint, Tileset> tileset);
 		~Level();
-		
+
 		//accessors
 		int 			 getSize() const;
-		Tileset* 	 getTileset();
 		GdkPixbuf* getTile(int i) const;
 		GtkWidget* getDrawingArea(int i) const;
 
 		//mutators
 		void setTileset(std::string tileSetFile);
 		void setTile(int i, int j);
-	
+
 	private:
 		//settings
 		int size; 		//default level size
-	
-		//working data
-		
+
 };
 
 class Settings

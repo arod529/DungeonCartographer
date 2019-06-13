@@ -4,10 +4,9 @@
 //--------------------------
 //----- Tileset Struct -----
 //--------------------------
-int Tileset::count = 0;
 
 /*!
-  Default empty initilizers for tileset struct
+  Default empty initializers for tileset struct
 **/
 Tileset::Tileset()
 {
@@ -18,7 +17,7 @@ Tileset::Tileset()
 }
 
 /*!
-  Assignment initilizer for tileset struct
+  Assignment initializer for tileset struct
 **/
 Tileset::Tileset(uint _id, std::string _name, char* _filePath, GdkPixbuf* _pixbuf)
 {
@@ -37,6 +36,115 @@ Tile::Tile(int _gridId, Level* _tileLvl, Tileset* _tileTileset)
 	tileLvl = _tileLvl;
 	tileTileset = _tileTileset;
 }
+
+//---------------------
+//----- Map Class -----
+//---------------------
+/*!
+	Initializes a map with defaults from settings
+**/
+Map::Map(Settings* _settings)
+{
+	//set default size
+	size = _settings->getMapSize();
+
+	//set default tileset
+	loadTileset("./tiles/defaultSet");
+
+	//create a level
+	level.emplace_back(size, tileset);
+}
+
+/*!
+	Free memory of map
+**/
+Map::~Map()
+{
+	for(auto iter = tileset.begin(); iter != tileset.end(); iter++)
+	{
+		auto i = iter->first;
+		delete[] tileset[i].filePath;
+		g_object_unref(tileset[i].pixbuf);
+	}
+}
+
+/*!
+	Load a tileset from a file
+
+	\bug doesn't check if file exists
+
+	@param[in] tileSetFile file name for the tile set to load
+**/
+void Map::loadTileset(std::string tileSetFile)
+{
+	//open file
+	std::ifstream file;
+	file.open(tileSetFile);
+
+	//get number of tile in tileset
+	int count;
+	file >> count;
+
+	//read tileset
+	std::string tmp;
+	uint _id;
+	do
+	{
+		file >> _id;
+		tileset[_id].id = _id;
+		std::getline(file, tmp, ','); //eat comma
+		std::getline(file, tileset[_id].name, ',');
+		std::getline(file, tmp);
+		tileset[_id].filePath = new char[tmp.size()];
+		tmp.copy(tileset[_id].filePath, tmp.size(), 0);
+	} while(!file.eof());
+
+	//close file
+	file.close();
+
+	//create pixbufs
+	GError *err = NULL;
+	for(auto iter = tileset.begin(); iter != tileset.end(); iter++) {
+		auto i = iter->first;
+		tileset[i].pixbuf = gdk_pixbuf_new_from_file(tileset[i].filePath, &err);
+		if(err != NULL) printf("%s\n", err->message);
+	}
+}
+
+//-----------------------
+//----- Level Class -----
+//-----------------------
+Level::Level(int _size, std::unordered_map<uint, Tileset> _tileset)
+{
+	//set map size and tileset
+	size = _size;
+	tileset = _tileset;
+
+	//set all tiles to background tile
+	for(int i = 0; i < size*size; i++)
+		tile.emplace_back(i, this, &tileset[BACKGROUND]);
+
+	//initilize drawing areas for map
+	for(int i = 0; i < size*size; i++)
+		drawingArea.emplace_back(gtk_drawing_area_new());
+	for(int i = 0; i < size*size; i++)
+		gtk_widget_set_can_focus (drawingArea[i],true);
+}
+
+Level::~Level()
+{
+
+}
+
+int Level::getSize() const
+{
+	return size;
+}
+
+// GtkWidget* Level::getDrawingArea(int i) const
+// {
+// 	return drawingArea[i];
+// }
 
 //--------------------------
 //----- Settings Class -----
@@ -137,16 +245,7 @@ void Settings::setZoomFollowsMouse(bool _zoomFollowsMouse)
 
 void Settings::writeDefaultTilesetFile()
 {
-	/*
-	id:
-		bit[0-3] = wall bits
-		bit[4-6] = corner bits
-	*/
-
-	//tileset definition
-	int count = BACKGROUND+1;
-	Tileset tileset[count];
-	tileset[0].count = count;
+	std::unordered_map<uint, Tileset> tileset;
 
 	tileset[E] = 			 (Tileset){E, "E Wall", (char *)"./tiles/eWall.svg", NULL};
 	tileset[E_NW] = 	 (Tileset){E_NW, "E Wall NW Corner", (char *)"./tiles/eWall_nwCorner.svg", NULL};
@@ -211,130 +310,12 @@ void Settings::writeDefaultTilesetFile()
 	file.open("./tiles/defaultSet");
 
 	//write to file
-	file << count << '\n';
-	for(int i = 0; i < count; i++) {
-		if(tileset[i].filePath != NULL) {
-			file << tileset[i].id << ',' << tileset[i].name << ',' << tileset[i].filePath << '\0' <<'\n';
-		}
+	file << tileset.size() << '\n';
+	for(auto iter = tileset.begin(); iter != tileset.end(); iter++) {
+		auto i = iter->first;
+		file << tileset[i].id << ',' << tileset[i].name << ',' << tileset[i].filePath << '\0' <<'\n';
 	}
 
 	//close file
 	file.close();
 }
-
-//---------------------
-//----- Map Class -----
-//---------------------
-/*!
-	Initilizes a map with defaults from settings
-**/
-Map::Map(Settings* _settings)
-{
-	//set default size
-	size = _settings->getMapSize();
-
-	//set default tileset
-	loadTileset("./tiles/defaultSet");
-
-	//create a level
-	level.emplace_back(size, tileset);
-}
-
-/*!
-	Free memmory of map
-**/
-Map::~Map()
-{
-	for(int i = 0; i < tileset[0].count; i++)
-	{
-		delete[] tileset[i].filePath;
-		if(tileset[i].pixbuf != NULL) {
-			g_object_unref(tileset[i].pixbuf);
-		}
-	}
-
-	delete[] tileset;
-}
-
-/*!
-	Load a tileset from a file
-
-	\bug doesn't check if file exists
-
-	@param[in] tileSetFile file name for the tile set to load
-**/
-void Map::loadTileset(std::string tileSetFile)
-{
-	//open file
-	std::ifstream file;
-	file.open(tileSetFile);
-
-	//get number of tile in tileset
-	int count;
-	file >> count;
-
-	//allocate tileset
-	tileset = new Tileset[count];
-	tileset[0].count = count;
-
-	//read tileset
-	std::string tmp;
-	uint _id;
-	do
-	{
-		file >> _id;
-		tileset[_id].id = _id;
-		std::getline(file, tmp, ','); //eat comma
-		std::getline(file, tileset[_id].name, ',');
-		std::getline(file, tmp);
-		tileset[_id].filePath = new char[tmp.size()];
-		tmp.copy(tileset[_id].filePath, tmp.size(), 0);
-	} while(!file.eof());
-
-	//close file
-	file.close();
-
-	//create pixbufs
-	GError *err = NULL;
-	for(int i = 0; i < count; i++) {
-		if(tileset[i].filePath != NULL) {
-			tileset[i].pixbuf = gdk_pixbuf_new_from_file(tileset[i].filePath, &err);
-			if(err != NULL) printf("%s\n", err->message);
-		}
-	}
-}
-
-//-----------------------
-//----- Level Class -----
-//-----------------------
-Level::Level(int _size, Tileset* _tileset)
-{
-	//set map size and tileset
-	size = _size;
-	tileset = _tileset;
-
-	//set all tiles to background tile
-	for(int i = 0; i < size*size; i++)
-		tile.emplace_back(i, this, &tileset[BACKGROUND]);
-
-	//initilize drawing areas for map
-	for(int i = 0; i < size*size; i++)
-		drawingArea.emplace_back(gtk_drawing_area_new());
-	for(int i = 0; i < size*size; i++)
-		gtk_widget_set_can_focus (drawingArea[i],true);
-}
-
-Level::~Level()
-{
-
-}
-
-int Level::getSize() const
-{
-	return size;
-}
-
-// GtkWidget* Level::getDrawingArea(int i) const
-// {
-// 	return drawingArea[i];
-// }
