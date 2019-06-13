@@ -57,7 +57,7 @@ void zoom(Settings* settings, Level* level, GtkWidget* layout, GtkWidget* grid, 
 {
 	int xG, yG; //grid position
 	int dx = 0;	//delta change in postion
-	int dy = 0; 
+	int dy = 0;
 
 	//get grid stats
 	GtkAllocation allocG;
@@ -92,7 +92,7 @@ void zoom(Settings* settings, Level* level, GtkWidget* layout, GtkWidget* grid, 
 	// 	//get mouse coords in canvas
 	// 	double xMouse,yMouse;
 	// 	gdk_event_get_coords(event, &xMouse, &yMouse);
-		
+
 	// 	//get layout size
 		GtkAllocation allocL;
 		gtk_widget_get_allocation(layout, &allocL);
@@ -101,7 +101,7 @@ void zoom(Settings* settings, Level* level, GtkWidget* layout, GtkWidget* grid, 
 	// 	dx -= ((xG + allocG.width/2) - xMouse)/ds;
 	// 	dy += ((yG + allocG.height/2) - yMouse)/ds;
 	// }
-	
+
 	//move the grid
 	dx *= level->getSize()/2;
 	dy *= level->getSize()/2;
@@ -187,7 +187,7 @@ void event_changeTab(GtkNotebook* _notebook, GtkWidget* _page, uint _pageNum, vo
 
 }
 
-/*!	
+/*!
 	Draw refresh even triggered for a tile.
 
 	@param[in] *drawingArea  the tile's drawing area
@@ -215,6 +215,7 @@ bool event_drawTile(GtkWidget* drawingArea, cairo_t* cr)
 	surrounding tiles by adding or removing walls as required.
 
 	\bug needs updating to include full tileset
+		\fix? update tiles adjacent to open sides of clicked tile, including corners
 
 	@param[in] *drawingArea  the drawing area calling the event
 	@param[in] *event	       unused; required for overload
@@ -226,7 +227,7 @@ void event_tileClick(GtkWidget* drawingArea, GdkEvent* event, void* tile)
 
 	Level* _lvl  = _tile->tileLvl;  //the working level
 	int gridSize = _lvl->getSize(); //this levels grid size
-	
+
 	int _gridId 		 	= _tile->gridId; 		 //this tile's gridId
 	int c 					 	= _gridId%gridSize;  //this tile's column number
 	int r 					 	= _gridId/gridSize;  //this tile's row number
@@ -234,32 +235,41 @@ void event_tileClick(GtkWidget* drawingArea, GdkEvent* event, void* tile)
 	Tile* aTile;  	//adjacent tile
 	GtkWidget* aDA; //adjacent drawing area
 
-	//array of tile exist truths
+	//adjacent tile exist truths
 	bool tileExists[] = {
-		(c>0), 						//west tile
+		(c > 0),					//west tile
 		(r < gridSize-1), //south tile
 		(c < gridSize-1), //east tile
-		(r > 0) 					//north tile
+		(r > 0),					//north tile
+		(c < gridSize-1 && r > 0),				 //northeast tile
+		(r > 0 && c > 0),	 								 //northwest tile
+		(c > 0 && r < gridSize-1),				 //southwest tile
+		(c < gridSize-1 && r < gridSize-1) //southeast tile
 	};
 
-	//adjacent tile index array
+	//adjacent tile index
 	int a[] = {
 		_gridId-1,				//west tile
 		_gridId+gridSize,	//south tile
 		_gridId+1,				//east tile
-		_gridId-gridSize	//north tile
+		_gridId-gridSize, //north tile
+		_gridId-gridSize+1, //northeast tile
+
+		_gridId-gridSize-1, //northwest tile
+		_gridId+gridSize-1, //southwest tile
+		_gridId+gridSize+1 //southeast tile
 	};
 
-	uint compare = E_WALL; 					//compare value for wall
-	uint newTilesetId = NSEW_WALL;	//new base tile id for this tile is closed room
+	uint compare = E; 					//compare value for wall
+	uint newTilesetId = NSEW;	//new base tile id for this tile is closed room
 
 	if(_tile->tileTileset->id < BACKGROUND) //this tile is already a room
 		{newTilesetId = BACKGROUND;}	//set to background
 
-	//check for and update adjacent tiles
+	//check for and update adjacent tile walls
 	//cycles through each adjacent tile starting with west tile
 	//compare and adjacent tile are opposites
-	for(int i = 0; i < 4; i++) 
+	for(int i = 0; i < 4; i++)
 	{
 		if(tileExists[i])	//adjacent tile exists
 		{
@@ -309,7 +319,7 @@ void event_canvasScroll(GtkWidget* layout, GdkEvent* event, void* eventData)
 }
 
 /*!
-  
+
 **/
 UI::UI(Settings* _settings, Map* _map)
 {
@@ -338,7 +348,7 @@ UI::UI(Settings* _settings, Map* _map)
 	scrollSlider = gtk_builder_get_object(builder,"scrollSpeedSlider");
 
 	//noteboook
-	
+
 		//layout
 		layout.emplace_back(gtk_builder_get_object(builder,"layout[0]"));
 
@@ -377,7 +387,7 @@ UI::UI(Settings* _settings, Map* _map)
 
 UI::~UI()
 {
-	
+
 }
 
 void UI::drawLevel(Map* _map, int i)
@@ -405,7 +415,7 @@ void UI::drawLevel(GtkWidget* _grid, Level* _lvl)
 		//click
 		gtk_widget_add_events(da, GDK_BUTTON_PRESS_MASK);
 		g_signal_connect(G_OBJECT(da),"button-press-event",G_CALLBACK(event_tileClick),&_lvl->tile[i]);
-		
+
 	}
 	//set initial size
 	gtk_widget_set_size_request(_lvl->drawingArea[0],25,25);

@@ -38,3 +38,6 @@ ui.o: $(SRCD)/ui.cpp $(SRCD)/ui.h $(SRCD)/settings.h
 clean:
 	rm $(OBJD)/*.o
 	rm dungeonCartographer
+
+run:
+	./dungeonCartographer
