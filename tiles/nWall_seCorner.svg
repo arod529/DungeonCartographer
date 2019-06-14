@@ -15,7 +15,7 @@
    version="1.1"
    id="svg1805"
    inkscape:version="0.92.2 2405546, 2018-03-11"
-   sodipodi:docname="nWall_se.svg"
+   sodipodi:docname="nWall_sw.svg"
    enable-background="new">
   <defs
      id="defs1799">
@@ -287,7 +287,7 @@
      inkscape:label="corners"
      style="display:inline">
     <g
-       style="display:inline"
+       style="display:none"
        inkscape:label="se"
        id="g2520"
        inkscape:groupmode="layer"
@@ -325,7 +325,7 @@
        inkscape:groupmode="layer"
        id="g2506"
        inkscape:label="sw"
-       style="display:none"
+       style="display:inline"
        sodipodi:insensitive="true">
       <path
          style="display:inline;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"

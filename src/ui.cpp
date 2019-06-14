@@ -1,6 +1,8 @@
 #include "ui.h"
 #include "constants.h"
 
+#include <cmath>
+
 //-----------------------------
 //-----STATIC DECLARATIONS-----
 //-----------------------------
@@ -14,11 +16,11 @@ int EventData::currTab = 0;
 	Centers the level on the canvas.
 
 	@param[in] *layout  pointer to the layout of the current tab
-	@param[in] *grid    ponter to the grid of the current tab
+	@param[in] *grid    pointer to the grid of the current tab
 **/
 void centerLevel(GtkWidget* layout, GtkWidget* grid)
 {
-	//get location and dimenstion properties
+	//get location and dimension properties
 	GtkAllocation allocG;
 	gtk_widget_get_allocation(grid, &allocG);
 	GtkAllocation allocL;
@@ -30,11 +32,11 @@ void centerLevel(GtkWidget* layout, GtkWidget* grid)
 
 void zoomToFit(Level* level, GtkWidget* layout, GtkWidget* drawingArea0)
 {
-  //get location and dimenstion properties
+  //get location and dimension properties
   GtkAllocation allocL;
   gtk_widget_get_allocation(layout, &allocL);
 
-  //get smallest dimention of layout
+  //get smallest dimension of layout
   int s = allocL.height;
   if(allocL.width < s) s = allocL.height;
   s /= level->getSize();
@@ -56,7 +58,7 @@ void zoomToFit(Level* level, GtkWidget* layout, GtkWidget* drawingArea0)
 void zoom(Settings* settings, Level* level, GtkWidget* layout, GtkWidget* grid, GtkWidget* drawingArea0, double scrollDir)
 {
 	int xG, yG; //grid position
-	int dx = 0;	//delta change in postion
+	int dx = 0;	//delta change in position
 	int dy = 0;
 
 	//get grid stats
@@ -241,10 +243,10 @@ void event_tileClick(GtkWidget* drawingArea, GdkEvent* event, void* tile)
 		(r < gridSize-1), //south tile
 		(c < gridSize-1), //east tile
 		(r > 0),					//north tile
-		(c < gridSize-1 && r > 0),				 //northeast tile
-		(r > 0 && c > 0),	 								 //northwest tile
-		(c > 0 && r < gridSize-1),				 //southwest tile
-		(c < gridSize-1 && r < gridSize-1) //southeast tile
+		(r > 0 && c > 0),	 								 	//northwest tile
+		(c > 0 && r < gridSize-1),				 	//southwest tile
+		(c < gridSize-1 && r < gridSize-1), //southeast tile
+		(c < gridSize-1 && r > 0)				 		//northeast tile
 	};
 
 	//adjacent tile index
@@ -253,11 +255,10 @@ void event_tileClick(GtkWidget* drawingArea, GdkEvent* event, void* tile)
 		_gridId+gridSize,	//south tile
 		_gridId+1,				//east tile
 		_gridId-gridSize, //north tile
-		_gridId-gridSize+1, //northeast tile
-
 		_gridId-gridSize-1, //northwest tile
 		_gridId+gridSize-1, //southwest tile
-		_gridId+gridSize+1 //southeast tile
+		_gridId+gridSize+1, //southeast tile
+		_gridId-gridSize+1  //northeast tile
 	};
 
 	uint compare = E; 					//compare value for wall
@@ -292,6 +293,36 @@ void event_tileClick(GtkWidget* drawingArea, GdkEvent* event, void* tile)
 			}
 		}
 		compare <<= 1; //shift compare to next wall
+	}
+
+	//update the corners on this tile
+
+	double pow[2] = {-1}; //the power of the highest bit aka index bit for tile opposite of wall
+	int corners = 0; //the number of corners to check
+	uint aTileId = 0;
+
+	if(newTilesetId == O) //is background tile
+		{corners = 4;}
+	else if(modf(log(newTilesetId)/log(2), &pow[0]) == 0) //is single wall tile
+		{corners = 2;}
+	else if (modf(log(newTilesetId-exp2(pow[0]))/log(2), &pow[1]) == 0 && (int)(pow[0]+pow[1])%2) //is corner tile
+		{corners = 1;}
+	else
+		{corners = 0;}
+
+	//check corner tiles
+	for(int i = 4; i < 4+corners; i++) //i is index offset for corners
+	{
+		int j = (int)(pow[0]+i)%4+4; //the bit for for the corner
+		if(pow[1] == 0 && pow[0] == 3)
+			{j = (int)(pow[1]+i)%4+4;}
+
+		if(tileExists[j]) //corner tile exists
+		{
+			aTileId = _lvl->tile[a[j]].tileTileset->id;
+			if(aTileId == BACKGROUND) //corner tile is background
+				newTilesetId |= (1<<j); //add corner bit
+		}
 	}
 
 	_tile->tileTileset = &_lvl->tileset[newTilesetId];			//update this tile's tileset id
