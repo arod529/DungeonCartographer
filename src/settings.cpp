@@ -94,7 +94,7 @@ void Tile::getAdjacentIndex(int* _adjacentIndex)
 
   1) Sets the new tile id to an enclosed room
   	1a) Changes the new tile id to background if it was already a room
-	2) Updates self and adjacent rooms in cardinal directions
+	2) For each adjacent tile in cardinal directions
 		2a) If the adjacent tile exists and is a room
 			2a1.1) If this tile was a room (is now background), add shared wall to adjacent tile
 			2a1.2) If the tile was background (is now a room), remove shared wall of this tile
@@ -134,26 +134,29 @@ void Tile::updateTile()
 			{
 				if(tileTileset->id < BACKGROUND) //this tile was a room
 				{
-					aTile->tileTileset = &tileLvl->tileset[aTile->tileTileset->id | compare]; //add previously shared wall of adjacent tile
+					//add previously shared wall of adjacent tile and remove all corner bits
+					aTile->tileTileset = &tileLvl->tileset[(aTile->tileTileset->id | compare)&NSEW];
 				}
 				else //this tile was not a room
 				{
-					aTile->tileTileset = &tileLvl->tileset[aTile->tileTileset->id & ~compare]; //remove shared wall of adjacent tile
+					//remove shared wall of adjacent tile and all corner bits
+					aTile->tileTileset = &tileLvl->tileset[(aTile->tileTileset->id & ~compare)&NSEW];
 					newTilesetId ^= (1 << (i+2)%4); //remove shared wall of this tile
 				}
-				aTile->queDraw();
+				aTile->updateCornerBits(false); //re-add valid corner bits
 			}
 		}
 		compare <<= 1; //shift compare to next wall
 	}
 
 	tileTileset = &tileLvl->tileset[newTilesetId]; //update this tile's tileset id
-	updateCornerBits(true);
+	updateCornerBits(true); //draw of this tile will occur here
 }
 
 /*!
-	Updates the corner bits of the calling tile, and recursively updates the corner bits
-	of the adjacent tiles. Locks the tile when called to prevent recursion double back.
+	Updates the corner bits of the calling tile, recursively updates the corner bits
+	of the diagonal tiles, and non-recursively updates the tiles cardinally adjacent.
+	Locks the tile when called to prevent recursion double back.
 
   1) Checks if the calling object has already been recursed by the locked property,
   		returns if locked, locks on continue
@@ -162,7 +165,7 @@ void Tile::updateTile()
   2.3) If the second remainder is 0 AND the sum of the powers is even, the tile
   			is a corner tile, 1 corner must be checked
 	2.4) No corners must be checked
-	3) Check corners
+	3) For each corner to be checked
 		3a) Calculate starting corner bit from largest power with offset, use lowest power for se corner tile
 		3b) If the corner tile exists
 			3b1) If this tile is background and the adjacent tile is not background
@@ -173,8 +176,11 @@ void Tile::updateTile()
  	^<-
 			 	3b2a.2) If the adjacent tile is a room, add corner bit, update corner bits of adjacent tile (recurse)
  	^<-
-	4) Queue draw for this tile
-	5) Unlock tile
+	4)If tile is not background, open room, or closed room
+		4a) For each tile adjacent to open walls, if exists, update corner bits (non-recursive)
+		^<-
+	5) Queue draw for this tile
+	6) Unlock tile
 **/
 void Tile::updateCornerBits(bool _propagate)
 {
@@ -202,8 +208,12 @@ void Tile::updateCornerBits(bool _propagate)
 		{corners = 2;}
 	else if (modf(log(walls-exp2(pow[0]))/log(2), &pow[1]) == 0 && (int)(pow[0]+pow[1])%2) //is corner tile
 		{corners = 1;}
-	else
-		{corners = 0;}
+	else //is double wall (parallel), triple wall, or closed room
+		{
+			corners = 0;
+			newTilesetId &= NSEW; //remove all corner bits
+			tileTileset = &tileLvl->tileset[newTilesetId];
+		}
 
 	//check corner tiles
 	for(int i = CORNER_BIT_OFFSET; i < CORNER_BIT_OFFSET+corners; i++) //i is index offset for corners
@@ -240,7 +250,7 @@ void Tile::updateCornerBits(bool _propagate)
 	}
 
 	//check tiles opposing walls
-	if(corners <=2 && walls != NSEW) //tile is double wall (parallel), or triple wall
+	if(corners <=2 && walls != NSEW) //tile is not background, open room, or closed room
 	{
 		pow[0] = -1; pow[1] = -1;
 		uint openWalls = ~walls & NSEW;
