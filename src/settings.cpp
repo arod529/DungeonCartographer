@@ -8,7 +8,7 @@
 //--------------------------
 
 /*!
-  Default empty initializers for tileset struct
+  Default empty initializers for tileset struct.
 **/
 Tileset::Tileset()
 {
@@ -19,7 +19,16 @@ Tileset::Tileset()
 }
 
 /*!
-  Assignment initializer for tileset struct
+  Assignment initializer for tileset struct.
+
+  @param[in] _id The id of the tile struct; a binary number that represents the
+  								walls and corner bits that the tile represents. \n
+  								|se|sw|nw|ne|s|w|n|e| \n
+  								bit[0-3] = wall bits \n
+									bit[4-7] = corner bits
+	@param[in] _name The display name of the tile.
+	@param[in] _filePath Path to the svg file of the tile.
+	@param[in] _pixbuf The pixbuf for the tile.
 **/
 Tileset::Tileset(uint _id, std::string _name, char* _filePath, GdkPixbuf* _pixbuf)
 {
@@ -29,9 +38,17 @@ Tileset::Tileset(uint _id, std::string _name, char* _filePath, GdkPixbuf* _pixbu
 	pixbuf = _pixbuf;
 }
 
-//-----------------------
-//----- Tile Struct -----
-//-----------------------
+//----------------------
+//----- Tile Class -----
+//----------------------
+/*!
+  Initializer for the Tile class.
+
+  @param[in] _gridId The id of the grid square this tile represents. This is a
+  										single dimension array that represents a square grid.
+	@param[in] _tileLvl The Level that the tile resides in.
+	@param[in] _tileTileset The Tileset struct that describes the tile image.
+**/
 Tile::Tile(int _gridId, Level* _tileLvl, Tileset* _tileTileset)
 {
 	gridId = _gridId;
@@ -40,9 +57,11 @@ Tile::Tile(int _gridId, Level* _tileLvl, Tileset* _tileTileset)
 }
 
 /*!
-  Get an array of adjacent tile exists truths {w, s, e, n, nw, sw, se, ne}
+  Get an array of adjacent tile exists truths. Each value in the array describes
+  whether the tile adjacent to the calling tile exists. The directions are: \n
+  {ne, se, sw, nw, n, e, s, w}
 
-  @param [in/out] _tileExists truths of tile exists (size 8)
+  @param [in,out] _tileExists Truths of tile exists (size 8)
 **/
 void Tile::getTileExists(bool* _tileExists)
 {
@@ -55,8 +74,8 @@ void Tile::getTileExists(bool* _tileExists)
 		(r < gridSize-1), //south tile
 		(c < gridSize-1), //east tile
 		(r > 0),					//north tile
-		(r > 0 && c > 0),	 					 				 	//northwest tile
-		(c > 0 && r < gridSize-1),  				 	//southwest tile
+		(r > 0 && c > 0),	 					 				//northwest tile
+		(c > 0 && r < gridSize-1),  				//southwest tile
 		(c < gridSize-1 && r < gridSize-1), //southeast tile
 		(c < gridSize-1 && r > 0)				 		//northeast tile
 	};
@@ -65,19 +84,21 @@ void Tile::getTileExists(bool* _tileExists)
 }
 
 /*!
-  Get an array of adjacent tile indexes {w, s, e, n, nw, sw, se, ne}
+  Get an array of adjacent tile indexes. Each value in the array is the grid index
+  of the adjacent tile. The directions are: \n
+  {ne, se, sw, nw, n, e, s, w}
 
-  @param [in/out] _adjacentIndex the indexes of the adjacent tiles (size 8)
+  @param [in,out] _adjacentIndex The indexes of the adjacent tiles (size 8)
 **/
 void Tile::getAdjacentIndex(int* _adjacentIndex)
 {
 	int gridSize = tileLvl->getSize();
 
 	int tmp[] = {
-		gridId-1,				//west tile
-		gridId+gridSize,	//south tile
-		gridId+1,				//east tile
-		gridId-gridSize, //north tile
+		gridId-1,					 //west tile
+		gridId+gridSize,	 //south tile
+		gridId+1,					 //east tile
+		gridId-gridSize, 	 //north tile
 		gridId-gridSize-1, //northwest tile
 		gridId+gridSize-1, //southwest tile
 		gridId+gridSize+1, //southeast tile
@@ -90,18 +111,21 @@ void Tile::getAdjacentIndex(int* _adjacentIndex)
 /*!
   Updates the tile by either making it a room or a background tile based
   on its previous state. Updates the shared walls of the adjacent tiles
-  and queues a draw call for them. Calls this.updateCornerBits().
+  and calls a non-propagating updateCornerBits() on them. Calls a
+  propagating updateCornerBits() on self.
 
-  1) Sets the new tile id to an enclosed room
-  	1a) Changes the new tile id to background if it was already a room
-	2) For each adjacent tile in cardinal directions
-		2a) If the adjacent tile exists and is a room
-			2a1.1) If this tile was a room (is now background), add shared wall to adjacent tile
+<pre>
+  1) Sets the new tile id to an enclosed room.
+  	1a) Changes the new tile id to background if it was already a room.
+	2) For each adjacent tile in cardinal directions.
+		2a) If the adjacent tile exists and is a room.
+			2a1.1) If this tile was a room (is now background), add shared wall to adjacent tile.
 			2a1.2) If the tile was background (is now a room), remove shared wall of this tile
-					 	and adjacent tile
-			2a2) Add adjacent tile to draw queue
+					 		and adjacent tile
+			2a2) Add adjacent tile to draw queue.
 	^<-
-	3) Update corner bits of this tile
+	3) Update corner bits of this tile.
+</pre>
 **/
 void Tile::updateTile()
 {
@@ -156,31 +180,33 @@ void Tile::updateTile()
 /*!
 	Updates the corner bits of the calling tile, recursively updates the corner bits
 	of the diagonal tiles, and non-recursively updates the tiles cardinally adjacent.
-	Locks the tile when called to prevent recursion double back.
+	Locks the tile when called to prevent recursion double back. Calls queDraw() at end.
 
+<pre>
   1) Checks if the calling object has already been recursed by the locked property,
-  		returns if locked, locks on continue
-  2.1) If there are no walls or tile is background, 4 corners must be checked
-  2.2) If remainder is 0, the tile is a single wall tile, 2 corners must be checked
+  		returns if locked, locks on continue.
+  2.1) If there are no walls or tile is background, 4 corners must be checked.
+  2.2) If remainder is 0, the tile is a single wall tile, 2 corners must be checked.
   2.3) If the second remainder is 0 AND the sum of the powers is even, the tile
-  			is a corner tile, 1 corner must be checked
-	2.4) No corners must be checked
-	3) For each corner to be checked
-		3a) Calculate starting corner bit from largest power with offset, use lowest power for se corner tile
-		3b) If the corner tile exists
-			3b1) If this tile is background and the adjacent tile is not background
-			 	3b1a) Update the corner bits of the adjacent tile (recurse)
+  			is a corner tile, 1 corner must be checked.
+	2.4) No corners must be checked.
+	3) For each corner to be checked.
+		3a) Calculate starting corner bit from largest power with offset, use lowest power for se corner tile.
+		3b) If the corner tile exists.
+			3b1) If this tile is background and the adjacent tile is not background.
+			 	3b1a) Update the corner bits of the adjacent tile (recurse).
 	^<-
-			3b2) If this tile is not a background tile
-			 	3b2a.1) If the adjacent tile is background, add corner bit
+			3b2) If this tile is not a background tile.
+			 	3b2a.1) If the adjacent tile is background, add corner bit.
  	^<-
-			 	3b2a.2) If the adjacent tile is a room, add corner bit, update corner bits of adjacent tile (recurse)
+			 	3b2a.2) If the adjacent tile is a room, add corner bit, update corner bits of adjacent tile (recurse).
  	^<-
-	4)If tile is not background, open room, or closed room
-		4a) For each tile adjacent to open walls, if exists, update corner bits (non-recursive)
+	4)If tile is not background, open room, or closed room.
+		4a) For each tile adjacent to open walls, if exists, update corner bits (non-recursive).
 		^<-
-	5) Queue draw for this tile
-	6) Unlock tile
+	5) Queue draw for this tile.
+	6) Unlock tile.
+</pre>
 **/
 void Tile::updateCornerBits(bool _propagate)
 {
@@ -272,7 +298,7 @@ void Tile::updateCornerBits(bool _propagate)
 }
 
 /*!
-  Que a redraw for the tile
+  Queue a redraw for the tile.
 **/
 void Tile::queDraw()
 {
@@ -284,7 +310,9 @@ void Tile::queDraw()
 //----- Map Class -----
 //---------------------
 /*!
-	Initializes a map with defaults from settings
+	Initializes a map with defaults from Settings. Creates a starting Level.
+
+	@param[in] _settings The program settings
 **/
 Map::Map(Settings* _settings)
 {
@@ -299,7 +327,10 @@ Map::Map(Settings* _settings)
 }
 
 /*!
-	Free memory of map
+	Free memory of map used by the Tileset file paths, and pixbufs.
+
+	\bug Tileset memory management should be done by the tileset
+	\bug will need to free memory of optional Tileset
 **/
 Map::~Map()
 {
@@ -314,9 +345,9 @@ Map::~Map()
 /*!
 	Load a tileset from a file
 
-	\bug doesn't check if file exists
+	@param[in] tileSetFile File path for the tile set to load.
 
-	@param[in] tileSetFile file name for the tile set to load
+	\bug doesn't check if file exists
 **/
 void Map::loadTileset(std::string tileSetFile)
 {
@@ -357,6 +388,12 @@ void Map::loadTileset(std::string tileSetFile)
 //-----------------------
 //----- Level Class -----
 //-----------------------
+/*!
+  Initializes a new blank Level.
+
+  @param[in] _size The size of the level.
+  @param[in] _tileset The Tileset to use for the level
+**/
 Level::Level(int _size, std::unordered_map<uint, Tileset> _tileset)
 {
 	//set map size and tileset
@@ -367,33 +404,28 @@ Level::Level(int _size, std::unordered_map<uint, Tileset> _tileset)
 	for(int i = 0; i < size*size; i++)
 		tile.emplace_back(i, this, &tileset[BACKGROUND]);
 
-	//initilize drawing areas for map
+	//initialize drawing areas for map
 	for(int i = 0; i < size*size; i++)
 		drawingArea.emplace_back(gtk_drawing_area_new());
 	for(int i = 0; i < size*size; i++)
 		gtk_widget_set_can_focus (drawingArea[i],true);
 }
 
-Level::~Level()
-{
+/*!
+  Returns the size of the level.
 
-}
-
+  @return The size of the Level.
+**/
 int Level::getSize() const
 {
 	return size;
 }
 
-// GtkWidget* Level::getDrawingArea(int i) const
-// {
-// 	return drawingArea[i];
-// }
-
 //--------------------------
 //----- Settings Class -----
 //--------------------------
 /*!
-	Initilize settings from file
+	Initialize settings from default settings file.
 **/
 Settings::Settings()
 {
@@ -401,7 +433,7 @@ Settings::Settings()
 
 	//try default file
 	file.open(settingsFile, std::ios_base::in);
-	if(file.is_open()) //file exist read settings
+	if(file.is_open()) //file exists read settings
 	{
 		file >> mapSize
 				 >> zoomSpeed
@@ -423,69 +455,66 @@ Settings::Settings()
 	}
 }
 
-Settings::~Settings()
-{
-
-}
-
 /*!
-	Returns the default map size
+	Returns the default map size.
 
-	@return int the global size for a map
+	@return The global size for a map.
 **/
 int Settings::getMapSize() const
 	{return mapSize;}
 /*!
-	Returns the zoom speed
+	Returns the zoom speed.
 
-	@return int the zoom speed in pixels change per zoom action
+	@return The zoom speed in pixels change per zoom action
 **/
 int Settings::getZoomSpeed() const
 	{return zoomSpeed;}
 /*!
-	Returns the scroll speed
+	Returns the scroll speed.
 
-	@return int the scroll speed in pixels change per scroll action
+	@return The scroll speed in pixels change per scroll action.
 **/
 int Settings::getScrollSpeed() const
 	{return scrollSpeed;}
 /*!
-	Returns the zoom follows mouse setting
+	Returns the zoom follows mouse setting.
 
-	@return bool does zoom follow the mouse
+	@return Does zoom follow the mouse.
 **/
 bool Settings::getZoomFollowsMouse() const
 	{return zoomFollowsMouse;}
 /*!
-	Sets the default map size
+	Sets the default map size.
 
-	@param[in] int the global size for a map
+	@param[in] _mapSize The global size for a map
 **/
 void Settings::setMapSize(int _mapSize)
 	{mapSize = mapSize;}
 /*!
-	Sets the zoom speed
+	Sets the zoom speed.
 
-	@param[in] int the zoom speed in pixels change per zoom action
+	@param[in] _zoomSpeed The zoom speed in pixels change per zoom action.
 **/
 void Settings::setZoomSpeed(int _zoomSpeed)
 	{zoomSpeed = _zoomSpeed;}
 /*!
-	Sets the scroll speed
+	Sets the scroll speed.
 
-	@param[in] int the scroll speed in pixels change per scroll action
+	@param[in] _scrollSpeed The scroll speed in pixels change per scroll action.
 **/
 void Settings::setScrollSpeed(int _scrollSpeed)
 	{scrollSpeed = _scrollSpeed;}
 /*!
-	Set the zoom follows mouse setting
+	Set the zoom follows mouse setting.
 
-	@param[in] bool does zoom follow the mouse
+	@param[in] _zoomFollowsMouse Does zoom follow the mouse.
 **/
 void Settings::setZoomFollowsMouse(bool _zoomFollowsMouse)
 	{zoomFollowsMouse = _zoomFollowsMouse;}
 
-
+/*!
+  Writes a default Tileset file to disk.
+**/
 void Settings::writeDefaultTilesetFile()
 {
 	std::unordered_map<uint, Tileset> tileset;
@@ -556,7 +585,7 @@ void Settings::writeDefaultTilesetFile()
 	file << tileset.size() << '\n';
 	for(auto iter = tileset.begin(); iter != tileset.end(); iter++) {
 		auto i = iter->first;
-		file << tileset[i].id << ',' << tileset[i].name << ',' << tileset[i].filePath << '\0' <<'\n';
+		file << tileset[i].id << ',' << tileset[i].name << ',' << tileset[i].filePath << '\0' << '\n';
 	}
 
 	//close file

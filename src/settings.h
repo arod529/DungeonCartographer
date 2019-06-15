@@ -18,22 +18,32 @@
 class Level;
 class Settings;
 
+/*!
+  Tileset data structure. Contains the id, name, file path, and pixbuf of the
+  tile image. An array of tileset structs defines a complete tileset.
+
+  \bug variables should be private, and read only aside from initialization.
+**/
 struct Tileset
 {
 	Tileset();
-	Tileset(uint, std::string, char*, GdkPixbuf*);
+	Tileset(uint _id, std::string _name, char* _filePath, GdkPixbuf* _pixbuf);
 
-	/*!
-	id: |se|sw|nw|ne|s|w|n|e|
-		bit[0-3] = wall bits
-		bit[4-7] = corner bits
-	**/
 	uint 				id;
 	std::string	name;
 	char* 			filePath;
 	GdkPixbuf* 	pixbuf;
 };
 
+/*!
+  Tile data structure. Contains the grid id, the containing Level, and Tileset
+  of the tile. Internal functions update the tiles, queue a draw, and examine the
+  adjacent tiles for existence and index.
+
+  \bug gridId and tileLvl should be private and read only after initialization.
+  \bug locked should be private.
+  \bug getTileExists(), getAdjacentIndex() updateCornerBits(), queDraw() should be private
+**/
 class Tile
 {
 public:
@@ -41,18 +51,26 @@ public:
 	Level* 	 tileLvl; 		//pointer to tile owning level
 	Tileset* tileTileset;	//tileset that defines the tile characteristics
 
-	bool locked = false; //protection against multiple recuresion
+	bool locked = false; //protection against multiple recursion
 
 	Tile(int _gridId, Level* _tileLvl, Tileset* _tileTileset);
+	void updateTile();
+
 	void getTileExists(bool* _tileExists);
 	void getAdjacentIndex(int* _adjacentIndex);
-	void updateTile();
 	void updateCornerBits(bool _propagate);
 	void queDraw();
 };
 
 /*!
+	Map data structure. Tileset, and grid size for new maps default to the the global
+	values in Settings.
+
 	\bug make level private
+	\bug tileset should be pointer
+	\bug incomplete definition
+	\bug add map file
+	\bug should be in own header with Level, Tile, and Tileset?
 **/
 class Map
 {
@@ -74,10 +92,16 @@ class Map
 		std::vector<Level> level;		//array of levels for a map
 
 	private:
-		int 		 size; 		//default level size
-		std::unordered_map<uint, Tileset> tileset;	//default level tileset
+		int size; //default level size
+		std::unordered_map<uint, Tileset> tileset; //default level tileset
 };
 
+/*!
+  Level data structure. Tileset and grid size for new levels default to the global
+  values in Map().
+
+  \bug tileset should be pointer
+**/
 class Level
 {
 	public:
@@ -86,21 +110,12 @@ class Level
 		std::vector<GtkWidget*>	drawingArea; 	//drawing areas for map
 
 		Level(int size, std::unordered_map<uint, Tileset> tileset);
-		~Level();
 
 		//accessors
 		int 			 getSize() const;
-		GdkPixbuf* getTile(int i) const;
-		GtkWidget* getDrawingArea(int i) const;
-
-		//mutators
-		void setTileset(std::string tileSetFile);
-		void setTile(int i, int j);
 
 	private:
-		//settings
-		int size; 		//default level size
-
+		int size; //default level size
 };
 
 class Settings

@@ -213,15 +213,11 @@ bool event_drawTile(GtkWidget* drawingArea, cairo_t* cr)
 }
 
 /*!
-	The click event for a tile. Intelligently sets the new tile and updates the
-	surrounding tiles by adding or removing walls as required.
+	The click event for a tile.
 
-	\bug needs updating to include full tileset
-		\fix? update tiles adjacent to open sides of clicked tile, including corners
-
-	@param[in] *drawingArea  the drawing area calling the event
-	@param[in] *event	       unused; required for overload
-	@param[in] *tile			   the tile contained in the drawing area
+	@param[in] *drawingArea  Unused; the drawing area calling the event.
+	@param[in] *event	       Unused; required for overload.
+	@param[in] *tile			   The tile clicked on.
 **/
 void event_tileClick(GtkWidget* _drawingArea, GdkEvent* _event, void* _tile)
 {
