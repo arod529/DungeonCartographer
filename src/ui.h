@@ -23,7 +23,7 @@ struct EventData
 	//arrays of pointers to data
 	Settings* settings;
 	Level* level[1];
-	
+
 	GtkWidget* layout[1];
 	GtkWidget* grid[1];
 	GtkWidget* drawingArea0[1];
@@ -39,7 +39,7 @@ struct UI
 		~UI();
 
 		void drawLevel(Map* _map, int i);
-	
+
 	private:
 		GtkBuilder*     builder;
 		GtkCssProvider* css;
@@ -50,7 +50,7 @@ struct UI
 		GObject* zoomFit;
 		GObject* zoomSlider;
 		GObject* scrollSlider;
-		
+
 		std::vector<GObject*>   layout;
 		std::vector<GtkWidget*> grid;
 

@@ -34,13 +34,21 @@ struct Tileset
 	GdkPixbuf* 	pixbuf;
 };
 
-struct Tile
+class Tile
 {
+public:
 	int 		 gridId; 			//id of the tile's grid
 	Level* 	 tileLvl; 		//pointer to tile owning level
 	Tileset* tileTileset;	//tileset that defines the tile characteristics
 
+	bool locked = false; //protection against multiple recuresion
+
 	Tile(int _gridId, Level* _tileLvl, Tileset* _tileTileset);
+	void getTileExists(bool* _tileExists);
+	void getAdjacentIndex(int* _adjacentIndex);
+	void updateTile();
+	void updateCornerBits(bool _propagate);
+	void queDraw();
 };
 
 /*!

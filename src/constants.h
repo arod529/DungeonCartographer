@@ -1,6 +1,8 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+static const uint CORNER_BIT_OFFSET = 4;
+
 static const uint E =           0b0001;
 static const uint E_NW =    0b00010001;
 static const uint E_SW =    0b00100001;

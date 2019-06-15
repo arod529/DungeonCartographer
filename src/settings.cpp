@@ -1,6 +1,8 @@
 #include "settings.h"
 #include "constants.h"
 
+#include <cmath>
+
 //--------------------------
 //----- Tileset Struct -----
 //--------------------------
@@ -35,6 +37,237 @@ Tile::Tile(int _gridId, Level* _tileLvl, Tileset* _tileTileset)
 	gridId = _gridId;
 	tileLvl = _tileLvl;
 	tileTileset = _tileTileset;
+}
+
+/*!
+  Get an array of adjacent tile exists truths {w, s, e, n, nw, sw, se, ne}
+
+  @param [in/out] _tileExists truths of tile exists (size 8)
+**/
+void Tile::getTileExists(bool* _tileExists)
+{
+	int gridSize = tileLvl->getSize();
+	int c = gridId%gridSize;  //this tile's column number
+	int r = gridId/gridSize;  //this tile's row number
+
+	bool tmp[] = {
+		(c > 0),					//west tile
+		(r < gridSize-1), //south tile
+		(c < gridSize-1), //east tile
+		(r > 0),					//north tile
+		(r > 0 && c > 0),	 					 				 	//northwest tile
+		(c > 0 && r < gridSize-1),  				 	//southwest tile
+		(c < gridSize-1 && r < gridSize-1), //southeast tile
+		(c < gridSize-1 && r > 0)				 		//northeast tile
+	};
+
+	std::copy(tmp, tmp+8, _tileExists);
+}
+
+/*!
+  Get an array of adjacent tile indexes {w, s, e, n, nw, sw, se, ne}
+
+  @param [in/out] _adjacentIndex the indexes of the adjacent tiles (size 8)
+**/
+void Tile::getAdjacentIndex(int* _adjacentIndex)
+{
+	int gridSize = tileLvl->getSize();
+
+	int tmp[] = {
+		gridId-1,				//west tile
+		gridId+gridSize,	//south tile
+		gridId+1,				//east tile
+		gridId-gridSize, //north tile
+		gridId-gridSize-1, //northwest tile
+		gridId+gridSize-1, //southwest tile
+		gridId+gridSize+1, //southeast tile
+		gridId-gridSize+1  //northeast tile
+	};
+
+	std::copy(tmp, tmp+8, _adjacentIndex);
+}
+
+/*!
+  Updates the tile by either making it a room or a background tile based
+  on its previous state. Updates the shared walls of the adjacent tiles
+  and queues a draw call for them. Calls this.updateCornerBits().
+
+  1) Sets the new tile id to an enclosed room
+  	1a) Changes the new tile id to background if it was already a room
+	2) Updates self and adjacent rooms in cardinal directions
+		2a) If the adjacent tile exists and is a room
+			2a1.1) If this tile was a room (is now background), add shared wall to adjacent tile
+			2a1.2) If the tile was background (is now a room), remove shared wall of this tile
+					 	and adjacent tile
+			2a2) Add adjacent tile to draw queue
+	^<-
+	3) Update corner bits of this tile
+**/
+void Tile::updateTile()
+{
+	Tile* aTile = NULL; //adjacent tile
+
+	//adjacent tile exist truths
+	bool tileExists[8];
+	getTileExists(tileExists);
+
+	//adjacent tile index
+	int a[8];
+	getAdjacentIndex(a);
+
+	uint compare = E; 				//compare value for wall
+	uint newTilesetId = NSEW;	//new base tile id for this tile is closed room
+
+	if(tileTileset->id < BACKGROUND) //this tile is already a room
+		{newTilesetId = BACKGROUND;}	 //set to background
+
+	//check for and update adjacent tile walls
+	//cycles through each adjacent tile starting with west tile
+	//compare and adjacent tile are opposites
+	for(int i = 0; i < 4; i++)
+	{
+		if(tileExists[i])	//adjacent tile exists
+		{
+			aTile = &tileLvl->tile[a[i]];	//get adjacent tile
+
+			if (aTile->tileTileset->id < BACKGROUND) //adjacent tile is a room
+			{
+				if(tileTileset->id < BACKGROUND) //this tile was a room
+				{
+					aTile->tileTileset = &tileLvl->tileset[aTile->tileTileset->id | compare]; //add previously shared wall of adjacent tile
+				}
+				else //this tile was not a room
+				{
+					aTile->tileTileset = &tileLvl->tileset[aTile->tileTileset->id & ~compare]; //remove shared wall of adjacent tile
+					newTilesetId ^= (1 << (i+2)%4); //remove shared wall of this tile
+				}
+				aTile->queDraw();
+			}
+		}
+		compare <<= 1; //shift compare to next wall
+	}
+
+	tileTileset = &tileLvl->tileset[newTilesetId]; //update this tile's tileset id
+	updateCornerBits(true);
+}
+
+/*!
+	Updates the corner bits of the calling tile, and recursively updates the corner bits
+	of the adjacent tiles. Locks the tile when called to prevent recursion double back.
+
+  1) Checks if the calling object has already been recursed by the locked property,
+  		returns if locked, locks on continue
+  2.1) If there are no walls or tile is background, 4 corners must be checked
+  2.2) If remainder is 0, the tile is a single wall tile, 2 corners must be checked
+  2.3) If the second remainder is 0 AND the sum of the powers is even, the tile
+  			is a corner tile, 1 corner must be checked
+	2.4) No corners must be checked
+	3) Check corners
+		3a) Calculate starting corner bit from largest power with offset, use lowest power for se corner tile
+		3b) If the corner tile exists
+			3b1) If this tile is background and the adjacent tile is not background
+			 	3b1a) Update the corner bits of the adjacent tile (recurse)
+	^<-
+			3b2) If this tile is not a background tile
+			 	3b2a.1) If the adjacent tile is background, add corner bit
+ 	^<-
+			 	3b2a.2) If the adjacent tile is a room, add corner bit, update corner bits of adjacent tile (recurse)
+ 	^<-
+	4) Queue draw for this tile
+	5) Unlock tile
+**/
+void Tile::updateCornerBits(bool _propagate)
+{
+	if(locked) return; //don't run if this tile already part of recursion chain
+	locked = true; //lock the function for this tile
+
+	Tile* aTile = NULL; //adjacent tile
+	uint newTilesetId = tileTileset->id; //new tile set id to use, current as bases
+	uint walls = newTilesetId & NSEW; //the walls of this tile
+
+	//adjacent tile exists truths
+	bool tileExists[8];
+	getTileExists(tileExists);
+
+	//adjacent tile indexes
+	int a[8];
+	getAdjacentIndex(a);
+
+	double pow[2] = {-1, -1}; //the power of the highest bit aka index bit for tile opposite of wall
+	int corners = 0; //the number of corners to check
+
+	if(walls == O || newTilesetId == BACKGROUND) //is background tile or open room
+		{corners = 4;}
+	else if(modf(log(walls)/log(2), &pow[0]) == 0) //is single wall tile
+		{corners = 2;}
+	else if (modf(log(walls-exp2(pow[0]))/log(2), &pow[1]) == 0 && (int)(pow[0]+pow[1])%2) //is corner tile
+		{corners = 1;}
+	else
+		{corners = 0;}
+
+	//check corner tiles
+	for(int i = CORNER_BIT_OFFSET; i < CORNER_BIT_OFFSET+corners; i++) //i is index offset for corners
+	{
+		int j = (int)(pow[0]+i)%CORNER_BIT_OFFSET+CORNER_BIT_OFFSET; //the bit for for the corner
+		if(pow[1] == 0 && pow[0] == 3) //bit adjustment for se corner tile
+			{j = (int)(pow[1]+i)%CORNER_BIT_OFFSET+CORNER_BIT_OFFSET;}
+
+		if(tileExists[j]) //corner tile exists
+		{
+			aTile = &tileLvl->tile[a[j]];
+
+			//don't update this tile if it is background AND
+			//update adjacent if not a background tile
+			if(newTilesetId == BACKGROUND && aTile->tileTileset->id != BACKGROUND)
+			{
+				if(_propagate) aTile->updateCornerBits(true);
+			}
+			else
+			{
+				if(aTile->tileTileset->id == BACKGROUND) //corner tile is background
+				{
+					newTilesetId |= (1<<j); //add corner bit
+					tileTileset = &tileLvl->tileset[newTilesetId];
+				}
+				else //corner tile is room
+				{
+					newTilesetId &= ~(1<<j); //remove corner bit
+					tileTileset = &tileLvl->tileset[newTilesetId];
+					if(_propagate) aTile->updateCornerBits(true);
+				}
+			}
+		}
+	}
+
+	//check tiles opposing walls
+	if(corners <=2 && walls != NSEW) //tile is double wall (parallel), or triple wall
+	{
+		pow[0] = -1; pow[1] = -1;
+		uint openWalls = ~walls & NSEW;
+		while(openWalls != 0) //make sure there are open walls left
+		{
+			modf(log(openWalls)/log(2), &pow[0]); //get highest power of of empty wall
+
+			if(tileExists[(int)(pow[0]+2)%4]) //the tile adjacent to the empty wall exists
+			{
+				aTile = &tileLvl->tile[a[(int)(pow[0]+2)%4]]; //get the adjacent tile
+				if(_propagate) aTile->updateCornerBits(false);
+			}
+			openWalls -= exp2(pow[0]);
+		}
+	}
+
+	queDraw();
+	locked = false;
+}
+
+/*!
+  Que a redraw for the tile
+**/
+void Tile::queDraw()
+{
+	g_object_set_data(G_OBJECT(tileLvl->drawingArea[gridId]),"tile",this); //update this tile's drawing area
+	gtk_widget_queue_draw(tileLvl->drawingArea[gridId]);									 //queue redraw of this tile
 }
 
 //---------------------

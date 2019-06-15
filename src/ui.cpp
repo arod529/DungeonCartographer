@@ -223,112 +223,13 @@ bool event_drawTile(GtkWidget* drawingArea, cairo_t* cr)
 	@param[in] *event	       unused; required for overload
 	@param[in] *tile			   the tile contained in the drawing area
 **/
-void event_tileClick(GtkWidget* drawingArea, GdkEvent* event, void* tile)
+void event_tileClick(GtkWidget* _drawingArea, GdkEvent* _event, void* _tile)
 {
-	Tile* _tile = (Tile*)tile;		//the clicked tile
+	Tile* tile = (Tile*)_tile;		//the clicked tile
 
-	Level* _lvl  = _tile->tileLvl;  //the working level
-	int gridSize = _lvl->getSize(); //this levels grid size
-
-	int _gridId 		 	= _tile->gridId; 		 //this tile's gridId
-	int c 					 	= _gridId%gridSize;  //this tile's column number
-	int r 					 	= _gridId/gridSize;  //this tile's row number
-
-	Tile* aTile;  	//adjacent tile
-	GtkWidget* aDA; //adjacent drawing area
-
-	//adjacent tile exist truths
-	bool tileExists[] = {
-		(c > 0),					//west tile
-		(r < gridSize-1), //south tile
-		(c < gridSize-1), //east tile
-		(r > 0),					//north tile
-		(r > 0 && c > 0),	 								 	//northwest tile
-		(c > 0 && r < gridSize-1),				 	//southwest tile
-		(c < gridSize-1 && r < gridSize-1), //southeast tile
-		(c < gridSize-1 && r > 0)				 		//northeast tile
-	};
-
-	//adjacent tile index
-	int a[] = {
-		_gridId-1,				//west tile
-		_gridId+gridSize,	//south tile
-		_gridId+1,				//east tile
-		_gridId-gridSize, //north tile
-		_gridId-gridSize-1, //northwest tile
-		_gridId+gridSize-1, //southwest tile
-		_gridId+gridSize+1, //southeast tile
-		_gridId-gridSize+1  //northeast tile
-	};
-
-	uint compare = E; 					//compare value for wall
-	uint newTilesetId = NSEW;	//new base tile id for this tile is closed room
-
-	if(_tile->tileTileset->id < BACKGROUND) //this tile is already a room
-		{newTilesetId = BACKGROUND;}	//set to background
-
-	//check for and update adjacent tile walls
-	//cycles through each adjacent tile starting with west tile
-	//compare and adjacent tile are opposites
-	for(int i = 0; i < 4; i++)
-	{
-		if(tileExists[i])	//adjacent tile exists
-		{
-			aTile = &_lvl->tile[a[i]];			//get adjacent tile
-			aDA = _lvl->drawingArea[a[i]];	//get adjacent tile drawing area
-
-			if (aTile->tileTileset->id < BACKGROUND) //adjacent tile is a room
-			{
-				if(_tile->tileTileset->id < BACKGROUND) //this tile was a room
-				{
-					aTile->tileTileset = &_lvl->tileset[aTile->tileTileset->id | compare]; //add previously shared wall of adjacent tile
-				}
-				else //this tile was not a room
-				{
-					aTile->tileTileset = &_lvl->tileset[aTile->tileTileset->id ^ compare]; //remove shared wall of adjacent tile
-					newTilesetId ^= (1 << (i+2)%4); //remove shared wall of this tile
-				}
-				g_object_set_data(G_OBJECT(aDA),"tile",aTile);	//update drawing area data of adjacent tile
-				gtk_widget_queue_draw(aDA);											//queue redraw of adjacent tile
-			}
-		}
-		compare <<= 1; //shift compare to next wall
-	}
-
-	//update the corners on this tile
-
-	double pow[2] = {-1}; //the power of the highest bit aka index bit for tile opposite of wall
-	int corners = 0; //the number of corners to check
-	uint aTileId = 0;
-
-	if(newTilesetId == O) //is background tile
-		{corners = 4;}
-	else if(modf(log(newTilesetId)/log(2), &pow[0]) == 0) //is single wall tile
-		{corners = 2;}
-	else if (modf(log(newTilesetId-exp2(pow[0]))/log(2), &pow[1]) == 0 && (int)(pow[0]+pow[1])%2) //is corner tile
-		{corners = 1;}
-	else
-		{corners = 0;}
-
-	//check corner tiles
-	for(int i = 4; i < 4+corners; i++) //i is index offset for corners
-	{
-		int j = (int)(pow[0]+i)%4+4; //the bit for for the corner
-		if(pow[1] == 0 && pow[0] == 3)
-			{j = (int)(pow[1]+i)%4+4;}
-
-		if(tileExists[j]) //corner tile exists
-		{
-			aTileId = _lvl->tile[a[j]].tileTileset->id;
-			if(aTileId == BACKGROUND) //corner tile is background
-				newTilesetId |= (1<<j); //add corner bit
-		}
-	}
-
-	_tile->tileTileset = &_lvl->tileset[newTilesetId];			//update this tile's tileset id
-	g_object_set_data(G_OBJECT(drawingArea),"tile",_tile);	//update this tile's drawing area
-	gtk_widget_queue_draw(drawingArea);											//queue redraw of this tile
+	tile->updateTile(); //set tile to room or background, update shared walls of adjacent tiles
 }
+
 
 /*!
   Zooms the level in and out when the mouse wheel is scrolled on the canvas
