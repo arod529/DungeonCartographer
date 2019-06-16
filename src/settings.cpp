@@ -14,7 +14,7 @@ Tileset::Tileset()
 {
 	id = 0;
 	name = "";
-	filePath = NULL;
+	filePath = "";
 	pixbuf = NULL;
 }
 
@@ -30,13 +30,27 @@ Tileset::Tileset()
 	@param[in] _filePath Path to the svg file of the tile.
 	@param[in] _pixbuf The pixbuf for the tile.
 **/
-Tileset::Tileset(uint _id, std::string _name, char* _filePath, GdkPixbuf* _pixbuf)
+Tileset::Tileset(uint _id, std::string _name, std::string _filePath, GdkPixbuf* _pixbuf)
 {
 	id = _id;
 	name = _name;
 	filePath = _filePath;
 	pixbuf = _pixbuf;
 }
+
+Tileset::~Tileset()
+{
+
+}
+
+uint Tileset::getId() const
+	{return id;}
+
+std::string Tileset::getName() const
+	{return name;}
+
+std::string Tileset::getFilePath() const
+	{return (std::string)filePath;}
 
 //----------------------
 //----- Tile Class -----
@@ -142,7 +156,7 @@ void Tile::updateTile()
 	uint compare = E; 				//compare value for wall
 	uint newTilesetId = NSEW;	//new base tile id for this tile is closed room
 
-	if(tileTileset->id < BACKGROUND) //this tile is already a room
+	if(tileTileset->getId() < BACKGROUND) //this tile is already a room
 		{newTilesetId = BACKGROUND;}	 //set to background
 
 	//check for and update adjacent tile walls
@@ -154,17 +168,17 @@ void Tile::updateTile()
 		{
 			aTile = &tileLvl->tile[a[i]];	//get adjacent tile
 
-			if (aTile->tileTileset->id < BACKGROUND) //adjacent tile is a room
+			if (aTile->tileTileset->getId() < BACKGROUND) //adjacent tile is a room
 			{
-				if(tileTileset->id < BACKGROUND) //this tile was a room
+				if(tileTileset->getId() < BACKGROUND) //this tile was a room
 				{
 					//add previously shared wall of adjacent tile and remove all corner bits
-					aTile->tileTileset = &tileLvl->tileset[(aTile->tileTileset->id | compare)&NSEW];
+					aTile->tileTileset = &(*tileLvl->tileset)[(aTile->tileTileset->getId() | compare)&NSEW];
 				}
 				else //this tile was not a room
 				{
 					//remove shared wall of adjacent tile and all corner bits
-					aTile->tileTileset = &tileLvl->tileset[(aTile->tileTileset->id & ~compare)&NSEW];
+					aTile->tileTileset = &(*tileLvl->tileset)[(aTile->tileTileset->getId() & ~compare)&NSEW];
 					newTilesetId ^= (1 << (i+2)%4); //remove shared wall of this tile
 				}
 				aTile->updateCornerBits(false); //re-add valid corner bits
@@ -173,7 +187,7 @@ void Tile::updateTile()
 		compare <<= 1; //shift compare to next wall
 	}
 
-	tileTileset = &tileLvl->tileset[newTilesetId]; //update this tile's tileset id
+	tileTileset = &(*tileLvl->tileset)[newTilesetId]; //update this tile's tileset id
 	updateCornerBits(true); //draw of this tile will occur here
 }
 
@@ -214,7 +228,7 @@ void Tile::updateCornerBits(bool _propagate)
 	locked = true; //lock the function for this tile
 
 	Tile* aTile = NULL; //adjacent tile
-	uint newTilesetId = tileTileset->id; //new tile set id to use, current as bases
+	uint newTilesetId = tileTileset->getId(); //new tile set id to use, current as bases
 	uint walls = newTilesetId & NSEW; //the walls of this tile
 
 	//adjacent tile exists truths
@@ -238,7 +252,7 @@ void Tile::updateCornerBits(bool _propagate)
 		{
 			corners = 0;
 			newTilesetId &= NSEW; //remove all corner bits
-			tileTileset = &tileLvl->tileset[newTilesetId];
+			tileTileset = &(*tileLvl->tileset)[newTilesetId];
 		}
 
 	//check corner tiles
@@ -254,21 +268,21 @@ void Tile::updateCornerBits(bool _propagate)
 
 			//don't update this tile if it is background AND
 			//update adjacent if not a background tile
-			if(newTilesetId == BACKGROUND && aTile->tileTileset->id != BACKGROUND)
+			if(newTilesetId == BACKGROUND && aTile->tileTileset->getId() != BACKGROUND)
 			{
 				if(_propagate) aTile->updateCornerBits(true);
 			}
 			else
 			{
-				if(aTile->tileTileset->id == BACKGROUND) //corner tile is background
+				if(aTile->tileTileset->getId() == BACKGROUND) //corner tile is background
 				{
 					newTilesetId |= (1<<j); //add corner bit
-					tileTileset = &tileLvl->tileset[newTilesetId];
+					tileTileset = &(*tileLvl->tileset)[newTilesetId];
 				}
 				else //corner tile is room
 				{
 					newTilesetId &= ~(1<<j); //remove corner bit
-					tileTileset = &tileLvl->tileset[newTilesetId];
+					tileTileset = &(*tileLvl->tileset)[newTilesetId];
 					if(_propagate) aTile->updateCornerBits(true);
 				}
 			}
@@ -323,7 +337,7 @@ Map::Map(Settings* _settings)
 	loadTileset("./tiles/defaultSet");
 
 	//create a level
-	level.emplace_back(size, tileset);
+	level.emplace_back(size, &tileset);
 }
 
 /*!
@@ -337,7 +351,7 @@ Map::~Map()
 	for(auto iter = tileset.begin(); iter != tileset.end(); iter++)
 	{
 		auto i = iter->first;
-		delete[] tileset[i].filePath;
+		//delete[] tileset[i].filePath;
 		g_object_unref(tileset[i].pixbuf);
 	}
 }
@@ -348,6 +362,7 @@ Map::~Map()
 	@param[in] tileSetFile File path for the tile set to load.
 
 	\bug doesn't check if file exists
+	\bug adding to tileset uses copy initializer causing ~Tileset() to be called immediately
 **/
 void Map::loadTileset(std::string tileSetFile)
 {
@@ -355,34 +370,38 @@ void Map::loadTileset(std::string tileSetFile)
 	std::ifstream file;
 	file.open(tileSetFile);
 
-	//get number of tile in tileset
-	int count;
-	file >> count;
+	//tileset properties
+	uint tilesetId = 0;
+	std::string tilesetName = "";
+	std::string tilesetFilePath = "";
+	GdkPixbuf* tilesetPixbuf = NULL;
 
-	//read tileset
-	std::string tmp;
-	uint _id;
+	std::string tmp = "";
+	GError *err = NULL;
+
+	//read file
 	do
 	{
-		file >> _id;
-		tileset[_id].id = _id;
+		//read id
+		file >> tilesetId;
+
+		//read name
 		std::getline(file, tmp, ','); //eat comma
-		std::getline(file, tileset[_id].name, ',');
-		std::getline(file, tmp);
-		tileset[_id].filePath = new char[tmp.size()];
-		tmp.copy(tileset[_id].filePath, tmp.size(), 0);
+		std::getline(file, tilesetName, ',');
+
+		//read file path
+		std::getline(file, tilesetFilePath);
+
+		//init pixbuf from file
+		tilesetPixbuf = gdk_pixbuf_new_from_file(tilesetFilePath.c_str(), &err);
+		if(err != NULL) printf("%s\n", err->message);
+
+		//add to tile set
+		tileset[tilesetId] = (Tileset){tilesetId, tilesetName, tilesetFilePath, tilesetPixbuf};
 	} while(!file.eof());
 
 	//close file
 	file.close();
-
-	//create pixbufs
-	GError *err = NULL;
-	for(auto iter = tileset.begin(); iter != tileset.end(); iter++) {
-		auto i = iter->first;
-		tileset[i].pixbuf = gdk_pixbuf_new_from_file(tileset[i].filePath, &err);
-		if(err != NULL) printf("%s\n", err->message);
-	}
 }
 
 //-----------------------
@@ -394,7 +413,7 @@ void Map::loadTileset(std::string tileSetFile)
   @param[in] _size The size of the level.
   @param[in] _tileset The Tileset to use for the level
 **/
-Level::Level(int _size, std::unordered_map<uint, Tileset> _tileset)
+Level::Level(int _size, std::unordered_map<uint, Tileset>* _tileset)
 {
 	//set map size and tileset
 	size = _size;
@@ -402,7 +421,7 @@ Level::Level(int _size, std::unordered_map<uint, Tileset> _tileset)
 
 	//set all tiles to background tile
 	for(int i = 0; i < size*size; i++)
-		tile.emplace_back(i, this, &tileset[BACKGROUND]);
+		tile.emplace_back(i, this, &(*tileset)[BACKGROUND]);
 
 	//initialize drawing areas for map
 	for(int i = 0; i < size*size; i++)
@@ -517,76 +536,67 @@ void Settings::setZoomFollowsMouse(bool _zoomFollowsMouse)
 **/
 void Settings::writeDefaultTilesetFile()
 {
-	std::unordered_map<uint, Tileset> tileset;
-
-	tileset[E] = 			 (Tileset){E, "E Wall", (char *)"./tiles/eWall.svg", NULL};
-	tileset[E_NW] = 	 (Tileset){E_NW, "E Wall NW Corner", (char *)"./tiles/eWall_nwCorner.svg", NULL};
-	tileset[E_SW] = 	 (Tileset){E_SW, "E Wall SW Corner", (char *)"./tiles/eWall_swCorner.svg", NULL};
-	tileset[E_NW_SW] = (Tileset){E_NW_SW, "E Wall NW-SW Corner", (char *)"./tiles/eWall_nw-swCorner.svg", NULL};
-
-	tileset[N] =			 (Tileset){N, "N Wall", (char *)"./tiles/nWall.svg", NULL};
-	tileset[N_SW] = 	 (Tileset){N_SW, "N Wall SE Corner", (char *)"./tiles/nWall_seCorner.svg", NULL};
-	tileset[N_SE] = 	 (Tileset){N_SE, "N Wall SW Corner", (char *)"./tiles/nWall_swCorner.svg", NULL};
-	tileset[N_SW_SE] = (Tileset){N_SW_SE, "N Wall SE-SW Corner", (char *)"./tiles/nWall_sw-seCorner.svg", NULL};
-
-	tileset[W] = 			 (Tileset){W, "W Wall", (char *)"./tiles/wWall.svg", NULL};
-	tileset[W_NE] =		 (Tileset){W_NE, "W Wall NE Corner", (char *)"./tiles/wWall_neCorner.svg", NULL};
-	tileset[W_SE] =		 (Tileset){W_SE, "W Wall SE Corner", (char *)"./tiles/wWall_seCorner.svg", NULL};
-	tileset[W_NE_SE] = (Tileset){W_NE_SE, "W Wall NE-SE Corner", (char *)"./tiles/wWall_ne-seCorner.svg", NULL};
-
-	tileset[S] = 			 (Tileset){S, "S Wall", (char *)"./tiles/sWall.svg", NULL};
-	tileset[S_NE] = 	 (Tileset){S_NE, "S Wall NE Corner", (char *)"./tiles/sWall_neCorner.svg", NULL};
-	tileset[S_NW] = 	 (Tileset){S_NW, "S Wall NW Corner", (char *)"./tiles/sWall_nwCorner.svg", NULL};
-	tileset[S_NE_NW] = (Tileset){S_NE_NW, "S Wall NE-NW Corner", (char *)"./tiles/sWall_ne-nwCorner.svg", NULL};
-
-	tileset[NE] = 	 (Tileset){NE, "NE Wall", (char *)"./tiles/neWall.svg", NULL};
-	tileset[NE_SW] = (Tileset){NE_SW, "NE Wall SW Corner", (char *)"./tiles/neWall_swCorner.svg", NULL};
-	tileset[SE] = 	 (Tileset){SE, "SE Wall", (char *)"./tiles/seWall.svg", NULL};
-	tileset[SE_NW] = (Tileset){SE_NW, "SE Wall NW Corner", (char *)"./tiles/seWall_nwCorner.svg", NULL};
-	tileset[NW] = 	 (Tileset){NW, "NW Wall", (char *)"./tiles/nwWall.svg", NULL};
-	tileset[NW_SE] = (Tileset){NW_SE, "NW Wall SE Corner", (char *)"./tiles/nwWall_seCorner.svg", NULL};
-	tileset[SW] =		 (Tileset){SW, "SW Wall", (char *)"./tiles/swWall.svg", NULL};
-	tileset[SW_NE] = (Tileset){SW_NE, "SW Wall NE Corner", (char *)"./tiles/swWall_neCorner.svg", NULL};
-
-	tileset[WE] = (Tileset){WE, "EW Wall", (char *)"./tiles/ewWall.svg", NULL};
-	tileset[NS] = (Tileset){NS, "NS Wall", (char *)"./tiles/nsWall.svg", NULL};
-
-	tileset[NEW] = (Tileset){NEW, "NEW Wall", (char *)"./tiles/newWall.svg", NULL};
-	tileset[NSE] = (Tileset){NSE, "NSE Wall", (char *)"./tiles/nseWall.svg", NULL};
-	tileset[SEW] = (Tileset){SEW, "SEW Wall", (char *)"./tiles/sewWall.svg", NULL};
-	tileset[NSW] = (Tileset){NSW, "NSW Wall", (char *)"./tiles/nswWall.svg", NULL};
-
-	tileset[NSEW] = (Tileset){NSEW, "NSEW Wall", (char *)"./tiles/nsewWall.svg", NULL};
-
-	tileset[O] = 						 (Tileset){O, "Open", (char *)"./tiles/open.svg", NULL};
-	tileset[O_NE] = 				 (Tileset){O_NE, "Open NE Corner", (char *)"./tiles/open_neCorner.svg", NULL};
-	tileset[O_NW] = 				 (Tileset){O_NW, "Open NW Corner", (char *)"./tiles/open_nwCorner.svg", NULL};
-	tileset[O_NE_NW] = 			 (Tileset){O_NE_NW, "Open NE-NW Corner", (char *)"./tiles/open_ne-nwCorner.svg", NULL};
-	tileset[O_SW] = 				 (Tileset){O_SW, "Open SW Corner", (char *)"./tiles/open_swCorner.svg", NULL};
-	tileset[O_NE_SW] = 			 (Tileset){O_NE_SW, "Open NE-SW Corner", (char *)"./tiles/open_ne-swCorner.svg", NULL};
-	tileset[O_NW_SW] =       (Tileset){O_NW_SW, "Open NW-SW Corner", (char *)"./tiles/open_nw-swCorner.svg", NULL};
-	tileset[O_NE_NW_SW] =    (Tileset){O_NE_NW_SW, "Open NE-NW-SW Corner", (char *)"./tiles/open_ne-nw-swCorner.svg", NULL};
-	tileset[O_SE] = 				 (Tileset){O_SE, "Open SE Corner", (char *)"./tiles/open_seCorner.svg", NULL};
-	tileset[O_NE_SE] = 			 (Tileset){O_NE_SE, "Open NE-SE Corner", (char *)"./tiles/open_ne-seCorner.svg", NULL};
-	tileset[O_NW_SE] = 			 (Tileset){O_NW_SE, "Open NW-SE Corner", (char *)"./tiles/open_nw-seCorner.svg", NULL};
-	tileset[O_NE_NW_SE] = 	 (Tileset){O_NE_NW_SE, "Open NE-NW-SE Corner", (char *)"./tiles/open_ne-nw-seCorner.svg", NULL};
-	tileset[O_SW_SE] = 			 (Tileset){O_SW_SE, "Open SW-SE Corner", (char *)"./tiles/open_sw-seCorner.svg", NULL};
-	tileset[O_NE_SW_SE] = 	 (Tileset){O_NE_SW_SE, "Open NE-SW-SE Corner", (char *)"./tiles/open_ne-sw-seCorner.svg", NULL};
-	tileset[O_NW_SW_SE] = 	 (Tileset){O_NW_SW_SE, "Open NW-SW-SE Corner", (char *)"./tiles/open_nw-sw-seCorner.svg", NULL};
-	tileset[O_NE_NW_SW_SE] = (Tileset){O_NE_NW_SW_SE, "Open NE-NW-SW-SE Corner", (char *)"./tiles/open_ne-nw-sw-seCorner.svg", NULL};
-
-	tileset[BACKGROUND] = (Tileset){BACKGROUND, "Background", (char *)"./tiles/bg.svg", NULL};
-
 	//open file
 	std::ofstream file;
 	file.open("./tiles/defaultSet");
 
-	//write to file
-	file << tileset.size() << '\n';
-	for(auto iter = tileset.begin(); iter != tileset.end(); iter++) {
-		auto i = iter->first;
-		file << tileset[i].id << ',' << tileset[i].name << ',' << tileset[i].filePath << '\0' << '\n';
-	}
+	//write to file (id,name,filePath\0\n) for each tile
+	file << E << ',' << "E Wall" << ',' << "./tiles/eWall.svg" << '\n'
+			 << E_NW << ',' << "E Wall NW Corner" << ',' << "./tiles/eWall_nwCorner.svg" << '\n'
+			 << E_SW << ',' << "E Wall SW Corner" << ',' << "./tiles/eWall_swCorner.svg" << '\n'
+			 << E_NW_SW << ',' << "E Wall NW-SW Corner" << ',' << "./tiles/eWall_nw-swCorner.svg" << '\n'
+
+			 << N << ',' << "N Wall" << ',' << "./tiles/nWall.svg" << '\n'
+			 << N_SW << ',' << "N Wall SE Corner" << ',' << "./tiles/nWall_seCorner.svg" << '\n'
+			 << N_SE << ',' << "N Wall SW Corner" << ',' << "./tiles/nWall_swCorner.svg" << '\n'
+			 << N_SW_SE << ',' << "N Wall SE-SW Corner" << ',' << "./tiles/nWall_sw-seCorner.svg" << '\n'
+
+			 << W << ',' << "W Wall" << ',' << "./tiles/wWall.svg" << '\n'
+			 << W_NE << ',' << "W Wall NE Corner" << ',' << "./tiles/wWall_neCorner.svg" << '\n'
+			 << W_SE << ',' << "W Wall SE Corner" << ',' << "./tiles/wWall_seCorner.svg" << '\n'
+			 << W_NE_SE << ',' << "W Wall NE-SE Corner" << ',' << "./tiles/wWall_ne-seCorner.svg" << '\n'
+
+			 << S << ',' << "S Wall" << ',' << "./tiles/sWall.svg" << '\n'
+			 << S_NE << ',' << "S Wall NE Corner" << ',' << "./tiles/sWall_neCorner.svg" << '\n'
+			 << S_NW << ',' << "S Wall NW Corner" << ',' << "./tiles/sWall_nwCorner.svg" << '\n'
+			 << S_NE_NW << ',' << "S Wall NE-NW Corner" << ',' << "./tiles/sWall_ne-nwCorner.svg" << '\n'
+
+			 << NE << ',' << "NE Wall" << ',' << "./tiles/neWall.svg" << '\n'
+			 << NE_SW << ',' << "NE Wall SW Corner" << ',' << "./tiles/neWall_swCorner.svg" << '\n'
+			 << SE << ',' << "SE Wall" << ',' << "./tiles/seWall.svg" << '\n'
+			 << SE_NW << ',' << "SE Wall NW Corner" << ',' << "./tiles/seWall_nwCorner.svg" << '\n'
+			 << NW << ',' << "NW Wall" << ',' << "./tiles/nwWall.svg" << '\n'
+			 << NW_SE << ',' << "NW Wall SE Corner" << ',' << "./tiles/nwWall_seCorner.svg" << '\n'
+			 << SW << ',' << "SW Wall" << ',' << "./tiles/swWall.svg" << '\n'
+			 << SW_NE << ',' << "SW Wall NE Corner" << ',' << "./tiles/swWall_neCorner.svg" << '\n'
+
+			 << WE << ',' << "EW Wall" << ',' << "./tiles/ewWall.svg" << '\n'
+			 << NS << ',' << "NS Wall" << ',' << "./tiles/nsWall.svg" << '\n'
+
+			 << NEW << ',' << "NEW Wall" << ',' << "./tiles/newWall.svg" << '\n'
+			 << NSE << ',' << "NSE Wall" << ',' << "./tiles/nseWall.svg" << '\n'
+			 << SEW << ',' << "SEW Wall" << ',' << "./tiles/sewWall.svg" << '\n'
+			 << NSW << ',' << "NSW Wall" << ',' << "./tiles/nswWall.svg" << '\n'
+			 << NSEW << ',' << "NSEW Wall" << ',' << "./tiles/nsewWall.svg" << '\n'
+
+			 << O << ',' << "Open" << ',' << "./tiles/open.svg" << '\n'
+			 << O_NE << ',' << "Open NE Corner" << ',' << "./tiles/open_neCorner.svg" << '\n'
+			 << O_NW << ',' << "Open NW Corner" << ',' << "./tiles/open_nwCorner.svg" << '\n'
+			 << O_NE_NW << ',' << "Open NE-NW Corner" << ',' << "./tiles/open_ne-nwCorner.svg" << '\n'
+			 << O_SW << ',' << "Open SW Corner" << ',' << "./tiles/open_swCorner.svg" << '\n'
+			 << O_NE_SW << ',' << "Open NE-SW Corner" << ',' << "./tiles/open_ne-swCorner.svg" << '\n'
+			 << O_NW_SW << ',' << "Open NW-SW Corner" << ',' << "./tiles/open_nw-swCorner.svg" << '\n'
+			 << O_NE_NW_SW << ',' << "Open NE-NW-SW Corner" << ',' << "./tiles/open_ne-nw-swCorner.svg" << '\n'
+			 << O_SE << ',' << "Open SE Corner" << ',' << "./tiles/open_seCorner.svg" << '\n'
+			 << O_NE_SE << ',' << "Open NE-SE Corner" << ',' << "./tiles/open_ne-seCorner.svg" << '\n'
+			 << O_NW_SE << ',' << "Open NW-SE Corner" << ',' << "./tiles/open_nw-seCorner.svg" << '\n'
+			 << O_NE_NW_SE << ',' << "Open NE-NW-SE Corner" << ',' << "./tiles/open_ne-nw-seCorner.svg" << '\n'
+			 << O_SW_SE << ',' << "Open SW-SE Corner" << ',' << "./tiles/open_sw-seCorner.svg" << '\n'
+			 << O_NE_SW_SE << ',' << "Open NE-SW-SE Corner" << ',' << "./tiles/open_ne-sw-seCorner.svg" << '\n'
+			 << O_NW_SW_SE << ',' << "Open NW-SW-SE Corner" << ',' << "./tiles/open_nw-sw-seCorner.svg" << '\n'
+			 << O_NE_NW_SW_SE << ',' << "Open NE-NW-SW-SE Corner" << ',' << "./tiles/open_ne-nw-sw-seCorner.svg" << '\n'
+
+			 << BACKGROUND << ',' << "Background" << ',' << "./tiles/bg.svg" << '\n';
 
 	//close file
 	file.close();

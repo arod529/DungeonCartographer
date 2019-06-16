@@ -190,7 +190,7 @@ void event_changeTab(GtkNotebook* _notebook, GtkWidget* _page, uint _pageNum, vo
 }
 
 /*!
-	Draw refresh even triggered for a tile.
+	Draw refresh event triggered for a tile.
 
 	@param[in] *drawingArea  the tile's drawing area
 	@param[in] *cr 	         the tile's cairo_t

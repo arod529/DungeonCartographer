@@ -1,10 +1,3 @@
-/*!
-  \bug clean up classes and structs,
-  	make variables private,
-  	write accessor and mutator functions
-	\bug make sure objects are only copied if needed, otherwise point
-**/
-
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
@@ -26,13 +19,20 @@ class Settings;
 **/
 struct Tileset
 {
+public:
 	Tileset();
-	Tileset(uint _id, std::string _name, char* _filePath, GdkPixbuf* _pixbuf);
+	Tileset(uint _id, std::string _name, std::string _filePath, GdkPixbuf* _pixbuf);
+	~Tileset();
 
-	uint 				id;
+	uint getId() const;
+	std::string getName() const;
+	std::string getFilePath() const;
+
+	GdkPixbuf* pixbuf;
+private:
+	uint id;
 	std::string	name;
-	char* 			filePath;
-	GdkPixbuf* 	pixbuf;
+	std::string filePath;
 };
 
 /*!
@@ -60,6 +60,28 @@ public:
 	void getAdjacentIndex(int* _adjacentIndex);
 	void updateCornerBits(bool _propagate);
 	void queDraw();
+};
+
+/*!
+  Level data structure. Tileset and grid size for new levels default to the global
+  values in Map().
+
+  \bug tileset should be pointer
+**/
+class Level
+{
+	public:
+		std::unordered_map<uint, Tileset>* tileset;											//default level tileset
+		std::vector<Tile> tile; 							//tile for map
+		std::vector<GtkWidget*>	drawingArea; 	//drawing areas for map
+
+		Level(int _size, std::unordered_map<uint, Tileset>* _tileset);
+
+		//accessors
+		int getSize() const;
+
+	private:
+		int size; //default level size
 };
 
 /*!
@@ -96,28 +118,6 @@ class Map
 		std::unordered_map<uint, Tileset> tileset; //default level tileset
 };
 
-/*!
-  Level data structure. Tileset and grid size for new levels default to the global
-  values in Map().
-
-  \bug tileset should be pointer
-**/
-class Level
-{
-	public:
-		std::unordered_map<uint, Tileset> tileset;											//default level tileset
-		std::vector<Tile> tile; 							//tile for map
-		std::vector<GtkWidget*>	drawingArea; 	//drawing areas for map
-
-		Level(int size, std::unordered_map<uint, Tileset> tileset);
-
-		//accessors
-		int 			 getSize() const;
-
-	private:
-		int size; //default level size
-};
-
 class Settings
 {
 	public:
@@ -126,7 +126,6 @@ class Settings
 		char* settingsFile = (char*)"./ui/config";
 
 		Settings();
-		~Settings();
 
 		//utiltiy
 		void writeDefaultTilesetFile();
