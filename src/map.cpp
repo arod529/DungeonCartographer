@@ -77,7 +77,7 @@ void Map::loadTileset(std::string tileSetFile)
     if(err != NULL) printf("%s\n", err->message);
 
     //add to tile set
-    tileset[tilesetId] = (Tileset){tilesetId, tilesetName, tilesetFilePath, tilesetPixbuf};
+    tileset[tilesetId] = (TilesetTile){tilesetId, tilesetName, tilesetFilePath, tilesetPixbuf};
   } while(!file.eof());
 
   //close file

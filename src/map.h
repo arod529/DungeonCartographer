@@ -1,7 +1,7 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "tileset.h"
+#include "tilesettile.h"
 #include "level.h"
 #include "settings.h"
 
@@ -40,7 +40,7 @@ class Map
 
   private:
     int size; //default level size
-    std::unordered_map<uint, Tileset> tileset; //default level tileset
+    std::unordered_map<uint, TilesetTile> tileset; //default level tileset
 };
 
 #endif

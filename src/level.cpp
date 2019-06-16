@@ -8,7 +8,7 @@
   @param[in] _size The size of the level.
   @param[in] _tileset The Tileset to use for the level
 **/
-Level::Level(int _size, std::unordered_map<uint, Tileset>* _tileset)
+Level::Level(int _size, std::unordered_map<uint, TilesetTile>* _tileset)
 {
   //set map size and tileset
   size = _size;

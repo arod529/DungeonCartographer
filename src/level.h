@@ -1,7 +1,7 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 
-#include "tileset.h"
+#include "tilesettile.h"
 #include "tile.h"
 
 #include <gtk/gtk.h>
@@ -18,11 +18,11 @@ class Tile;
 class Level
 {
   public:
-    std::unordered_map<uint, Tileset>* tileset; //default level tileset
+    std::unordered_map<uint, TilesetTile>* tileset; //default level tileset
     std::vector<Tile> tile; //tile for map
     std::vector<GtkWidget*> drawingArea; //drawing areas for map
 
-    Level(int _size, std::unordered_map<uint, Tileset>* _tileset);
+    Level(int _size, std::unordered_map<uint, TilesetTile>* _tileset);
 
     //accessors
     int getSize() const;

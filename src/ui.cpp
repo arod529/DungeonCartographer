@@ -201,7 +201,7 @@ bool event_drawTile(GtkWidget* drawingArea, cairo_t* cr)
 	int s = gtk_widget_get_allocated_width(drawingArea);
 	//get current assigned pixbuf and scale
 	Tile* _tile = (Tile*)g_object_get_data(G_OBJECT(drawingArea),"tile");
-	GdkPixbuf* tmp = gdk_pixbuf_scale_simple(_tile->tileTileset->pixbuf,s,s,GDK_INTERP_NEAREST);
+	GdkPixbuf* tmp = gdk_pixbuf_scale_simple(_tile->tilesetTile->pixbuf,s,s,GDK_INTERP_NEAREST);
 	//draw the image
 	gdk_cairo_set_source_pixbuf(cr,tmp,0,0);
 	cairo_paint(cr);

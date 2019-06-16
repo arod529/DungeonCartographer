@@ -1,7 +1,7 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include "tileset.h"
+#include "tilesettile.h"
 #include "level.h"
 
 //forward declaration
@@ -15,9 +15,9 @@ class Level;
 class Tile
 {
 public:
-  Tileset* tileTileset; //tileset that defines the tile characteristics
+  TilesetTile* tilesetTile; //tileset that defines the tile characteristics
 
-  Tile(int _gridId, Level* _tileLvl, Tileset* _tileTileset);
+  Tile(int _gridId, Level* _tileLvl, TilesetTile* _tilesetTile);
   void updateTile();
 
 private:

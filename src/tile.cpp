@@ -11,13 +11,13 @@
   @param[in] _gridId The id of the grid square this tile represents. This is a
                       single dimension array that represents a square grid.
   @param[in] _tileLvl The Level that the tile resides in.
-  @param[in] _tileTileset The Tileset struct that describes the tile image.
+  @param[in] _tilesetTile The TilesetTile struct that describes the tile image.
 **/
-Tile::Tile(int _gridId, Level* _tileLvl, Tileset* _tileTileset)
+Tile::Tile(int _gridId, Level* _tileLvl, TilesetTile* _tilesetTile)
 {
   gridId = _gridId;
   tileLvl = _tileLvl;
-  tileTileset = _tileTileset;
+  tilesetTile = _tilesetTile;
 }
 
 /*!
@@ -106,7 +106,7 @@ void Tile::updateTile()
   uint compare = E;         //compare value for wall
   uint newTilesetId = NSEW;  //new base tile id for this tile is closed room
 
-  if(tileTileset->getId() < BACKGROUND) //this tile is already a room
+  if(tilesetTile->getId() < BACKGROUND) //this tile is already a room
     {newTilesetId = BACKGROUND;}   //set to background
 
   //check for and update adjacent tile walls
@@ -118,17 +118,17 @@ void Tile::updateTile()
     {
       aTile = &tileLvl->tile[a[i]];  //get adjacent tile
 
-      if (aTile->tileTileset->getId() < BACKGROUND) //adjacent tile is a room
+      if (aTile->tilesetTile->getId() < BACKGROUND) //adjacent tile is a room
       {
-        if(tileTileset->getId() < BACKGROUND) //this tile was a room
+        if(tilesetTile->getId() < BACKGROUND) //this tile was a room
         {
           //add previously shared wall of adjacent tile and remove all corner bits
-          aTile->tileTileset = &(*tileLvl->tileset)[(aTile->tileTileset->getId() | compare)&NSEW];
+          aTile->tilesetTile = &(*tileLvl->tileset)[(aTile->tilesetTile->getId() | compare)&NSEW];
         }
         else //this tile was not a room
         {
           //remove shared wall of adjacent tile and all corner bits
-          aTile->tileTileset = &(*tileLvl->tileset)[(aTile->tileTileset->getId() & ~compare)&NSEW];
+          aTile->tilesetTile = &(*tileLvl->tileset)[(aTile->tilesetTile->getId() & ~compare)&NSEW];
           newTilesetId ^= (1 << (i+2)%4); //remove shared wall of this tile
         }
         aTile->updateCornerBits(false); //re-add valid corner bits
@@ -137,7 +137,7 @@ void Tile::updateTile()
     compare <<= 1; //shift compare to next wall
   }
 
-  tileTileset = &(*tileLvl->tileset)[newTilesetId]; //update this tile's tileset id
+  tilesetTile = &(*tileLvl->tileset)[newTilesetId]; //update this tile's tilesetTile
   updateCornerBits(true); //draw of this tile will occur here
 }
 
@@ -178,7 +178,7 @@ void Tile::updateCornerBits(bool _propagate)
   locked = true; //lock the function for this tile
 
   Tile* aTile = NULL; //adjacent tile
-  uint newTilesetId = tileTileset->getId(); //new tile set id to use, current as bases
+  uint newTilesetId = tilesetTile->getId(); //new tile set id to use, current as bases
   uint walls = newTilesetId & NSEW; //the walls of this tile
 
   //adjacent tile exists truths
@@ -202,7 +202,7 @@ void Tile::updateCornerBits(bool _propagate)
     {
       corners = 0;
       newTilesetId &= NSEW; //remove all corner bits
-      tileTileset = &(*tileLvl->tileset)[newTilesetId];
+      tilesetTile = &(*tileLvl->tileset)[newTilesetId];
     }
 
   //check corner tiles
@@ -218,21 +218,21 @@ void Tile::updateCornerBits(bool _propagate)
 
       //don't update this tile if it is background AND
       //update adjacent if not a background tile
-      if(newTilesetId == BACKGROUND && aTile->tileTileset->getId() != BACKGROUND)
+      if(newTilesetId == BACKGROUND && aTile->tilesetTile->getId() != BACKGROUND)
       {
         if(_propagate) aTile->updateCornerBits(true);
       }
       else
       {
-        if(aTile->tileTileset->getId() == BACKGROUND) //corner tile is background
+        if(aTile->tilesetTile->getId() == BACKGROUND) //corner tile is background
         {
           newTilesetId |= (1<<j); //add corner bit
-          tileTileset = &(*tileLvl->tileset)[newTilesetId];
+          tilesetTile = &(*tileLvl->tileset)[newTilesetId];
         }
         else //corner tile is room
         {
           newTilesetId &= ~(1<<j); //remove corner bit
-          tileTileset = &(*tileLvl->tileset)[newTilesetId];
+          tilesetTile = &(*tileLvl->tileset)[newTilesetId];
           if(_propagate) aTile->updateCornerBits(true);
         }
       }

@@ -1,9 +1,9 @@
-#include "tileset.h"
+#include "tilesettile.h"
 
 /*!
   Default empty initializers.
 **/
-Tileset::Tileset()
+TilesetTile::TilesetTile()
 {
   id = 0;
   name = "";
@@ -12,7 +12,7 @@ Tileset::Tileset()
 }
 
 /*!
-  Assignment initializer for tileset .
+  Assignment initializer for TilesetTile .
 
   @param[in] _id The id of the tile struct; a binary number that represents the
                   walls and corner bits that the tile represents. \n
@@ -23,7 +23,7 @@ Tileset::Tileset()
   @param[in] _filePath Path to the svg file of the tile.
   @param[in] _pixbuf The pixbuf for the tile.
 **/
-Tileset::Tileset(uint _id, std::string _name, std::string _filePath, GdkPixbuf* _pixbuf)
+TilesetTile::TilesetTile(uint _id, std::string _name, std::string _filePath, GdkPixbuf* _pixbuf)
 {
   id = _id;
   name = _name;
@@ -31,16 +31,16 @@ Tileset::Tileset(uint _id, std::string _name, std::string _filePath, GdkPixbuf* 
   pixbuf = _pixbuf;
 }
 
-Tileset::~Tileset()
+TilesetTile::~TilesetTile()
 {
 
 }
 
-uint Tileset::getId() const
+uint TilesetTile::getId() const
   {return id;}
 
-std::string Tileset::getName() const
+std::string TilesetTile::getName() const
   {return name;}
 
-std::string Tileset::getFilePath() const
+std::string TilesetTile::getFilePath() const
   {return (std::string)filePath;}
