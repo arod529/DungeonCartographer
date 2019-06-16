@@ -11,22 +11,19 @@ class Level;
   Tile data structure. Contains the grid id, the containing Level, and Tileset
   of the tile. Internal functions update the tiles, queue a draw, and examine the
   adjacent tiles for existence and index.
-
-  \bug gridId and tileLvl should be private and read only after initialization.
-  \bug locked should be private.
-  \bug getTileExists(), getAdjacentIndex() updateCornerBits(), queDraw() should be private
 **/
 class Tile
 {
 public:
-  int      gridId;       //id of the tile's grid
-  Level*   tileLvl;     //pointer to tile owning level
-  Tileset* tileTileset;  //tileset that defines the tile characteristics
-
-  bool locked = false; //protection against multiple recursion
+  Tileset* tileTileset; //tileset that defines the tile characteristics
 
   Tile(int _gridId, Level* _tileLvl, Tileset* _tileTileset);
   void updateTile();
+
+private:
+  int gridId; //id of the tile's grid
+  bool locked = false; //protection against multiple recursion
+  Level* tileLvl; //pointer to tile owning level
 
   void getTileExists(bool* _tileExists);
   void getAdjacentIndex(int* _adjacentIndex);

@@ -5,7 +5,7 @@
 #include <string>
 
 /*!
-  Tileset data structure. Contains the id, name, file path, and pixbuf of the
+  TilesetTile data structure. Contains the id, name, file path, and pixbuf of the
   tile image. An array of tileset structs defines a complete tileset.
 
   \bug variables should be private, and read only aside from initialization.

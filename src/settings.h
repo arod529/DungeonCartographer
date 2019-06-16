@@ -10,7 +10,7 @@ class Settings
 
 		Settings();
 
-		//utiltiy
+		//utility
 		void writeDefaultTilesetFile();
 		void writeDefaultSettingsFile();
 
