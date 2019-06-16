@@ -1,6 +1,11 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+typedef unsigned int uint;
+
+//--------------------------------
+//----- Tileset id constants -----
+//--------------------------------
 static const uint CORNER_BIT_OFFSET = 4;
 
 static const uint E =           0b0001;

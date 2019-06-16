@@ -1,12 +1,15 @@
 #ifndef UI_H
 #define UI_H
 
+#include "settings.h"
+#include "level.h"
+#include "map.h"
+
+#include <cairo/cairo.h>
 #include <gtk/gtk.h>
 
-#include "settings.h"
 #include <stdexcept>
 #include <string>
-#include <cairo/cairo.h>
 #include <vector>
 
 

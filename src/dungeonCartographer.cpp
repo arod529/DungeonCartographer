@@ -1,4 +1,6 @@
 #include "ui.h"
+#include "settings.h"
+#include "map.h"
 
 int main(int argc, char **argv)
 {
