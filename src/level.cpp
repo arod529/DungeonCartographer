@@ -11,12 +11,9 @@
   @param[in] _size The size of the level.
   @param[in] _tileset The Tileset to use for the level
 **/
-Level::Level(int _size, std::unordered_map<uint, TilesetTile>* _tileset)
+Level::Level(int id, int size, std::string tilesetFile, std::unordered_map<uint, TilesetTile>* tileset)
+: id(id), size(size), tilesetFile(tilesetFile), tileset(tileset)
 {
-  //set map size and tileset
-  size = _size;
-  tileset = _tileset;
-
   //set all tiles to background tile
   for(int i = 0; i < size*size; i++)
     tile.emplace_back(i, this, &(*tileset)[BACKGROUND]);
@@ -34,35 +31,33 @@ Level::Level(int _size, std::unordered_map<uint, TilesetTile>* _tileset)
   @return The size of the Level.
 **/
 int Level::getSize() const
+  {return size;}
+
+std::ostream& operator<<(std::ostream& out, const Level& level)
 {
-  return size;
+  out << "Level["
+       << level.id << ','
+       << level.size << ','
+       << level.tilesetFile << ']' << '\n';
+  out.flush();
+  return out;
 }
 
-std::ostream& operator<<(std::ostream& _out, const Level& _level)
-{
-  _out << "Level["
-       << _level.id << ','
-       << _level.size << ','
-       << _level.tilesetFile << ']' << '\n';
-  _out.flush();
-  return _out;
-}
-
-std::istream& operator>>(std::istream& _in, Level& _level)
+std::istream& operator>>(std::istream& in, Level& level)
 {
   static const std::streamsize MAX = std::numeric_limits<std::streamsize>::max();
 
-  _in.ignore(MAX, '[');
-  _in >> _level.id;
-  _in.get(); //discard comma
-  _in >> _level.size;
-  _in.get(); //discard comma
-  std::getline(_in, _level.tilesetFile, ']');
-  _in.ignore(MAX, '\n'); //getline doesn't eat this newline
+  in.ignore(MAX, '[');
+  in >> level.id;
+  in.get(); //discard comma
+  in >> level.size;
+  in.get(); //discard comma
+  std::getline(in, level.tilesetFile, ']');
+  in.ignore(MAX, '\n'); //getline doesn't eat this newline
 
   //leave stream in good state by discarding empty lines
-  while(_in.peek() == '\n')
-    {_in.get();}
+  while(in.peek() == '\n')
+    {in.get();}
 
-  return _in;
+  return in;
 }

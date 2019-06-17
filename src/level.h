@@ -22,14 +22,14 @@ class Level
     std::vector<Tile> tile; //tile for map
     std::vector<GtkWidget*> drawingArea; //drawing areas for map
 
-    Level(int _size, std::unordered_map<uint, TilesetTile>* _tileset);
+    Level(int id, int size, std::string tilesetFile, std::unordered_map<uint, TilesetTile>* tileset);
 
     //accessors
     int getSize() const;
 
     //overloads
-    friend std::ostream& operator<<(std::ostream& _out, const Level& _level);
-    friend std::istream& operator>>(std::istream& _in, Level& _level);
+    friend std::ostream& operator<<(std::ostream& out, const Level& level);
+    friend std::istream& operator>>(std::istream& in, Level& level);
 
   private:
     int id; // the level id

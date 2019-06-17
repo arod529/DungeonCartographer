@@ -73,7 +73,7 @@ void zoom(Settings* settings, Level* level, GtkWidget* layout, GtkWidget* grid, 
 	int s = gtk_widget_get_allocated_width(drawingArea0);
 
 	//delta for size change
-	int ds = settings->getZoomSpeed();
+	int ds = settings->zoomSpeed;
 
 	//change grid tile size
 	if(scrollDir < 0) //scroll up
@@ -166,7 +166,7 @@ void eventBtn_zoomFit(GtkButton* btn, void* eventData)
 **/
 void event_zoomSpeed(GtkRange* range, Settings* settings)
 {
-	settings->setZoomSpeed(gtk_range_get_value(range));
+	settings->zoomSpeed = gtk_range_get_value(range);
 }
 
 /*!
@@ -177,7 +177,7 @@ void event_zoomSpeed(GtkRange* range, Settings* settings)
 **/
 void event_scrollSpeed(GtkRange* range, Settings* settings)
 {
-	settings->setScrollSpeed(gtk_range_get_value(range));
+	settings->scrollSpeed = gtk_range_get_value(range);
 }
 
 void event_closeTab()

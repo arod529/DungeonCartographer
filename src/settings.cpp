@@ -17,63 +17,6 @@ Settings::Settings()
 }
 
 /*!
-	Returns the default map size.
-
-	@return The global size for a map.
-**/
-int Settings::getMapSize() const
-	{return mapSize;}
-/*!
-	Returns the zoom speed.
-
-	@return The zoom speed in pixels change per zoom action
-**/
-int Settings::getZoomSpeed() const
-	{return zoomSpeed;}
-/*!
-	Returns the scroll speed.
-
-	@return The scroll speed in pixels change per scroll action.
-**/
-int Settings::getScrollSpeed() const
-	{return scrollSpeed;}
-/*!
-	Returns the zoom follows mouse setting.
-
-	@return Does zoom follow the mouse.
-**/
-bool Settings::getZoomFollowsMouse() const
-	{return zoomFollowsMouse;}
-/*!
-	Sets the default map size.
-
-	@param[in] _mapSize The global size for a map
-**/
-void Settings::setMapSize(int _mapSize)
-	{mapSize = mapSize;}
-/*!
-	Sets the zoom speed.
-
-	@param[in] _zoomSpeed The zoom speed in pixels change per zoom action.
-**/
-void Settings::setZoomSpeed(int _zoomSpeed)
-	{zoomSpeed = _zoomSpeed;}
-/*!
-	Sets the scroll speed.
-
-	@param[in] _scrollSpeed The scroll speed in pixels change per scroll action.
-**/
-void Settings::setScrollSpeed(int _scrollSpeed)
-	{scrollSpeed = _scrollSpeed;}
-/*!
-	Set the zoom follows mouse setting.
-
-	@param[in] _zoomFollowsMouse Does zoom follow the mouse.
-**/
-void Settings::setZoomFollowsMouse(bool _zoomFollowsMouse)
-	{zoomFollowsMouse = _zoomFollowsMouse;}
-
-/*!
   Writes a default Tileset file to disk.
 **/
 bool Settings::writeDefaultTilesetFile()
@@ -158,16 +101,16 @@ bool Settings::writeDefaultTilesetFile()
 
   @return Whether or not the load was successful.
 **/
-bool Settings::loadSettingsFile(const std::string _fileName)
+bool Settings::loadSettingsFile(const std::string fileName)
 {
 	//open file
 	std::ifstream file;
-	file.open(_fileName.c_str());
+	file.open(fileName);
 
 	//Make sure file can be opened
 	if(!file.is_open())
 	{
-		fprintf(stderr, "ERROR: Dungeon Cartographer @ loadSettingsFile: The file could not be opened: %s\n", _fileName.c_str());
+		fprintf(stderr, "ERROR: Dungeon Cartographer @ loadSettingsFile: The file could not be opened: %s\n", fileName);
 		return false;
 	}
 
@@ -190,7 +133,7 @@ bool Settings::writeDefaultSettingsFile()
 	zoomFollowsMouse = true;
 
 	//open file
-	std::ofstream file(defaultSettingsFile.c_str());
+	std::ofstream file(defaultSettingsFile);
 
 	//Make sure file can be opened
 	if(!file.is_open())
@@ -206,23 +149,23 @@ bool Settings::writeDefaultSettingsFile()
 	return true;
 }
 
-std::ostream& operator<<(std::ostream& _out, const Settings& _settings)
+std::ostream& operator<<(std::ostream& out, const Settings& settings)
 {
-	_out << "MapSize=" << _settings.mapSize << '\n'
-			 << "ZoomSpeed=" << _settings.zoomSpeed << '\n'
-			 << "ScrollSpeed=" << _settings.scrollSpeed << '\n'
-			 << "ZoomFollowsMouse=" << _settings.zoomFollowsMouse << '\n';
-	 _out.flush();
-	 return _out;
+	out << "MapSize=" << settings.mapSize << '\n'
+			<< "ZoomSpeed=" << settings.zoomSpeed << '\n'
+			<< "ScrollSpeed=" << settings.scrollSpeed << '\n'
+			<< "ZoomFollowsMouse=" << settings.zoomFollowsMouse << '\n';
+	 out.flush();
+	 return out;
 }
 
-std::istream& operator>>(std::istream& _in, Settings& _settings)
+std::istream& operator>>(std::istream& in, Settings& settings)
 {
 	static const std::streamsize MAX = std::numeric_limits<std::streamsize>::max();
 
-	_in.ignore(MAX, '='); _in >> _settings.mapSize;
-	_in.ignore(MAX, '=');	_in >> _settings.zoomSpeed;
-	_in.ignore(MAX, '=');	_in >> _settings.scrollSpeed;
-	_in.ignore(MAX, '=');	_in >> _settings.zoomFollowsMouse;
-	return _in;
+	in.ignore(MAX, '='); in >> settings.mapSize;
+	in.ignore(MAX, '='); in >> settings.zoomSpeed;
+	in.ignore(MAX, '='); in >> settings.scrollSpeed;
+	in.ignore(MAX, '='); in >> settings.zoomFollowsMouse;
+	return in;
 }

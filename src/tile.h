@@ -17,21 +17,21 @@ class Tile
 public:
   TilesetTile* tilesetTile; //tileset that defines the tile characteristics
 
-  Tile(int _gridId, Level* _tileLvl, TilesetTile* _tilesetTile);
+  Tile(int gridId, Level* tileLvl, TilesetTile* tilesetTile);
   void updateTile();
 
   //overloads
-  friend std::ostream& operator<<(std::ostream& _out, const Tile& _tile);
-  friend std::istream& operator>>(std::istream& _in, Tile& _tile);
+  friend std::ostream& operator<<(std::ostream& out, const Tile& tile);
+  friend std::istream& operator>>(std::istream& in, Tile& tile);
 
 private:
   int gridId; //id of the tile's grid
   bool locked = false; //protection against multiple recursion
   Level* tileLvl; //pointer to tile owning level
 
-  void getTileExists(bool* _tileExists);
-  void getAdjacentIndex(int* _adjacentIndex);
-  void updateCornerBits(bool _propagate);
+  void getTileExists(bool* tileExists);
+  void getAdjacentIndex(int* adjacentIndex);
+  void updateCornerBits(bool propagate);
   void queDraw();
 };
 

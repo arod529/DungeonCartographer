@@ -9,26 +9,22 @@
 /*!
   Initializer for the Tile class.
 
-  @param[in] _gridId The id of the grid square this tile represents. This is a
+  @param[in] gridId The id of the grid square this tile represents. This is a
                       single dimension array that represents a square grid.
-  @param[in] _tileLvl The Level that the tile resides in.
-  @param[in] _tilesetTile The TilesetTile struct that describes the tile image.
+  @param[in] tileLvl The Level that the tile resides in.
+  @param[in] tilesetTile The TilesetTile struct that describes the tile image.
 **/
-Tile::Tile(int _gridId, Level* _tileLvl, TilesetTile* _tilesetTile)
-{
-  gridId = _gridId;
-  tileLvl = _tileLvl;
-  tilesetTile = _tilesetTile;
-}
+Tile::Tile(int gridId, Level* tileLvl, TilesetTile* tilesetTile)
+:gridId(gridId), tileLvl(tileLvl), tilesetTile(tilesetTile) {}
 
 /*!
   Get an array of adjacent tile exists truths. Each value in the array describes
   whether the tile adjacent to the calling tile exists. The directions are: \n
   {ne, se, sw, nw, n, e, s, w}
 
-  @param [in,out] _tileExists Truths of tile exists (size 8)
+  @param [in,out] tileExists Truths of tile exists (size 8)
 **/
-void Tile::getTileExists(bool* _tileExists)
+void Tile::getTileExists(bool* tileExists)
 {
   int gridSize = tileLvl->getSize();
   int c = gridId%gridSize;  //this tile's column number
@@ -45,7 +41,7 @@ void Tile::getTileExists(bool* _tileExists)
     (c < gridSize-1 && r > 0)             //northeast tile
   };
 
-  std::copy(tmp, tmp+8, _tileExists);
+  std::copy(tmp, tmp+8, tileExists);
 }
 
 /*!
@@ -53,9 +49,9 @@ void Tile::getTileExists(bool* _tileExists)
   of the adjacent tile. The directions are: \n
   {ne, se, sw, nw, n, e, s, w}
 
-  @param [in,out] _adjacentIndex The indexes of the adjacent tiles (size 8)
+  @param [in,out] adjacentIndex The indexes of the adjacent tiles (size 8)
 **/
-void Tile::getAdjacentIndex(int* _adjacentIndex)
+void Tile::getAdjacentIndex(int* adjacentIndex)
 {
   int gridSize = tileLvl->getSize();
 
@@ -70,7 +66,7 @@ void Tile::getAdjacentIndex(int* _adjacentIndex)
     gridId-gridSize+1  //northeast tile
   };
 
-  std::copy(tmp, tmp+8, _adjacentIndex);
+  std::copy(tmp, tmp+8, adjacentIndex);
 }
 
 /*!
@@ -173,7 +169,7 @@ void Tile::updateTile()
   6) Unlock tile.
 </pre>
 **/
-void Tile::updateCornerBits(bool _propagate)
+void Tile::updateCornerBits(bool propagate)
 {
   if(locked) return; //don't run if this tile already part of recursion chain
   locked = true; //lock the function for this tile
@@ -221,7 +217,7 @@ void Tile::updateCornerBits(bool _propagate)
       //update adjacent if not a background tile
       if(newTilesetId == BACKGROUND && aTile->tilesetTile->getId() != BACKGROUND)
       {
-        if(_propagate) aTile->updateCornerBits(true);
+        if(propagate) aTile->updateCornerBits(true);
       }
       else
       {
@@ -234,7 +230,7 @@ void Tile::updateCornerBits(bool _propagate)
         {
           newTilesetId &= ~(1<<j); //remove corner bit
           tilesetTile = &(*tileLvl->tileset)[newTilesetId];
-          if(_propagate) aTile->updateCornerBits(true);
+          if(propagate) aTile->updateCornerBits(true);
         }
       }
     }
@@ -252,7 +248,7 @@ void Tile::updateCornerBits(bool _propagate)
       if(tileExists[(int)(pow[0]+2)%4]) //the tile adjacent to the empty wall exists
       {
         aTile = &tileLvl->tile[a[(int)(pow[0]+2)%4]]; //get the adjacent tile
-        if(_propagate) aTile->updateCornerBits(false);
+        if(propagate) aTile->updateCornerBits(false);
       }
       openWalls -= exp2(pow[0]);
     }
@@ -274,12 +270,12 @@ void Tile::queDraw()
 /*!
   Writes a Tile to a file stream.
 **/
-std::ostream& operator<<(std::ostream& _out, const Tile& _tile)
+std::ostream& operator<<(std::ostream& out, const Tile& tile)
 {
-  _out << _tile.gridId << ','
-       << _tile.tilesetTile->getId() << '\n';
-  _out.flush();
-  return _out;
+  out << tile.gridId << ','
+       << tile.tilesetTile->getId() << '\n';
+  out.flush();
+  return out;
 }
 
 /*!
@@ -287,19 +283,19 @@ std::ostream& operator<<(std::ostream& _out, const Tile& _tile)
 
   The Tile must have a valid tileLvl, and therefore cannot be initialized with this.
 **/
-std::istream& operator>>(std::istream& _in, Tile& _tile)
+std::istream& operator>>(std::istream& in, Tile& tile)
 {
   uint id = 0;
 
-  _in >> _tile.gridId;
-  _in.get(); //scrap comma
-  _in >> id;
+  in >> tile.gridId;
+  in.get(); //scrap comma
+  in >> id;
 
-  _tile.tilesetTile = &(*_tile.tileLvl->tileset)[id];
+  tile.tilesetTile = &(*tile.tileLvl->tileset)[id];
 
   //leave stream in good state by discarding empty lines
-  while(_in.peek() == '\n')
-    {_in.get();}
+  while(in.peek() == '\n')
+    {in.get();}
 
-  return _in;
+  return in;
 }

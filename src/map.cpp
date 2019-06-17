@@ -7,32 +7,30 @@
 /*!
   Initializes a map with defaults from Settings. Creates a starting Level.
 
-  @param[in] _settings The program settings
+  @param[in] settings The program settings
 **/
-Map::Map(Settings* _settings)
+Map::Map(Settings* settings)
+: size(settings->mapSize)
+, tilesetFile(settings->defaultTilesetFile)
 {
-  //set default size
-  size = _settings->getMapSize();
-  tilesetFile = _settings->defaultTilesetFile;
-
   //set default tileset
-  loadTileset(_settings->defaultTilesetFile);
+  loadTileset(settings->defaultTilesetFile);
 
   //create a level
-  level.emplace_back(size, &tileset);
+  level.emplace_back(0, size, tilesetFile, &tileset);
 }
 
 /*!
   Load a tileset from a file
 
-  @param[in] tileSetFile File path for the tile set to load.
+  @param[in] filepath File path for the tile set to load.
 
   \bug doesn't check if file exists
 **/
-void Map::loadTileset(std::string tileSetFile)
+void Map::loadTileset(std::string filepath)
 {
   //open file
-  std::ifstream file(tileSetFile);
+  std::ifstream file(filepath);
 
   auto pos = file.tellg();
   uint tilesetId = 0;
@@ -55,9 +53,9 @@ void Map::loadTileset(std::string tileSetFile)
 
   @param[in] _filename The path to the file.
 **/
-bool Map::saveToFile(std::string _filepath)
+bool Map::saveToFile(std::string filepath)
 {
-  std::ofstream file(_filepath.c_str());
+  std::ofstream file(filepath);
 
   //write map to file
   file << *this;
@@ -76,28 +74,28 @@ bool Map::saveToFile(std::string _filepath)
   return true;
 }
 
-std::ostream& operator<<(std::ostream& _out, const Map& _map)
+std::ostream& operator<<(std::ostream& out, const Map& map)
 {
-  _out << "Map["
-       << _map.size << ','
-       << _map.tilesetFile << ']' << '\n';
-  _out.flush();
-  return _out;
+  out << "Map["
+       << map.size << ','
+       << map.tilesetFile << ']' << '\n';
+  out.flush();
+  return out;
 }
 
-std::istream& operator>>(std::istream& _in, Map& _map)
+std::istream& operator>>(std::istream& in, Map& map)
 {
   static const std::streamsize MAX = std::numeric_limits<std::streamsize>::max();
 
-  _in.ignore(MAX, '[');
-  _in >> _map.size;
-  _in.get(); //discard comma
-  std::getline(_in, _map.tilesetFile, ']');
-  _in.ignore(MAX, '\n'); //getline doesn't eat this newline
+  in.ignore(MAX, '[');
+  in >> map.size;
+  in.get(); //discard comma
+  std::getline(in, map.tilesetFile, ']');
+  in.ignore(MAX, '\n'); //getline doesn't eat this newline
 
   //leave stream in good state by discarding empty lines
-  while(_in.peek() == '\n')
-    {_in.get();}
+  while(in.peek() == '\n')
+    {in.get();}
 
-  return _in;
+  return in;
 }

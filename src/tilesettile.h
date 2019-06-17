@@ -11,8 +11,7 @@
 struct TilesetTile
 {
 public:
-  TilesetTile();
-  TilesetTile(uint _id, std::string _name, std::string _filePath, GdkPixbuf* _pixbuf);
+  TilesetTile(uint id = 0, std::string name = "", std::string filePath = "", GdkPixbuf* pixbuf = NULL);
   ~TilesetTile();
 
   //accessors
@@ -24,7 +23,7 @@ public:
   static bool event_drawTile(GtkWidget* drawingArea, cairo_t* cr);
 
   //overloads
-  friend std::istream& operator>>(std::istream& _in, TilesetTile& _tilesettile);
+  friend std::istream& operator>>(std::istream& in, TilesetTile& tilesettile);
 
 private:
   uint id;
