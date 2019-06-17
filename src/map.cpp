@@ -14,7 +14,7 @@ Map::Map(Settings* _settings)
   size = _settings->getMapSize();
 
   //set default tileset
-  loadTileset("./tiles/defaultSet");
+  loadTileset(_settings->defaultTilesetFile);
 
   //create a level
   level.emplace_back(size, &tileset);

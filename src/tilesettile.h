@@ -6,9 +6,9 @@
 
 /*!
   TilesetTileTile data structure. Contains the id, name, file path, and pixbuf of the
-  tile image. An array of TilesetTile structs defines a complete TilesetTile.
+  tile image. An array of TilesetTile structs defines a complete tileset.
 
-  \bug variables should be private, and read only aside from initialization.
+  \bug make pixbuf private and handle deallocation locally
 **/
 struct TilesetTile
 {

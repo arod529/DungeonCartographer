@@ -3,36 +3,16 @@
 #include "constants.h"
 
 #include <fstream>
+#include <cstdio>
 
 /*!
 	Initialize settings from default settings file.
 **/
 Settings::Settings()
 {
-	std::fstream file;
-
-	//try default file
-	file.open(settingsFile, std::ios_base::in);
-	if(file.is_open()) //file exists read settings
-	{
-		file >> mapSize
-				 >> zoomSpeed
-				 >> scrollSpeed
-				 >> zoomFollowsMouse;
-	}
-	else //write and use default settings
-	{
-		mapSize = 25;
-		zoomSpeed = 5;
-		scrollSpeed = 5;
-		zoomFollowsMouse = true;
-
-		file.open(settingsFile, std::ios_base::out);
-		file << mapSize << '\n'
-				 << zoomSpeed << '\n'
-				 << scrollSpeed << '\n'
-				 << zoomFollowsMouse << '\n';
-	}
+	// try loading default settings file
+	if(!loadSettingsFile(defaultSettingsFile))
+		{writeDefaultSettingsFile();}
 }
 
 /*!
@@ -95,11 +75,18 @@ void Settings::setZoomFollowsMouse(bool _zoomFollowsMouse)
 /*!
   Writes a default Tileset file to disk.
 **/
-void Settings::writeDefaultTilesetFile()
+bool Settings::writeDefaultTilesetFile()
 {
 	//open file
 	std::ofstream file;
-	file.open("./tiles/defaultSet");
+	file.open(defaultTilesetFile.c_str());
+
+	//Make sure file can be opened
+	if(!file.is_open())
+	{
+		fprintf(stderr, "ERROR: Dungeon Cartographer @ writeDefaultTilesetFile: The file could not be opened: %s\n", defaultTilesetFile.c_str());
+		return false;
+	}
 
 	//write to file (id,name,filePath\0\n) for each tile
 	file << E << ',' << "E Wall" << ',' << "./tiles/eWall.svg" << '\n'
@@ -161,4 +148,69 @@ void Settings::writeDefaultTilesetFile()
 
 	//close file
 	file.close();
+
+	return true;
+}
+
+/*!
+  Load Settings from a file on disk.
+
+  @return Whether or not the load was successful.
+**/
+bool Settings::loadSettingsFile(const std::string _fileName)
+{
+	//open file
+	std::ifstream file;
+	file.open(_fileName.c_str());
+
+	//Make sure file can be opened
+	if(!file.is_open())
+	{
+		fprintf(stderr, "ERROR: Dungeon Cartographer @ loadSettingsFile: The file could not be opened: %s\n", _fileName.c_str());
+		return false;
+	}
+
+	//read file
+	file >> mapSize
+			 >> zoomSpeed
+			 >> scrollSpeed
+			 >> zoomFollowsMouse;
+
+	//close file
+	file.close();
+
+	return true;
+}
+
+/*!
+  Writes a default Settings file to disk.
+**/
+bool Settings::writeDefaultSettingsFile()
+{
+	//set default settings
+	mapSize = 25;
+	zoomSpeed = 5;
+	scrollSpeed = 5;
+	zoomFollowsMouse = true;
+
+	//open file
+	std::ofstream file;
+	file.open(defaultSettingsFile.c_str());
+	//Make sure file can be opened
+	if(!file.is_open())
+	{
+		fprintf(stderr, "ERROR: Dungeon Cartographer @ writeDefaultSettingsFile: The file could not be opened: %s\n", defaultSettingsFile.c_str());
+		return false;
+	}
+
+	//write to file
+	file << mapSize << '\n'
+			 << zoomSpeed << '\n'
+			 << scrollSpeed << '\n'
+			 << zoomFollowsMouse << '\n';
+
+	//close file
+	file.close();
+
+	return true;
 }

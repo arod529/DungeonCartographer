@@ -1,18 +1,21 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include <string>
+
 class Settings
 {
 	public:
-		char* uiFile = (char*)"./ui/dungeonCartographer.ui";
-		char* cssFile = (char*)"./ui/dungeonCartographer.css";
-		char* settingsFile = (char*)"./ui/config";
+		const std::string defaultTilesetFile = "./tiles/defaultSet";
+		const char* uiFile = (char*)"./ui/dungeonCartographer.ui";
+		const char* cssFile = (char*)"./ui/dungeonCartographer.css";
 
 		Settings();
 
 		//utility
-		void writeDefaultTilesetFile();
-		void writeDefaultSettingsFile();
+		bool writeDefaultTilesetFile();
+		bool writeDefaultSettingsFile();
+		bool loadSettingsFile(std::string _fileName);
 
 		//accessors
 		int getMapSize() const;
@@ -27,6 +30,8 @@ class Settings
 		void setZoomFollowsMouse(bool _zoomFollowsMouse);
 
 	private:
+		const std::string defaultSettingsFile = "./ui/config";
+
 		int mapSize;
 		int zoomSpeed;
 		int scrollSpeed;
