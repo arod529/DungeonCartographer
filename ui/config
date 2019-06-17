@@ -1,4 +1,4 @@
-25
-5
-5
-1
+MapSize=25
+ZoomSpeed=5
+ScrollSpeed=5
+ZoomFollowsMouse=1

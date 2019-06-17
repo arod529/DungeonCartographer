@@ -29,6 +29,10 @@ class Settings
 		void setScrollSpeed(int _scrollSpeed);
 		void setZoomFollowsMouse(bool _zoomFollowsMouse);
 
+		//overloads
+		friend std::ostream& operator<<(std::ostream& _out, const Settings& _settings);
+		friend std::istream& operator>>(std::istream& _in, Settings& _settings);
+
 	private:
 		const std::string defaultSettingsFile = "./ui/config";
 

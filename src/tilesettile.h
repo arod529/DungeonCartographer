@@ -7,8 +7,6 @@
 /*!
   TilesetTileTile data structure. Contains the id, name, file path, and pixbuf of the
   tile image. An array of TilesetTile structs defines a complete tileset.
-
-  \bug make pixbuf private and handle deallocation locally
 **/
 struct TilesetTile
 {
@@ -17,15 +15,22 @@ public:
   TilesetTile(uint _id, std::string _name, std::string _filePath, GdkPixbuf* _pixbuf);
   ~TilesetTile();
 
+  //accessors
   uint getId() const;
   std::string getName() const;
   std::string getFilePath() const;
 
-  GdkPixbuf* pixbuf;
+  //events
+  static bool event_drawTile(GtkWidget* drawingArea, cairo_t* cr);
+
+  //overloads
+  friend std::istream& operator>>(std::istream& _in, TilesetTile& _tilesettile);
+
 private:
   uint id;
-  std::string  name;
+  std::string name;
   std::string filePath;
+  GdkPixbuf* pixbuf;
 };
 
 #endif

@@ -25,13 +25,14 @@ class Map
 
     Map(Settings*);            //default map
     Map(std::string mapFile);  //map from file
-    ~Map();                    //close a map
 
     //utility
     void loadTileset(std::string tileSetFile);
+    bool saveMap(std::string _filepath);
 
   private:
     int size; //default level size
+    std::string tilesetFile; //the file of the tileset
     std::unordered_map<uint, TilesetTile> tileset; //default level tileset
 };
 

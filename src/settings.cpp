@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include <cstdio>
+#include <limits>
 
 /*!
 	Initialize settings from default settings file.
@@ -171,12 +172,7 @@ bool Settings::loadSettingsFile(const std::string _fileName)
 	}
 
 	//read file
-	file >> mapSize
-			 >> zoomSpeed
-			 >> scrollSpeed
-			 >> zoomFollowsMouse;
-
-	//close file
+	file >> *this;
 	file.close();
 
 	return true;
@@ -194,8 +190,8 @@ bool Settings::writeDefaultSettingsFile()
 	zoomFollowsMouse = true;
 
 	//open file
-	std::ofstream file;
-	file.open(defaultSettingsFile.c_str());
+	std::ofstream file(defaultSettingsFile.c_str());
+
 	//Make sure file can be opened
 	if(!file.is_open())
 	{
@@ -204,13 +200,29 @@ bool Settings::writeDefaultSettingsFile()
 	}
 
 	//write to file
-	file << mapSize << '\n'
-			 << zoomSpeed << '\n'
-			 << scrollSpeed << '\n'
-			 << zoomFollowsMouse << '\n';
-
-	//close file
+	file << *this;
 	file.close();
 
 	return true;
+}
+
+std::ostream& operator<<(std::ostream& _out, const Settings& _settings)
+{
+	_out << "MapSize=" << _settings.mapSize << '\n'
+			 << "ZoomSpeed=" << _settings.zoomSpeed << '\n'
+			 << "ScrollSpeed=" << _settings.scrollSpeed << '\n'
+			 << "ZoomFollowsMouse=" << _settings.zoomFollowsMouse << '\n';
+	 _out.flush();
+	 return _out;
+}
+
+std::istream& operator>>(std::istream& _in, Settings& _settings)
+{
+	static const std::streamsize MAX = std::numeric_limits<std::streamsize>::max();
+
+	_in.ignore(MAX, '='); _in >> _settings.mapSize;
+	_in.ignore(MAX, '=');	_in >> _settings.zoomSpeed;
+	_in.ignore(MAX, '=');	_in >> _settings.scrollSpeed;
+	_in.ignore(MAX, '=');	_in >> _settings.zoomFollowsMouse;
+	return _in;
 }

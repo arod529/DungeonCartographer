@@ -1,5 +1,6 @@
 #include "ui.h"
 #include "constants.h"
+#include "tilesettile.h"
 
 #include <cmath>
 
@@ -195,22 +196,22 @@ void event_changeTab(GtkNotebook* _notebook, GtkWidget* _page, uint _pageNum, vo
 	@param[in] *drawingArea  the tile's drawing area
 	@param[in] *cr 	         the tile's cairo_t
 **/
-bool event_drawTile(GtkWidget* drawingArea, cairo_t* cr)
-{
-	//get drawing area size
-	int s = gtk_widget_get_allocated_width(drawingArea);
-	//get current assigned pixbuf and scale
-	Tile* _tile = (Tile*)g_object_get_data(G_OBJECT(drawingArea),"tile");
-	GdkPixbuf* tmp = gdk_pixbuf_scale_simple(_tile->tilesetTile->pixbuf,s,s,GDK_INTERP_NEAREST);
-	//draw the image
-	gdk_cairo_set_source_pixbuf(cr,tmp,0,0);
-	cairo_paint(cr);
+// bool event_drawTile(GtkWidget* drawingArea, cairo_t* cr)
+// {
+// 	//get drawing area size
+// 	int s = gtk_widget_get_allocated_width(drawingArea);
+// 	//get current assigned pixbuf and scale
+// 	Tile* _tile = (Tile*)g_object_get_data(G_OBJECT(drawingArea),"tile");
+// 	GdkPixbuf* tmp = gdk_pixbuf_scale_simple(_tile->tilesetTile->pixbuf,s,s,GDK_INTERP_NEAREST);
+// 	//draw the image
+// 	gdk_cairo_set_source_pixbuf(cr,tmp,0,0);
+// 	cairo_paint(cr);
 
-	//free mem
-	g_object_unref(tmp);
+// 	//free mem
+// 	g_object_unref(tmp);
 
-	return false;
-}
+// 	return false;
+// }
 
 /*!
 	The click event for a tile.
@@ -334,7 +335,7 @@ void UI::drawLevel(GtkWidget* _grid, Level* _lvl)
 	{
 		da = _lvl->drawingArea[i];
 		//create callback for render
-		g_signal_connect(da,"draw",G_CALLBACK(event_drawTile),NULL);
+		g_signal_connect(da,"draw",G_CALLBACK(TilesetTile::event_drawTile),NULL);
 		g_object_set_data(G_OBJECT(da),"tile",&_lvl->tile[i]);
 		//attach drawing area to grid
 		gtk_grid_attach(GTK_GRID(_grid),da,i%lvlSize,i/lvlSize,1,1);
