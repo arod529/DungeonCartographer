@@ -28,7 +28,11 @@ class Map
 
     //utility
     void loadTileset(std::string tileSetFile);
-    bool saveMap(std::string _filepath);
+    bool saveToFile(std::string _filepath);
+
+    //overloads
+    friend std::ostream& operator<<(std::ostream& _out, const Map& _map);
+    friend std::istream& operator>>(std::istream& _in, Map& _map);
 
   private:
     int size; //default level size

@@ -2,6 +2,9 @@
 
 #include "constants.h"
 
+#include <fstream>
+#include <limits>
+
 /*!
   Initializes a new blank Level.
 
@@ -33,4 +36,33 @@ Level::Level(int _size, std::unordered_map<uint, TilesetTile>* _tileset)
 int Level::getSize() const
 {
   return size;
+}
+
+std::ostream& operator<<(std::ostream& _out, const Level& _level)
+{
+  _out << "Level["
+       << _level.id << ','
+       << _level.size << ','
+       << _level.tilesetFile << ']' << '\n';
+  _out.flush();
+  return _out;
+}
+
+std::istream& operator>>(std::istream& _in, Level& _level)
+{
+  static const std::streamsize MAX = std::numeric_limits<std::streamsize>::max();
+
+  _in.ignore(MAX, '[');
+  _in >> _level.id;
+  _in.get(); //discard comma
+  _in >> _level.size;
+  _in.get(); //discard comma
+  std::getline(_in, _level.tilesetFile, ']');
+  _in.ignore(MAX, '\n'); //getline doesn't eat this newline
+
+  //leave stream in good state by discarding empty lines
+  while(_in.peek() == '\n')
+    {_in.get();}
+
+  return _in;
 }

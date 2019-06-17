@@ -4,6 +4,7 @@
 
 #include <gtk/gtk.h>
 #include <cmath>
+#include <fstream>
 
 /*!
   Initializer for the Tile class.
@@ -268,4 +269,37 @@ void Tile::queDraw()
 {
   g_object_set_data(G_OBJECT(tileLvl->drawingArea[gridId]),"tile",this); //update this tile's drawing area
   gtk_widget_queue_draw(tileLvl->drawingArea[gridId]);                   //queue redraw of this tile
+}
+
+/*!
+  Writes a Tile to a file stream.
+**/
+std::ostream& operator<<(std::ostream& _out, const Tile& _tile)
+{
+  _out << _tile.gridId << ','
+       << _tile.tilesetTile->getId() << '\n';
+  _out.flush();
+  return _out;
+}
+
+/*!
+  Reads a Tile from a file stream.
+
+  The Tile must have a valid tileLvl, and therefore cannot be initialized with this.
+**/
+std::istream& operator>>(std::istream& _in, Tile& _tile)
+{
+  uint id = 0;
+
+  _in >> _tile.gridId;
+  _in.get(); //scrap comma
+  _in >> id;
+
+  _tile.tilesetTile = &(*_tile.tileLvl->tileset)[id];
+
+  //leave stream in good state by discarding empty lines
+  while(_in.peek() == '\n')
+    {_in.get();}
+
+  return _in;
 }

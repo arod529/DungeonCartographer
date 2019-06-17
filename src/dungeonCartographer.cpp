@@ -10,6 +10,7 @@ int main(int argc, char **argv)
 	Settings settings;
 	settings.writeDefaultTilesetFile();
 	Map map(&settings);
+map.saveToFile("./mapTestFile");
 	try
 	{
 		UI ui(&settings, &map);

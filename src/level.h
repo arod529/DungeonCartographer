@@ -27,8 +27,14 @@ class Level
     //accessors
     int getSize() const;
 
+    //overloads
+    friend std::ostream& operator<<(std::ostream& _out, const Level& _level);
+    friend std::istream& operator>>(std::istream& _in, Level& _level);
+
   private:
+    int id; // the level id
     int size; //default level size
+    std::string tilesetFile; //the file path to the tileset
 };
 
 #endif

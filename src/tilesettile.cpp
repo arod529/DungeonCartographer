@@ -69,6 +69,11 @@ bool TilesetTile::event_drawTile(GtkWidget* drawingArea, cairo_t* cr)
   return false;
 }
 
+/*!
+  Initialize a TilesetTile from a file stream.
+
+  Creates a new pixbuf and writes any resulting errors to stderr.
+**/
 std::istream& operator>>(std::istream& _in, TilesetTile& _tilesettile)
 {
   static const std::streamsize MAX = std::numeric_limits<std::streamsize>::max();
@@ -77,8 +82,6 @@ std::istream& operator>>(std::istream& _in, TilesetTile& _tilesettile)
   _in.ignore(MAX, ','); //eat comma
   std::getline(_in, _tilesettile.name, ','); //get name
   std::getline(_in, _tilesettile.filePath); //get file path
-  while(_in.peek() == '\n') //discard empty lines
-    {_in.get();}
 
   GError *err = NULL;
   _tilesettile.pixbuf = gdk_pixbuf_new_from_file(_tilesettile.filePath.c_str(), &err);
@@ -87,6 +90,10 @@ std::istream& operator>>(std::istream& _in, TilesetTile& _tilesettile)
     fprintf(stderr, "ERROR: Dungeon Cartographer @ TilesetTile>>: pixbuf error for file: %s\n", _tilesettile.filePath.c_str());
     fprintf(stderr, "%s\n", err->message);
   }
+
+  //leave stream in good state by discarding empty lines
+  while(_in.peek() == '\n')
+    {_in.get();}
 
   return _in;
 }

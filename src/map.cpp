@@ -2,6 +2,7 @@
 
 #include <gtk/gtk.h>
 #include <fstream>
+#include <limits>
 
 /*!
   Initializes a map with defaults from Settings. Creates a starting Level.
@@ -54,17 +55,49 @@ void Map::loadTileset(std::string tileSetFile)
 
   @param[in] _filename The path to the file.
 **/
-bool Map::saveMap(std::string _filepath)
+bool Map::saveToFile(std::string _filepath)
 {
   std::ofstream file(_filepath.c_str());
 
-  //write map settings to file
-  file << size << '\n'
-       << tilesetFile << '\n';
+  //write map to file
+  file << *this;
 
-  //write levels to file
-
+  //append levels to file
+  for(int i = 0; i < level.size(); i++)
+  {
+    file << level[i];
+    for(int j = 0; j < level[i].tile.size(); j++)
+    {
+      file << level[i].tile[j];
+    }
+  }
 
   file.close();
   return true;
+}
+
+std::ostream& operator<<(std::ostream& _out, const Map& _map)
+{
+  _out << "Map["
+       << _map.size << ','
+       << _map.tilesetFile << ']' << '\n';
+  _out.flush();
+  return _out;
+}
+
+std::istream& operator>>(std::istream& _in, Map& _map)
+{
+  static const std::streamsize MAX = std::numeric_limits<std::streamsize>::max();
+
+  _in.ignore(MAX, '[');
+  _in >> _map.size;
+  _in.get(); //discard comma
+  std::getline(_in, _map.tilesetFile, ']');
+  _in.ignore(MAX, '\n'); //getline doesn't eat this newline
+
+  //leave stream in good state by discarding empty lines
+  while(_in.peek() == '\n')
+    {_in.get();}
+
+  return _in;
 }

@@ -20,6 +20,10 @@ public:
   Tile(int _gridId, Level* _tileLvl, TilesetTile* _tilesetTile);
   void updateTile();
 
+  //overloads
+  friend std::ostream& operator<<(std::ostream& _out, const Tile& _tile);
+  friend std::istream& operator>>(std::istream& _in, Tile& _tile);
+
 private:
   int gridId; //id of the tile's grid
   bool locked = false; //protection against multiple recursion
