@@ -4,7 +4,8 @@
 #include "tilesettile.h"
 #include "tile.h"
 
-#include <gtk/gtk.h>
+#include <gtkmm/drawingarea.h>
+
 #include <unordered_map>
 #include <vector>
 
@@ -20,9 +21,10 @@ class Level
   public:
     std::unordered_map<uint, TilesetTile>* tileset; //default level tileset
     std::vector<Tile> tile; //tile for map
-    std::vector<GtkWidget*> drawingArea; //drawing areas for map
+    std::vector<Gtk::DrawingArea*> drawingArea; //drawing areas for map
 
     Level(int id, int size, std::string tilesetFile, std::unordered_map<uint, TilesetTile>* tileset);
+    ~Level();
 
     //accessors
     int getSize() const;

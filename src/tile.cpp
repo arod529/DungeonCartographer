@@ -2,7 +2,6 @@
 
 #include "constants.h"
 
-#include <gtk/gtk.h>
 #include <cmath>
 #include <fstream>
 
@@ -263,8 +262,8 @@ void Tile::updateCornerBits(bool propagate)
 **/
 void Tile::queDraw()
 {
-  g_object_set_data(G_OBJECT(tileLvl->drawingArea[gridId]),"tile",this); //update this tile's drawing area
-  gtk_widget_queue_draw(tileLvl->drawingArea[gridId]);                   //queue redraw of this tile
+  // g_object_set_data(G_OBJECT(tileLvl->drawingArea[gridId]),"tile",this); //update this tile's drawing area
+  tileLvl->drawingArea[gridId]->queue_draw(); //queue redraw of this tile
 }
 
 /*!

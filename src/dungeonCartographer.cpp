@@ -2,23 +2,32 @@
 #include "settings.h"
 #include "map.h"
 
+#include <gtkmm/application.h>
+#include <glibmm/error.h>
+
+#include <iostream>
+
 int main(int argc, char **argv)
 {
 	//initilize gtk
-	gtk_init(&argc, &argv);
+	auto app = Gtk::Application::create(argc, argv);
 
 	Settings settings; //create settings object
 	Map map(&settings); //create default map
+
 	try
 	{
 		UI ui(&settings, &map); //make ui
+		return app->run(*ui.window); //have the time of your life
 	}
-	catch(const std::exception& e) //ah rats, its the aliens
+	catch(const Gtk::BuilderError& bErr) //ah rats, its the aliens
 	{
-		g_printerr(e.what());
+		std::cerr << bErr.what();
 		return 1;
 	}
-
-	gtk_main(); //have the time of your life
-	return 0;
+	catch(const Glib::Error& cssErr) //ah rats, its the aliens
+	{
+		std::cerr << cssErr.what();
+		return 1;
+	}
 }

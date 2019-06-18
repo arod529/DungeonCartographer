@@ -1,7 +1,10 @@
 #ifndef TILESETTILE_H
 #define TILESETTILE_H
 
-#include <gtk/gtk.h>
+#include <glibmm/refptr.h>
+#include <gdkmm/pixbuf.h>
+#include <gtkmm/drawingarea.h>
+
 #include <string>
 
 /*!
@@ -11,8 +14,8 @@
 struct TilesetTile
 {
 public:
-  TilesetTile(uint id = 0, std::string name = "", std::string filePath = "", GdkPixbuf* pixbuf = NULL);
-  ~TilesetTile();
+  // TilesetTile(uint id = 0, std::string name = "", std::string filePath = "", Glib::RefPtr<Gdk::Pixbuf> pixbuf);
+  // ~TilesetTile();
 
   //accessors
   uint getId() const;
@@ -20,7 +23,7 @@ public:
   std::string getFilePath() const;
 
   //util
-  bool drawTile(GtkWidget* drawingArea, cairo_t* cr);
+  bool drawTile(Gtk::DrawingArea* drawingArea, Cairo::RefPtr<Cairo::Context> cr);
 
   //overloads
   friend std::istream& operator>>(std::istream& in, TilesetTile& tilesettile);
@@ -29,7 +32,7 @@ private:
   uint id;
   std::string name;
   std::string filePath;
-  GdkPixbuf* pixbuf;
+  Glib::RefPtr<Gdk::Pixbuf> pixbuf;
 };
 
 #endif

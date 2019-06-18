@@ -6,20 +6,28 @@
 #include "level.h"
 #include "map.h"
 
-#include <cairo/cairo.h>
-#include <gtk/gtk.h>
+#include <glibmm/refptr.h>
+#include <gtkmm/cssprovider.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/window.h>
+#include <gtkmm/toolbutton.h>
+#include <gtkmm/scale.h>
+#include <gtkmm/notebook.h>
+#include <gtkmm/layout.h>
+#include <gtkmm/grid.h>
 
-#include <stdexcept>
-#include <string>
+
 #include <vector>
 
-struct UI
+class UI
 {
 	public:
+		Gtk::Window* window;
+
 		UI(Settings*, Map*);
 		~UI();
 
-		void drawLevel(Map* _map, int i);
+		void drawLevel(int i);
 
 	private:
 		//------------------------------
@@ -32,27 +40,31 @@ struct UI
 		//--------------------------
 		//----- Gtk Properties -----
 		//--------------------------
-		GtkBuilder*     builder;
-		GtkCssProvider* css;
+		//utils
+		Glib::RefPtr<Gtk::Builder> builder;
+		Glib::RefPtr<Gtk::CssProvider> css;
 
-		GObject* window;
+		//UI
 
-		GObject* save;
-		GObject* zoom[2];
-		GObject* zoomFit;
-		GObject* zoomSlider;
-		GObject* scrollSlider;
 
-		std::vector<GObject*>   layout;
-		std::vector<GtkWidget*> grid;
+			//toolbar
+			Gtk::ToolButton* save;
+			Gtk::ToolButton* zoom[2];
+			Gtk::ToolButton* zoomFit;
+			Gtk::Scale* zoomSlider;
+			Gtk::Scale* scrollSlider;
 
-    std::vector<GObject*> tabContent;
-    std::vector<GObject*> tabLabel;
-    std::vector<GObject*> tabButton;
+			//notebook (tabbed window display)
+			Gtk::Notebook* notebook;
 
-		EventData eventData;
+				//layout (infinite scroll area)
+				std::vector<Gtk::Layout*> layout;
+					//grid widget
+					std::vector<Gtk::Grid*> grid;
 
-		void drawLevel(GtkWidget* _grid, Level* _lvl);
+    // std::vector<GObject*> tabContent;
+    // std::vector<GObject*> tabLabel;
+    // std::vector<GObject*> tabButton;
 };
 
 #endif

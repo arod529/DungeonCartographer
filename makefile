@@ -4,14 +4,16 @@ SRCD=./src
 IDIR=./headers
 
 DEBUG=-g
-CFLAGS=`pkg-config gtk+-3.0 --cflags --libs` -std=c++11 $(DEBUG)
+CFLAGS=`pkg-config --cflags --libs gtkmm-3.0` -std=c++11 $(DEBUG)
 LFLAGS=$(CFLAGS)
 
 CC=g++ $(CFLAGS) -c
 LC=g++ $(LFLAGS) -o
 
 OBJS=$(OBJD)/tilesettile.o $(OBJD)/tile.o $(OBJD)/level.o $(OBJD)/map.o \
-		 $(OBJD)/settings.o $(OBJD)/event.o $(OBJD)/ui.o $(OBJD)/dungeonCartographer.o
+		 $(OBJD)/settings.o $(OBJD)/ui.o $(OBJD)/dungeonCartographer.o
+
+		 # $(OBJD)/event.o
 
 .PHONY: clean
 
@@ -22,7 +24,7 @@ all: dungeonCartographer
 #--------
 dungeonCartographer: $(OBJS)
 	$(LC) dungeonCartographer $(OBJD)/dungeonCartographer.o \
-														$(OBJD)/ui.o $(OBJD)/event.o $(OBJD)/settings.o \
+														$(OBJD)/ui.o $(OBJD)/settings.o \
 														$(OBJD)/map.o $(OBJD)/level.o $(OBJD)/tile.o $(OBJD)/tilesettile.o
 
 #------------

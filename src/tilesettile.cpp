@@ -1,7 +1,8 @@
 #include "tilesettile.h"
 #include "tile.h"
 
-#include <gtk/gtk.h>
+//for set_source_pixbuf()
+#include <gdkmm/general.h>
 
 #include <fstream>
 #include <limits>
@@ -18,14 +19,14 @@
   @param[in] _filePath Path to the svg file of the tile.
   @param[in] _pixbuf The pixbuf for the tile.
 **/
-TilesetTile::TilesetTile(uint id, std::string name, std::string filePath, GdkPixbuf* _pixbuf)
-: id(id), name(name), filePath(filePath), pixbuf(pixbuf) {}
+// TilesetTile::TilesetTile(uint id, std::string name, std::string filePath, Glib::RefPtr<Gdk::Pixbuf> pixbuf)
+// : id(id), name(name), filePath(filePath), pixbuf(pixbuf) {}
 
 /*!
   Free the memmory used by the pixbuf
 **/
-TilesetTile::~TilesetTile()
-  {g_object_unref(pixbuf);}
+// TilesetTile::~TilesetTile()
+//   {g_object_unref(pixbuf);}
 
 uint TilesetTile::getId() const
   {return id;}
@@ -36,28 +37,26 @@ std::string TilesetTile::getName() const
 std::string TilesetTile::getFilePath() const
   {return (std::string)filePath;}
 
-bool TilesetTile::drawTile(GtkWidget* drawingArea, cairo_t* cr)
+bool TilesetTile::drawTile(Gtk::DrawingArea* drawingArea, Cairo::RefPtr<Cairo::Context> cr)
 {
   //get drawing area size
-  int s = gtk_widget_get_allocated_width(drawingArea);
+  //may need Gtk::Allocation
+  int s = drawingArea->get_width();
 
   //get current assigned pixbuf and scale
-  GdkPixbuf* tmpPixbuf = gdk_pixbuf_scale_simple(pixbuf,s,s,GDK_INTERP_NEAREST);
+  Glib::RefPtr<Gdk::Pixbuf> tmpPixbuf = pixbuf->scale_simple(s, s, Gdk::InterpType::INTERP_BILINEAR);
 
   //draw the image
-  gdk_cairo_set_source_pixbuf(cr,tmpPixbuf,0,0);
-  cairo_paint(cr);
+  Gdk::Cairo::set_source_pixbuf(cr,tmpPixbuf,0,0);
+  cr->paint();
 
-  //free mem
-  g_object_unref(tmpPixbuf);
-
-  return false;
+  return true;
 }
 
 /*!
   Initialize a TilesetTile from a file stream.
 
-  Creates a new pixbuf and writes any resulting errors to stderr.
+  Creates a new pixbuf.
 **/
 std::istream& operator>>(std::istream& in, TilesetTile& tilesettile)
 {
@@ -68,13 +67,7 @@ std::istream& operator>>(std::istream& in, TilesetTile& tilesettile)
   std::getline(in, tilesettile.name, ','); //get name
   std::getline(in, tilesettile.filePath); //get file path
 
-  GError *err = NULL;
-  tilesettile.pixbuf = gdk_pixbuf_new_from_file(tilesettile.filePath.c_str(), &err);
-  if(err != NULL)
-  {
-    fprintf(stderr, "ERROR: Dungeon Cartographer @ TilesetTile>>: pixbuf error for file: %s\n", tilesettile.filePath.c_str());
-    fprintf(stderr, "%s\n", err->message);
-  }
+  tilesettile.pixbuf->create_from_file(tilesettile.filePath);
 
   //leave stream in good state by discarding empty lines
   while(in.peek() == '\n')

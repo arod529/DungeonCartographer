@@ -20,9 +20,18 @@ Level::Level(int id, int size, std::string tilesetFile, std::unordered_map<uint,
 
   //initialize drawing areas for map
   for(int i = 0; i < size*size; i++)
-    drawingArea.emplace_back(gtk_drawing_area_new());
+  {
+    drawingArea.emplace_back(new Gtk::DrawingArea());
+  }
+
   for(int i = 0; i < size*size; i++)
-    gtk_widget_set_can_focus (drawingArea[i],true);
+    drawingArea[i]->set_can_focus(true);
+}
+
+Level::~Level()
+{
+  for(int i = 0; i < drawingArea.size(); i++)
+    delete drawingArea[i];
 }
 
 /*!
