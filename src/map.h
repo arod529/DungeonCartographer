@@ -29,6 +29,7 @@ class Map
     //utility
     void loadTileset(std::string tileSetFile);
     bool saveToFile(std::string filepath);
+    bool openFile(std::string filepath);
 
     //overloads
     friend std::ostream& operator<<(std::ostream& out, const Map& map);

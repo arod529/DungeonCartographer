@@ -36,14 +36,13 @@ std::string TilesetTile::getName() const
 std::string TilesetTile::getFilePath() const
   {return (std::string)filePath;}
 
-bool TilesetTile::event_drawTile(GtkWidget* drawingArea, cairo_t* cr)
+bool TilesetTile::drawTile(GtkWidget* drawingArea, cairo_t* cr)
 {
   //get drawing area size
   int s = gtk_widget_get_allocated_width(drawingArea);
 
   //get current assigned pixbuf and scale
-  Tile* tile = (Tile*)g_object_get_data(G_OBJECT(drawingArea),"tile");
-  GdkPixbuf* tmpPixbuf = gdk_pixbuf_scale_simple(tile->tilesetTile->pixbuf,s,s,GDK_INTERP_NEAREST);
+  GdkPixbuf* tmpPixbuf = gdk_pixbuf_scale_simple(pixbuf,s,s,GDK_INTERP_NEAREST);
 
   //draw the image
   gdk_cairo_set_source_pixbuf(cr,tmpPixbuf,0,0);

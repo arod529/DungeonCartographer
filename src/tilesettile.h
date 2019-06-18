@@ -19,8 +19,8 @@ public:
   std::string getName() const;
   std::string getFilePath() const;
 
-  //events
-  static bool event_drawTile(GtkWidget* drawingArea, cairo_t* cr);
+  //util
+  bool drawTile(GtkWidget* drawingArea, cairo_t* cr);
 
   //overloads
   friend std::istream& operator>>(std::istream& in, TilesetTile& tilesettile);

@@ -74,6 +74,11 @@ bool Map::saveToFile(std::string filepath)
   return true;
 }
 
+bool Map::openFile(std::string filepath)
+{
+  return true;
+}
+
 std::ostream& operator<<(std::ostream& out, const Map& map)
 {
   out << "Map["

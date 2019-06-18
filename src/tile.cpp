@@ -272,8 +272,13 @@ void Tile::queDraw()
 **/
 std::ostream& operator<<(std::ostream& out, const Tile& tile)
 {
-  out << tile.gridId << ','
-       << tile.tilesetTile->getId() << '\n';
+  if(tile.gridId%tile.tileLvl->getSize() != 0)
+  {
+    out.seekp(-1, std::ios::cur);
+    out << '|';
+  }
+
+  out << tile.tilesetTile->getId() << '\n';
   out.flush();
   return out;
 }
@@ -287,9 +292,8 @@ std::istream& operator>>(std::istream& in, Tile& tile)
 {
   uint id = 0;
 
-  in >> tile.gridId;
-  in.get(); //scrap comma
   in >> id;
+  if(in.peek() == '|') in.get(); //scrap separator
 
   tile.tilesetTile = &(*tile.tileLvl->tileset)[id];
 

@@ -1,6 +1,7 @@
 #ifndef UI_H
 #define UI_H
 
+#include "event.h"
 #include "settings.h"
 #include "level.h"
 #include "map.h"
@@ -12,29 +13,6 @@
 #include <string>
 #include <vector>
 
-
-/*!
-	Structure to provide events with access to multiple and/or
-	dynamic data, whilst only requiring one argument and
-	a single signal connect. Each index contains data
-	specific to the equivalent tab.
-**/
-struct EventData
-{
-	static int currTab;	//the currently selected tab
-
-	//arrays of pointers to data
-	Settings* settings;
-	Level* level[1];
-
-	GtkWidget* layout[1];
-	GtkWidget* grid[1];
-	GtkWidget* drawingArea0[1];
-
-	void addTabData(int);
-	void removeTabData(int);
-};
-
 struct UI
 {
 	public:
@@ -44,11 +22,22 @@ struct UI
 		void drawLevel(Map* _map, int i);
 
 	private:
+		//------------------------------
+		//----- Program Properties -----
+		//------------------------------
+		Settings* settings;
+		Map* map;
+
+
+		//--------------------------
+		//----- Gtk Properties -----
+		//--------------------------
 		GtkBuilder*     builder;
 		GtkCssProvider* css;
 
 		GObject* window;
 
+		GObject* save;
 		GObject* zoom[2];
 		GObject* zoomFit;
 		GObject* zoomSlider;
