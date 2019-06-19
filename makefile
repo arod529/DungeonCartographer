@@ -10,10 +10,8 @@ LFLAGS=$(CFLAGS)
 CC=g++ $(CFLAGS) -c
 LC=g++ $(LFLAGS) -o
 
-OBJS=$(OBJD)/tilesettile.o $(OBJD)/tile.o $(OBJD)/level.o $(OBJD)/map.o \
-		 $(OBJD)/settings.o $(OBJD)/ui.o $(OBJD)/dungeonCartographer.o
-
-		 # $(OBJD)/event.o
+OBJS=$(OBJD)/tilesettile.o $(OBJD)/tileset.o $(OBJD)/tile.o $(OBJD)/level.o $(OBJD)/map.o \
+		 $(OBJD)/settings.o $(OBJD)/event.o $(OBJD)/ui.o $(OBJD)/dungeonCartographer.o
 
 .PHONY: clean
 
@@ -24,14 +22,17 @@ all: dungeonCartographer
 #--------
 dungeonCartographer: $(OBJS)
 	$(LC) dungeonCartographer $(OBJD)/dungeonCartographer.o \
-														$(OBJD)/ui.o $(OBJD)/settings.o \
-														$(OBJD)/map.o $(OBJD)/level.o $(OBJD)/tile.o $(OBJD)/tilesettile.o
+														$(OBJD)/ui.o $(OBJD)/event.o $(OBJD)/settings.o \
+														$(OBJD)/map.o $(OBJD)/level.o $(OBJD)/tile.o $(OBJD)/tileset.o $(OBJD)/tilesettile.o
 
 #------------
 #Object Files
 #------------
 $(OBJD)/tilesettile.o: $(SRCD)/tilesettile.cpp $(SRCD)/tilesettile.h
 	$(CC) -o $(OBJD)/tilesettile.o $(SRCD)/tilesettile.cpp
+
+$(OBJD)/tileset.o: $(SRCD)/tileset.cpp $(SRCD)/tileset.h
+	$(CC) -o $(OBJD)/tileset.o $(SRCD)/tileset.cpp
 
 $(OBJD)/tile.o: $(SRCD)/tile.cpp $(SRCD)/tile.h $(SRCD)/tilesettile.h $(SRCD)/level.h $(SRCD)/constants.h
 	$(CC) -o $(OBJD)/tile.o $(SRCD)/tile.cpp

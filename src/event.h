@@ -1,7 +1,11 @@
 #include "settings.h"
 #include "level.h"
 
-#include <gtk/gtk.h>
+#include <glibmm/refptr.h>
+
+#include <gtkmm/layout.h>
+#include <gtkmm/grid.h>
+#include <gtkmm/drawingarea.h>
 
 /*!
   Structure to provide events with access to multiple and/or
@@ -42,10 +46,10 @@ public:
   //Map modification
   static void save(GtkButton* btn, void* map);
   static void tileClick(GtkWidget* drawingArea, GdkEvent* event, void* tile);
-  static void drawTile(GtkWidget* drawingArea, cairo_t* cr);
+  static bool drawTile(Cairo::RefPtr<Cairo::Context> cr, Gtk::DrawingArea* da, Tile* tile);
 
+  static void centerLevel(Gtk::Layout* layout, Gtk::Grid* grid);
 private:
-  static void centerLevel(GtkWidget* layout, GtkWidget* grid);
   static void zoomToFit(Level* level, GtkWidget* layout, GtkWidget* drawingArea0);
   static void zoom(Settings* settings, Level* level, GtkWidget* layout, GtkWidget* grid, GtkWidget* drawingArea0, double scrollDir);
 };

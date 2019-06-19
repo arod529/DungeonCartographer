@@ -1,6 +1,7 @@
 #include "level.h"
 
 #include "constants.h"
+#include "event.h"
 
 #include <fstream>
 #include <limits>
@@ -11,12 +12,13 @@
   @param[in] _size The size of the level.
   @param[in] _tileset The Tileset to use for the level
 **/
-Level::Level(int id, int size, std::string tilesetFile, std::unordered_map<uint, TilesetTile>* tileset)
-: id(id), size(size), tilesetFile(tilesetFile), tileset(tileset)
+Level::Level(Tileset* tset, int id, int size)
+: id{id}, size{size}
 {
+  tileset = tset;
   //set all tiles to background tile
   for(int i = 0; i < size*size; i++)
-    tile.emplace_back(i, this, &(*tileset)[BACKGROUND]);
+    tile.emplace_back(i, this, &tileset->tile[BACKGROUND]);
 
   //initialize drawing areas for map
   for(int i = 0; i < size*size; i++)
@@ -30,8 +32,7 @@ Level::Level(int id, int size, std::string tilesetFile, std::unordered_map<uint,
 
 Level::~Level()
 {
-  for(int i = 0; i < drawingArea.size(); i++)
-    delete drawingArea[i];
+
 }
 
 /*!
@@ -47,7 +48,7 @@ std::ostream& operator<<(std::ostream& out, const Level& level)
   out << "Level["
        << level.id << ','
        << level.size << ','
-       << level.tilesetFile << ']' << '\n';
+       << level.tileset->filepath << ']' << '\n';
   out.flush();
   return out;
 }
@@ -61,7 +62,12 @@ std::istream& operator>>(std::istream& in, Level& level)
   in.get(); //discard comma
   in >> level.size;
   in.get(); //discard comma
-  std::getline(in, level.tilesetFile, ']');
+  
+  std::string tilesetFile = "";
+  std::getline(in, tilesetFile, ']');
+  if(!level.tileset->isTileset(tilesetFile))
+    {level.tileset = new Tileset(tilesetFile);}
+
   in.ignore(MAX, '\n'); //getline doesn't eat this newline
 
   //leave stream in good state by discarding empty lines

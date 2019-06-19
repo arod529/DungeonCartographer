@@ -23,7 +23,7 @@ public:
   std::string getFilePath() const;
 
   //util
-  bool drawTile(Gtk::DrawingArea* drawingArea, Cairo::RefPtr<Cairo::Context> cr);
+  void drawTile(Gtk::DrawingArea* drawingArea, Cairo::RefPtr<Cairo::Context> cr);
 
   //overloads
   friend std::istream& operator>>(std::istream& in, TilesetTile& tilesettile);

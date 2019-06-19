@@ -1,6 +1,5 @@
 #include "map.h"
 
-#include <gtk/gtk.h>
 #include <fstream>
 #include <limits>
 
@@ -9,43 +8,18 @@
 
   @param[in] settings The program settings
 **/
-Map::Map(Settings* settings)
-: size(settings->mapSize)
-, tilesetFile(settings->defaultTilesetFile)
+Map::Map(Settings* settings, std::string mapFile)
+: size{settings->mapSize}
+, tileset{&settings->tileset}
 {
-  //set default tileset
-  loadTileset(settings->defaultTilesetFile);
-
-  //create a level
-  level.emplace_back(0, size, tilesetFile, &tileset);
-}
-
-/*!
-  Load a tileset from a file
-
-  @param[in] filepath File path for the tile set to load.
-
-  \bug doesn't check if file exists
-**/
-void Map::loadTileset(std::string filepath)
-{
-  //open file
-  std::ifstream file(filepath);
-
-  auto pos = file.tellg();
-  uint tilesetId = 0;
-
-  //read file
-  do
+  if(mapFile != "")
   {
-    pos = file.tellg(); //get current streambuf position
-    file >> tilesetId; //get id
-    file.seekg(pos); //return to previous position
-    file >> tileset[tilesetId]; //add TilesetTile to tileset
-  } while(!file.eof());
-
-  //close file
-  file.close();
+    openFile(mapFile);
+  }
+  else //create a default level
+  {
+    level.emplace_back(tileset, 0, size);  
+  }
 }
 
 /*!
@@ -74,8 +48,27 @@ bool Map::saveToFile(std::string filepath)
   return true;
 }
 
-bool Map::openFile(std::string filepath)
+bool Map::openFile(std::string fPath)
 {
+  std::ifstream file(fPath);
+
+  //check file is open
+  if(!file.is_open())
+  {
+    fprintf(stderr, "ERROR: Dungeon Cartographer @ Map::openFile: The file could not be opened: %s\n", fPath.c_str());
+    return false;
+  }
+
+  //read map
+  file >> *this;
+
+  //read level (there must be at least one)
+  do
+  {
+    level.emplace_back(Level(tileset));
+    file >> level.back();
+  } while(!file.eof());
+
   return true;
 }
 
@@ -83,7 +76,7 @@ std::ostream& operator<<(std::ostream& out, const Map& map)
 {
   out << "Map["
        << map.size << ','
-       << map.tilesetFile << ']' << '\n';
+       << map.tileset->filepath << ']' << '\n';
   out.flush();
   return out;
 }
@@ -95,7 +88,12 @@ std::istream& operator>>(std::istream& in, Map& map)
   in.ignore(MAX, '[');
   in >> map.size;
   in.get(); //discard comma
-  std::getline(in, map.tilesetFile, ']');
+
+  std::string tilesetFile = "";
+  std::getline(in, tilesetFile, ']');
+  if(!map.tileset->isTileset(tilesetFile))
+    {map.tileset = new Tileset(tilesetFile);}
+
   in.ignore(MAX, '\n'); //getline doesn't eat this newline
 
   //leave stream in good state by discarding empty lines

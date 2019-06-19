@@ -1,36 +1,37 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include "tileset.h"
+
 #include <string>
+
 
 class Settings
 {
 	public:
-		const std::string defaultTilesetFile = "./tiles/defaultSet";
-		const char* uiFile = (char*)"./ui/dungeonCartographer.ui";
-		const char* cssFile = (char*)"./ui/dungeonCartographer.css";
+		Tileset tileset;
+		std::string tilesetFile{""};
 
-		int mapSize;
-		int zoomSpeed;
-		int scrollSpeed;
-
-		bool zoomFollowsMouse;
-
-		int tabCount;
+		int mapSize{0};
+		
+		int zoomSpeed{0};
+		int scrollSpeed{0};
+		bool zoomFollowsMouse{0};
+		int tabCount{0};
 
 		Settings();
 
 		//utility
-		bool writeDefaultTilesetFile();
-		bool writeDefaultSettingsFile();
 		bool loadSettingsFile(std::string fileName);
+		bool writeDefaultSettingsFile();
 
 		//overloads
 		friend std::ostream& operator<<(std::ostream& out, const Settings& settings);
 		friend std::istream& operator>>(std::istream& in, Settings& settings);
 
 	private:
-		const std::string defaultSettingsFile = "./ui/config";
+		const std::string defaultSettingsFile = "./ui/config"; 
+		const std::string defaultTilesetFile = "./tiles/defaultSet";
 };
 
 #endif

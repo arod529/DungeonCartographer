@@ -119,12 +119,12 @@ void Tile::updateTile()
         if(tilesetTile->getId() < BACKGROUND) //this tile was a room
         {
           //add previously shared wall of adjacent tile and remove all corner bits
-          aTile->tilesetTile = &(*tileLvl->tileset)[(aTile->tilesetTile->getId() | compare)&NSEW];
+          aTile->tilesetTile = &tileLvl->tileset->tile[(aTile->tilesetTile->getId() | compare)&NSEW];
         }
         else //this tile was not a room
         {
           //remove shared wall of adjacent tile and all corner bits
-          aTile->tilesetTile = &(*tileLvl->tileset)[(aTile->tilesetTile->getId() & ~compare)&NSEW];
+          aTile->tilesetTile = &tileLvl->tileset->tile[(aTile->tilesetTile->getId() & ~compare)&NSEW];
           newTilesetId ^= (1 << (i+2)%4); //remove shared wall of this tile
         }
         aTile->updateCornerBits(false); //re-add valid corner bits
@@ -133,7 +133,7 @@ void Tile::updateTile()
     compare <<= 1; //shift compare to next wall
   }
 
-  tilesetTile = &(*tileLvl->tileset)[newTilesetId]; //update this tile's tilesetTile
+  tilesetTile = &tileLvl->tileset->tile[newTilesetId]; //update this tile's tilesetTile
   updateCornerBits(true); //draw of this tile will occur here
 }
 
@@ -198,7 +198,7 @@ void Tile::updateCornerBits(bool propagate)
     {
       corners = 0;
       newTilesetId &= NSEW; //remove all corner bits
-      tilesetTile = &(*tileLvl->tileset)[newTilesetId];
+      tilesetTile = &tileLvl->tileset->tile[newTilesetId];
     }
 
   //check corner tiles
@@ -223,12 +223,12 @@ void Tile::updateCornerBits(bool propagate)
         if(aTile->tilesetTile->getId() == BACKGROUND) //corner tile is background
         {
           newTilesetId |= (1<<j); //add corner bit
-          tilesetTile = &(*tileLvl->tileset)[newTilesetId];
+          tilesetTile = &tileLvl->tileset->tile[newTilesetId];
         }
         else //corner tile is room
         {
           newTilesetId &= ~(1<<j); //remove corner bit
-          tilesetTile = &(*tileLvl->tileset)[newTilesetId];
+          tilesetTile = &tileLvl->tileset->tile[newTilesetId];
           if(propagate) aTile->updateCornerBits(true);
         }
       }
@@ -294,7 +294,7 @@ std::istream& operator>>(std::istream& in, Tile& tile)
   in >> id;
   if(in.peek() == '|') in.get(); //scrap separator
 
-  tile.tilesetTile = &(*tile.tileLvl->tileset)[id];
+  tile.tilesetTile = &tile.tileLvl->tileset->tile[id];
 
   //leave stream in good state by discarding empty lines
   while(in.peek() == '\n')

@@ -1,3 +1,4 @@
+Default Dungeon Cartographer Tileset
 1,E Wall,./tiles/eWall.svg
 17,E Wall NW Corner,./tiles/eWall_nwCorner.svg
 33,E Wall SW Corner,./tiles/eWall_swCorner.svg

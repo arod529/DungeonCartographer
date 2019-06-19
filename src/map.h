@@ -1,12 +1,11 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "tilesettile.h"
+#include "tileset.h"
 #include "level.h"
 #include "settings.h"
 
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 /*!
@@ -23,11 +22,9 @@ class Map
   public:
     std::vector<Level> level;    //array of levels for a map
 
-    Map(Settings*);            //default map
-    Map(std::string mapFile);  //map from file
+    Map(Settings*, std::string mapFile = "");
 
     //utility
-    void loadTileset(std::string tileSetFile);
     bool saveToFile(std::string filepath);
     bool openFile(std::string filepath);
 
@@ -37,8 +34,7 @@ class Map
 
   private:
     int size; //default level size
-    std::string tilesetFile; //the file of the tileset
-    std::unordered_map<uint, TilesetTile> tileset; //default level tileset
+    Tileset* tileset;
 };
 
 #endif

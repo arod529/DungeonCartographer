@@ -2,11 +2,11 @@
 #define LEVEL_H
 
 #include "tilesettile.h"
+#include "tileset.h"
 #include "tile.h"
 
 #include <gtkmm/drawingarea.h>
 
-#include <unordered_map>
 #include <vector>
 
 //forward declaration
@@ -19,11 +19,11 @@ class Tile;
 class Level
 {
   public:
-    std::unordered_map<uint, TilesetTile>* tileset; //default level tileset
+    Tileset* tileset;
     std::vector<Tile> tile; //tile for map
     std::vector<Gtk::DrawingArea*> drawingArea; //drawing areas for map
 
-    Level(int id, int size, std::string tilesetFile, std::unordered_map<uint, TilesetTile>* tileset);
+    Level(Tileset* tileset, int id = 0, int size = 0);
     ~Level();
 
     //accessors
@@ -36,7 +36,6 @@ class Level
   private:
     int id; // the level id
     int size; //default level size
-    std::string tilesetFile; //the file path to the tileset
 };
 
 #endif

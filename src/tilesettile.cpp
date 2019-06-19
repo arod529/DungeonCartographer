@@ -37,11 +37,10 @@ std::string TilesetTile::getName() const
 std::string TilesetTile::getFilePath() const
   {return (std::string)filePath;}
 
-bool TilesetTile::drawTile(Gtk::DrawingArea* drawingArea, Cairo::RefPtr<Cairo::Context> cr)
+void TilesetTile::drawTile(Gtk::DrawingArea* drawingArea, Cairo::RefPtr<Cairo::Context> cr)
 {
   //get drawing area size
-  //may need Gtk::Allocation
-  int s = drawingArea->get_width();
+  int s = drawingArea->get_allocated_width();
 
   //get current assigned pixbuf and scale
   Glib::RefPtr<Gdk::Pixbuf> tmpPixbuf = pixbuf->scale_simple(s, s, Gdk::InterpType::INTERP_BILINEAR);
@@ -49,8 +48,6 @@ bool TilesetTile::drawTile(Gtk::DrawingArea* drawingArea, Cairo::RefPtr<Cairo::C
   //draw the image
   Gdk::Cairo::set_source_pixbuf(cr,tmpPixbuf,0,0);
   cr->paint();
-
-  return true;
 }
 
 /*!
