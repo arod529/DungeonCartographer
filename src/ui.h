@@ -2,22 +2,22 @@
 #define UI_H
 
 #include "settings.h"
-#include "map.h"
+#include "level.h"
 
 #include <gtkmm/window.h>
+#include <gtkmm/layout.h>
 
 #include <vector>
 
 class UI : public Gtk::Window
 {
 public:
-	UI(Settings*, Map*);
+	UI();
 
-	void drawLevel(int i);
+	void addLevel(Level* level);
 
 private:
-	Settings* settings;
-	Map* map;
+	Gtk::Layout* layout;
 
 	const char* uiFile = (char*)"./ui/dungeonCartographer.ui";
 	const char* cssFile = (char*)"./ui/dungeonCartographer.css";

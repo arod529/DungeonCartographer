@@ -13,8 +13,8 @@ int main(int argc, char **argv)
 	auto app = Gtk::Application::create(argc, argv);
 
 	Settings settings; //create settings object
-	Map map(&settings); //create default map
-	UI ui(&settings, &map); //make ui
-	
+	UI ui; //make ui
+	Map map(&settings, &ui); //create default map
+
 	return app->run(ui); //have the time of your life
 }

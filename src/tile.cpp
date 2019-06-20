@@ -5,6 +5,10 @@
 #include <cmath>
 #include <fstream>
 
+#include <glibmm/refptr.h>
+//for set_source_pixbuf()
+#include <gdkmm/general.h>
+
 /*!
   Initializer for the Tile class.
 
@@ -14,7 +18,12 @@
   @param[in] tilesetTile The TilesetTile struct that describes the tile image.
 **/
 Tile::Tile(int gridId, Level* tileLvl, TilesetTile* tilesetTile)
-:gridId(gridId), tileLvl(tileLvl), tilesetTile(tilesetTile) {}
+:gridId(gridId), tileLvl(tileLvl), tilesetTile(tilesetTile)
+{
+  set_can_focus(true);
+  set_size_request(25,25);
+  show();
+}
 
 /*!
   Get an array of adjacent tile exists truths. Each value in the array describes
@@ -263,7 +272,16 @@ void Tile::updateCornerBits(bool propagate)
 void Tile::queDraw()
 {
   // g_object_set_data(G_OBJECT(tileLvl->drawingArea[gridId]),"tile",this); //update this tile's drawing area
-  tileLvl->drawingArea[gridId]->queue_draw(); //queue redraw of this tile
+  queue_draw(); //queue redraw of this tile
+}
+
+bool Tile::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+{
+  int s = get_allocated_width();
+  Gdk::Cairo::set_source_pixbuf(cr, tilesetTile->pixbuf, 0, 0);
+  cr->paint();
+
+  return false;
 }
 
 /*!

@@ -4,6 +4,8 @@
 #include "tilesettile.h"
 #include "level.h"
 
+#include <gtkmm/drawingarea.h>
+
 //forward declaration
 class Level;
 
@@ -12,7 +14,7 @@ class Level;
   of the tile. Internal functions update the tiles, queue a draw, and examine the
   adjacent tiles for existence and index.
 **/
-class Tile
+class Tile : public Gtk::DrawingArea
 {
 public:
   TilesetTile* tilesetTile; //tileset that defines the tile characteristics
@@ -33,6 +35,9 @@ private:
   void getAdjacentIndex(int* adjacentIndex);
   void updateCornerBits(bool propagate);
   void queDraw();
+
+  //signals
+  bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
 #endif

@@ -13,27 +13,17 @@
   @param[in] _tileset The Tileset to use for the level
 **/
 Level::Level(Tileset* tset, int id, int size)
-: id{id}, size{size}
+: tileset{tset}, id{id}, size{size}
 {
-  tileset = tset;
-  //set all tiles to background tile
-  for(int i = 0; i < size*size; i++)
-    tile.emplace_back(i, this, &tileset->tile[BACKGROUND]);
-
-  //initialize drawing areas for map
   for(int i = 0; i < size*size; i++)
   {
-    drawingArea.emplace_back(new Gtk::DrawingArea());
+    //set all tiles to background tile
+    tile.emplace_back(i, this, &tileset->tile[BACKGROUND]);
+    //attach to grid
+    attach(tile[i], i%size, i/size, 1, 1);
   }
-
-  for(int i = 0; i < size*size; i++)
-    drawingArea[i]->set_can_focus(true);
 }
 
-Level::~Level()
-{
-
-}
 
 /*!
   Returns the size of the level.
@@ -62,7 +52,7 @@ std::istream& operator>>(std::istream& in, Level& level)
   in.get(); //discard comma
   in >> level.size;
   in.get(); //discard comma
-  
+
   std::string tilesetFile = "";
   std::getline(in, tilesetFile, ']');
   if(!level.tileset->isTileset(tilesetFile))

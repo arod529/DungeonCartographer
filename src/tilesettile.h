@@ -3,7 +3,6 @@
 
 #include <glibmm/refptr.h>
 #include <gdkmm/pixbuf.h>
-#include <gtkmm/drawingarea.h>
 
 #include <string>
 
@@ -13,6 +12,7 @@
 **/
 struct TilesetTile
 {
+  friend class Tile;
 public:
   // TilesetTile(uint id = 0, std::string name = "", std::string filePath = "", Glib::RefPtr<Gdk::Pixbuf> pixbuf);
   // ~TilesetTile();
@@ -21,9 +21,6 @@ public:
   uint getId() const;
   std::string getName() const;
   std::string getFilePath() const;
-
-  //util
-  void drawTile(Gtk::DrawingArea* drawingArea, Cairo::RefPtr<Cairo::Context> cr);
 
   //overloads
   friend std::istream& operator>>(std::istream& in, TilesetTile& tilesettile);

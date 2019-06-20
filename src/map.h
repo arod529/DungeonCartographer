@@ -4,6 +4,7 @@
 #include "tileset.h"
 #include "level.h"
 #include "settings.h"
+#include "ui.h"
 
 #include <string>
 #include <vector>
@@ -22,7 +23,7 @@ class Map
   public:
     std::vector<Level> level;    //array of levels for a map
 
-    Map(Settings*, std::string mapFile = "");
+    Map(Settings*, UI* ui);
 
     //utility
     bool saveToFile(std::string filepath);
@@ -35,6 +36,7 @@ class Map
   private:
     int size; //default level size
     Tileset* tileset;
+    UI* ui;
 };
 
 #endif

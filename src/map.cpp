@@ -8,18 +8,13 @@
 
   @param[in] settings The program settings
 **/
-Map::Map(Settings* settings, std::string mapFile)
+Map::Map(Settings* settings, UI* ui)
 : size{settings->mapSize}
 , tileset{&settings->tileset}
+, ui{ui}
 {
-  if(mapFile != "")
-  {
-    openFile(mapFile);
-  }
-  else //create a default level
-  {
-    level.emplace_back(tileset, 0, size);  
-  }
+    level.emplace_back(tileset, 0, size);
+    ui->addLevel(&level.back());
 }
 
 /*!
@@ -65,7 +60,7 @@ bool Map::openFile(std::string fPath)
   //read level (there must be at least one)
   do
   {
-    level.emplace_back(Level(tileset));
+    level.emplace_back(tileset);
     file >> level.back();
   } while(!file.eof());
 

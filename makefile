@@ -4,7 +4,7 @@ SRCD=./src
 IDIR=./headers
 
 DEBUG=-g
-CFLAGS=`pkg-config --cflags --libs gtkmm-3.0` -std=c++11 $(DEBUG)
+CFLAGS=`pkg-config --cflags --libs gtkmm-3.0` -std=c++17 $(DEBUG)
 LFLAGS=$(CFLAGS)
 
 CC=g++ $(CFLAGS) -c

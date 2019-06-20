@@ -93,11 +93,11 @@
 // void Event::tileClick(GtkWidget* drawingArea, GdkEvent* event, void* tile)
 //   {((Tile*)tile)->updateTile();}
 
-bool Event::drawTile(Cairo::RefPtr<Cairo::Context> cr, Gtk::DrawingArea* da, Tile* tile)
-{
-  tile->tilesetTile->drawTile(da, cr);
-  return false; //keep signal handler
-}
+// bool Event::drawTile(Cairo::RefPtr<Cairo::Context> cr, Gtk::DrawingArea* da, Tile* tile)
+// {
+//   tile->tilesetTile->drawTile(da, cr);
+//   return false; //keep signal handler
+// }
 
 
 // /*!

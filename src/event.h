@@ -47,7 +47,6 @@ public:
   static void save(GtkButton* btn, void* map);
   static void tileClick(GtkWidget* drawingArea, GdkEvent* event, void* tile);
   static bool drawTile(Cairo::RefPtr<Cairo::Context> cr, Gtk::DrawingArea* da, Tile* tile);
-
   static void centerLevel(Gtk::Layout* layout, Gtk::Grid* grid);
 private:
   static void zoomToFit(Level* level, GtkWidget* layout, GtkWidget* drawingArea0);

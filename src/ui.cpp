@@ -9,8 +9,7 @@
 /*!
 
 **/
-UI::UI(Settings* settings, Map* map)
-: settings(settings), map(map)
+UI::UI()
 {
 	//css style
 	auto css = Gtk::CssProvider::create();
@@ -25,8 +24,16 @@ UI::UI(Settings* settings, Map* map)
 	builder->get_widget("contentBox", content);
 	add(*content);
 
+	builder->get_widget("layout", layout);
+
 	//window
 	set_title("Dungeon Cartographer");
 	maximize();
 	show_all_children();
+}
+
+void UI::addLevel(Level* level)
+{
+	layout->add(*level);
+	level->show();
 }
