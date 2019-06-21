@@ -5,9 +5,9 @@
 #include <gtkmm/cssprovider.h>
 #include <gtkmm/box.h>
 #include <gtkmm/toolbutton.h>
-// #include <gtkmm/filechoosernative.h>
 #include <gtkmm/filechooserdialog.h>
 #include <gtkmm/dialog.h>
+#include <gtkmm/notebook.h>
 
 /*!
 
@@ -18,8 +18,7 @@ UI::UI(Settings* settings)
 	//css style
 	auto css = Gtk::CssProvider::create();
 	css->load_from_path(cssFile);
-	auto styleContext = get_style_context();
-	styleContext->add_provider_for_screen(get_screen(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+	get_style_context()->add_provider_for_screen(get_screen(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
 	//gtk ui builder object
 	builder = Gtk::Builder::create_from_file(uiFile);
@@ -53,8 +52,21 @@ int UI::getZoomSpeed() const
 
 void UI::addLevel(Level* level)
 {
-	layout[0]->add(*level);
+	//create layout
+	auto newLayout = Gtk::Layout();
+	layout.emplace_back(&newLayout);
+	layout.back()->set_hexpand(true);
+	layout.back()->set_vexpand(true);
+	layout.back()->show();
+
+	//add level to layout
+	layout.back()->add(*level);
 	level->show();
+
+	//add layout to notebook
+	Gtk::Notebook* notebook;
+	builder->get_widget("notebook", notebook);
+	notebook->append_page(*layout.back());
 }
 
 /*!
