@@ -1,15 +1,8 @@
 #include "event.h"
 
-#include "map.h"
-#include "tilesettile.h"
-
 // //----------------
 // //-----EVENTS-----
 // //----------------
-// void Event::save(GtkButton* btn, void* map)
-// {
-//   ((Map*)map)->saveToFile("./mapTestFile");
-// }
 
 // /*!
 //   Zooms the level in on zoom in button press.
@@ -129,15 +122,15 @@
   @param[in] *layout  pointer to the layout of the current tab
   @param[in] *grid    pointer to the grid of the current tab
 **/
-void Event::centerLevel(Gtk::Layout* layout, Gtk::Grid* grid)
-{
-  //get location and dimension properties
-  Gtk::Allocation allocG = grid->get_allocation();
-  Gtk::Allocation allocL = layout->get_allocation();
+// void Event::centerLevel(Gtk::Layout* layout, Gtk::Grid* grid)
+// {
+//   //get location and dimension properties
+//   Gtk::Allocation allocG = grid->get_allocation();
+//   Gtk::Allocation allocL = layout->get_allocation();
 
-  //center grid in layout
-  layout->move(*grid, allocL.get_width()/2 - allocG.get_width()/2, allocL.get_height()/2 - allocG.get_height()/2);
-}
+//   //center grid in layout
+//   layout->move(*grid, allocL.get_width()/2 - allocG.get_width()/2, allocL.get_height()/2 - allocG.get_height()/2);
+// }
 
 // void Event::zoomToFit(Level* level, GtkWidget* layout, GtkWidget* drawingArea0)
 // {

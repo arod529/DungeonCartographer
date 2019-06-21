@@ -6,7 +6,7 @@
 		<!-- MENUBAR -->
 		<child>
 			<object class="GtkMenuBar">
-				
+
 				<child>
 					<object class="GtkMenuItem">
 						<property name="label">File</property>
@@ -41,7 +41,7 @@
 						<property name="label">New</property>
 					</object>
 				</child>
-				
+
 				<child>
 					<object id="openMap" class="GtkMenuToolButton">
 						<property name="icon-name">document-open</property>
@@ -50,14 +50,14 @@
 				</child>
 
 				<child>
-					<object id="saveMap" class="GtkToolButton">
+					<object id="saveBtn" class="GtkToolButton">
 						<property name="icon-name">document-save</property>
 						<property name="label">Save</property>
 					</object>
 				</child>
 
 				<child>
-					<object id="saveAsMap" class="GtkToolButton">
+					<object id="saveAsBtn" class="GtkToolButton">
 						<property name="icon-name">document-save-as</property>
 						<property name="label">Save As</property>
 					</object>
@@ -131,7 +131,7 @@
 							<property name="xalign">.01</property>
 						</object>
 					</child>
-					
+
 					<child>
 						<object id="zoomSpeedSlider" class="GtkScale">
 							<property name="adjustment">zoomAdjustment</property>
@@ -155,7 +155,7 @@
 							<property name="xalign">.01</property>
 						</object>
 					</child>
-					
+
 					<child>
 						<object id="scrollSpeedSlider" class="GtkScale">
 							<property name="adjustment">scrollAdjustment</property>
@@ -192,7 +192,7 @@
 
 						</object>
 					</child>
-				
+
 				<child type="tab">
 					<object id="tabContent[0]" class="GtkBox">
 						<property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
@@ -225,7 +225,7 @@
 						<property name="label">+</property>
 					</object>
 				</child>
-				
+
 			</object>
 		</child>
 		<!-- /NOTEBOOK -->
@@ -270,13 +270,13 @@
 		</child>
 
 		<child>
-			<object class="GtkMenuItem">
+			<object id="saveMenu" class="GtkMenuItem">
 				<property name="label">Save</property>
 			</object>
 		</child>
 
 		<child>
-			<object class="GtkMenuItem">
+			<object id="saveAsMenu" class="GtkMenuItem">
 				<property name="label">Save As</property>
 			</object>
 		</child>

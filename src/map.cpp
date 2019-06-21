@@ -3,6 +3,9 @@
 #include <fstream>
 #include <limits>
 
+#include <gtkmm/toolbutton.h>
+#include <gtkmm/menuitem.h>
+
 /*!
   Initializes a map with defaults from Settings. Creates a starting Level.
 
@@ -13,8 +16,20 @@ Map::Map(Settings* settings, UI* ui)
 , tileset{&settings->tileset}
 , ui{ui}
 {
-    level.emplace_back(tileset, 0, size);
-    ui->addLevel(&level.back());
+  Gtk::ToolButton* btn;
+  ui->getWidget<Gtk::ToolButton>("saveBtn", btn);
+  btn->signal_clicked().connect(sigc::mem_fun(*this, &Map::save));
+  ui->getWidget<Gtk::ToolButton>("saveAsBtn", btn);
+  btn->signal_clicked().connect(sigc::mem_fun(*this, &Map::saveAs));
+
+  Gtk::MenuItem* menu;
+  ui->getWidget<Gtk::MenuItem>("saveMenu", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &Map::save));
+  ui->getWidget<Gtk::MenuItem>("saveAsMenu", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &Map::saveAs));
+
+  level.emplace_back(tileset, 0, size);
+  ui->addLevel(&level.back());
 }
 
 /*!
@@ -43,6 +58,9 @@ bool Map::saveToFile(std::string filepath)
   return true;
 }
 
+//-------------------
+//----- Utility -----
+//-------------------
 bool Map::openFile(std::string fPath)
 {
   std::ifstream file(fPath);
@@ -67,6 +85,32 @@ bool Map::openFile(std::string fPath)
   return true;
 }
 
+//--------------------------
+//----- Event Handlers -----
+//--------------------------
+void Map::save()
+{
+  if(filepath == "") //there is no associated file
+    saveAs();
+  else //save the file
+    saveToFile(filepath);
+}
+
+void Map::saveAs()
+{
+  //request save as dialogue
+  std::string fpath{ui->saveAs()};
+
+  if(fpath != "")
+  {
+    filepath = fpath;
+    saveToFile(filepath);
+  }
+}
+
+//---------------------
+//----- Overloads -----
+//---------------------
 std::ostream& operator<<(std::ostream& out, const Map& map)
 {
   out << "Map["

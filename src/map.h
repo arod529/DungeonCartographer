@@ -29,12 +29,17 @@ class Map
     bool saveToFile(std::string filepath);
     bool openFile(std::string filepath);
 
+    //event handlers
+    void save();
+    void saveAs();
+
     //overloads
     friend std::ostream& operator<<(std::ostream& out, const Map& map);
     friend std::istream& operator>>(std::istream& in, Map& map);
 
   private:
     int size; //default level size
+    std::string filepath = "";
     Tileset* tileset;
     UI* ui;
 };
