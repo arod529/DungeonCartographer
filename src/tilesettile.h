@@ -1,10 +1,10 @@
 #ifndef TILESETTILE_H
 #define TILESETTILE_H
 
+#include <string>
+
 #include <glibmm/refptr.h>
 #include <gdkmm/pixbuf.h>
-
-#include <string>
 
 /*!
   TilesetTileTile data structure. Contains the id, name, file path, and pixbuf of the

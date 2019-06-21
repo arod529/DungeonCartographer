@@ -75,6 +75,7 @@ bool Tileset::writeDefaultTilesetFile(std::string fpath)
 
   //write to file (id,name,filePath\0\n) for each tile
   file << "Default Dungeon Cartographer Tileset" << '\n'
+  
        << E << ',' << "E Wall" << ',' << "./tiles/eWall.svg" << '\n'
        << E_NW << ',' << "E Wall NW Corner" << ',' << "./tiles/eWall_nwCorner.svg" << '\n'
        << E_SW << ',' << "E Wall SW Corner" << ',' << "./tiles/eWall_swCorner.svg" << '\n'

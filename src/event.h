@@ -21,7 +21,6 @@ public:
   // static void canvasScroll(GtkWidget* layout, GdkEvent* event, void* eventData);
 
   //Map modification
-  static void save();
   // static void tileClick(GtkWidget* drawingArea, GdkEvent* event, void* tile);
   // static bool drawTile(Cairo::RefPtr<Cairo::Context> cr, Gtk::DrawingArea* da, Tile* tile);
   // static void centerLevel(Gtk::Layout* layout, Gtk::Grid* grid);

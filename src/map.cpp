@@ -28,7 +28,7 @@ Map::Map(Settings* settings, UI* ui)
   ui->getWidget<Gtk::MenuItem>("saveAsMenu", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &Map::saveAs));
 
-  level.emplace_back(tileset, 0, size);
+  level.emplace_back(ui, tileset, 0, size);
   ui->addLevel(&level.back());
 }
 
@@ -78,7 +78,7 @@ bool Map::openFile(std::string fPath)
   //read level (there must be at least one)
   do
   {
-    level.emplace_back(tileset);
+    level.emplace_back(ui, tileset);
     file >> level.back();
   } while(!file.eof());
 
@@ -114,8 +114,8 @@ void Map::saveAs()
 std::ostream& operator<<(std::ostream& out, const Map& map)
 {
   out << "Map["
-       << map.size << ','
-       << map.tileset->filepath << ']' << '\n';
+      << map.size << ','
+      << map.tileset->filepath << ']' << '\n';
   out.flush();
   return out;
 }

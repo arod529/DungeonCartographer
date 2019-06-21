@@ -3,6 +3,12 @@
 
 typedef unsigned int uint;
 
+//---------------------------
+//----- Event Constants -----
+//---------------------------
+static const int SCROLL_UP = -1;
+static const int SCROLL_DOWN = 1;
+
 //--------------------------------
 //----- Tileset id constants -----
 //--------------------------------

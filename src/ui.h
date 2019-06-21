@@ -4,27 +4,36 @@
 #include "settings.h"
 #include "level.h"
 
+#include <string>
+#include <vector>
+
 #include <glibmm/refptr.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/window.h>
 #include <gtkmm/layout.h>
 
-#include <string>
-#include <vector>
+//forward declaration
+class Level;
 
 class UI : public Gtk::Window
 {
 public:
-	UI();
+	UI(Settings* settings);
 
-	void addLevel(Level* level);
 	std::string saveAs();
+	void addLevel(Level* level);
+	
+	int getCurrTab() const;
+	int getZoomSpeed() const;
 
 	template <class T> void getWidget(std::string name, T*& widget);
 
 private:
 	Glib::RefPtr<Gtk::Builder> builder;
-	Gtk::Layout* layout;
+	std::vector<Gtk::Layout*> layout;
+	Settings* settings;
+	int currTab{0};
+	int zoomSpeed{5};
 
 	const char* uiFile = (char*)"./ui/dungeonCartographer.ui";
 	const char* cssFile = (char*)"./ui/dungeonCartographer.css";

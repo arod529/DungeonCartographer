@@ -183,13 +183,6 @@
 							<property name="hexpand">true</property>
 							<property name="vexpand">true</property>
 
-							<!-- <child>
-								<object id="grid[0]" class="GtkGrid">
-									<property name="column-homogeneous">true</property>
-									<property name="row-homogeneous">true</property>
-								</object>
-							</child> -->
-
 						</object>
 					</child>
 

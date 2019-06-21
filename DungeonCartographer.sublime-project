@@ -4,5 +4,9 @@
 		{
 			"path": "."
 		}
-	]
+	],
+  "settings":
+  {
+    "sublimegdb_commandline": "gdb --interpreter=mi ${project_path:dungeonCartographer}",
+  }
 }

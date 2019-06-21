@@ -12,7 +12,8 @@
 /*!
 
 **/
-UI::UI()
+UI::UI(Settings* settings)
+: settings{settings}
 {
 	//css style
 	auto css = Gtk::CssProvider::create();
@@ -28,7 +29,8 @@ UI::UI()
 	add(*content);
 
 	//this needs to be made dynamically;
-	builder->get_widget("layout", layout);
+	layout.emplace_back();
+	builder->get_widget("layout", layout.back());
 
 	//window
 	set_title("Dungeon Cartographer");
@@ -36,9 +38,22 @@ UI::UI()
 	show_all_children();
 }
 
+/*!
+  \bug change to get tab from notebook; remove currTab var;
+**/
+int UI::getCurrTab() const
+	{return currTab;}
+
+/*!
+  \bug change to get zoomSlider value; remove zoomSpeed var;
+**/
+int UI::getZoomSpeed() const
+	{return zoomSpeed;}
+
+
 void UI::addLevel(Level* level)
 {
-	layout->add(*level);
+	layout[0]->add(*level);
 	level->show();
 }
 

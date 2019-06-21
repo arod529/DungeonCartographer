@@ -4,6 +4,8 @@
 #include "tilesettile.h"
 #include "tileset.h"
 #include "tile.h"
+#include "ui.h"
+#include "settings.h"
 
 #include <gtkmm/drawingarea.h>
 #include <gtkmm/grid.h>
@@ -11,6 +13,7 @@
 #include <vector>
 
 //forward declaration
+class UI;
 class Tile;
 
 /*!
@@ -23,12 +26,14 @@ class Level : public Gtk::Grid
     Tileset* tileset;
     std::vector<Tile> tile; //tile for map
 
-    Level(Tileset* tileset, int id = 0, int size = 0);
-    // ~Level(); //gtkmm hates this?
-
+    Level(UI* ui, Tileset* tileset, int id = 0, int size = 0);
+    void metaInit(UI* ui);
 
     //accessors
     int getSize() const;
+
+    //event handlers
+    void zoom(int currTab, int scrollDir, int zoomSpeed);
 
     //overloads
     friend std::ostream& operator<<(std::ostream& out, const Level& level);
