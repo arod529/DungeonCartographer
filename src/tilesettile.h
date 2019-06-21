@@ -14,9 +14,6 @@ struct TilesetTile
 {
   friend class Tile;
 public:
-  // TilesetTile(uint id = 0, std::string name = "", std::string filePath = "", Glib::RefPtr<Gdk::Pixbuf> pixbuf);
-  // ~TilesetTile();
-
   //accessors
   uint getId() const;
   std::string getName() const;

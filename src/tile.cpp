@@ -22,6 +22,9 @@ Tile::Tile(int gridId, Level* tileLvl, TilesetTile* tilesetTile)
 {
   set_can_focus(true);
   set_size_request(25,25);
+
+  add_events(Gdk::EventMask::BUTTON_PRESS_MASK);
+
   show();
 }
 
@@ -278,9 +281,16 @@ void Tile::queDraw()
 bool Tile::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
   int s = get_allocated_width();
-  Gdk::Cairo::set_source_pixbuf(cr, tilesetTile->pixbuf, 0, 0);
+  auto tmpPixbuf = tilesetTile->pixbuf->scale_simple(s, s, Gdk::INTERP_BILINEAR);
+  Gdk::Cairo::set_source_pixbuf(cr, tmpPixbuf, 0, 0);
   cr->paint();
 
+  return false;
+}
+
+bool Tile::on_button_press_event(GdkEventButton* btn)
+{
+  updateTile();
   return false;
 }
 

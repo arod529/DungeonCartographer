@@ -38,6 +38,7 @@ private:
 
   //signals
   bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+  bool on_button_press_event(GdkEventButton* btn) override;
 };
 
 #endif
