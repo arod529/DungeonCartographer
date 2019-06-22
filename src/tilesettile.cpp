@@ -1,5 +1,4 @@
 #include "tilesettile.h"
-#include "tile.h"
 
 #include <fstream>
 #include <limits>

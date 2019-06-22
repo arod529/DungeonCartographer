@@ -29,7 +29,7 @@ public:
 private:
   int gridId; //id of the tile's grid
   bool locked = false; //protection against multiple recursion
-  Level* tileLvl; //pointer to tile owning level
+  Level* tileLvl; //the tile owning level
 
   void getTileExists(bool* tileExists);
   void getAdjacentIndex(int* adjacentIndex);

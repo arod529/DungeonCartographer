@@ -4,6 +4,9 @@
 // #include <gtkmm/grid.h>
 // #include <gtkmm/drawingarea.h>
 
+#include <gtkmm/drawingarea.h>
+#include "level.h"
+
 
 
 /*!
@@ -21,7 +24,7 @@ public:
   // static void canvasScroll(GtkWidget* layout, GdkEvent* event, void* eventData);
 
   //Map modification
-  // static void tileClick(GtkWidget* drawingArea, GdkEvent* event, void* tile);
+  // static bool tileClick(GdkEventButton* btn, Level* level, int i);
   // static bool drawTile(Cairo::RefPtr<Cairo::Context> cr, Gtk::DrawingArea* da, Tile* tile);
   // static void centerLevel(Gtk::Layout* layout, Gtk::Grid* grid);
 private:

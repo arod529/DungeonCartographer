@@ -29,6 +29,10 @@ Level::Level(UI* ui, Tileset* tset, int id, int size)
     tile.emplace_back(i, this, &tileset->tile[BACKGROUND]);
     //attach to grid
     attach(tile[i], i%size, i/size, 1, 1);
+
+    //try this, doesn't work
+    // tile[i].signal_button_press_event().connect(sigc::bind<Level*, int>(sigc::ptr_fun(&Event::tileClick), this, i));
+
   }
 }
 
@@ -40,6 +44,7 @@ void Level::metaInit(UI* ui)
   //set grid properties
   set_row_homogeneous(true); set_column_homogeneous(true);
   set_row_spacing(0); set_column_spacing(0);
+  get_style_context()->add_class("mainWindow");
   
   //connect events
   Gtk::ToolButton* btn;
@@ -58,15 +63,6 @@ void Level::metaInit(UI* ui)
 int Level::getSize() const
   {return size;}
 
-std::ostream& operator<<(std::ostream& out, const Level& level)
-{
-  out << "Level["
-       << level.id << ','
-       << level.size << ','
-       << level.tileset->filepath << ']' << '\n';
-  out.flush();
-  return out;
-}
 
 //--------------------------
 //----- Event Handlers -----
@@ -121,6 +117,7 @@ void Level::zoom(int currTab, int scrollDir, int zoomSpeed)
   // }
 
   //move the grid
+  // \bug switch to adjustment?
   dx *= size/2;
   dy *= size/2;
   ((Gtk::Layout*)get_parent())->move(*this, xG+dx, yG+dy);
@@ -129,6 +126,16 @@ void Level::zoom(int currTab, int scrollDir, int zoomSpeed)
 //---------------------
 //----- Overloads -----
 //---------------------
+std::ostream& operator<<(std::ostream& out, const Level& level)
+{
+  out << "Level["
+       << level.id << ','
+       << level.size << ','
+       << level.tileset->filepath << ']' << '\n';
+  out.flush();
+  return out;
+}
+
 std::istream& operator>>(std::istream& in, Level& level)
 {
   static const std::streamsize MAX = std::numeric_limits<std::streamsize>::max();

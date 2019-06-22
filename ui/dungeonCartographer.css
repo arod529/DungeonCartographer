@@ -12,8 +12,8 @@ scale {
 	padding-left: 5px;
 }
 
-grid {
-	box-shadow: 0 0 15px 10px black;
+grid.mainWindow {
+	box-shadow: 0 0 15px 10px #333333;
 }
 
 stack {
@@ -21,12 +21,11 @@ stack {
 }
 
 tab {
+	background-color: #dddddd;
 	border-radius: 10px 10px 0px 0px;
-	background-image: linear-gradient(white, #999999),
-	linear-gradient(to bottom right, transparent 50%, red 50%),
-    linear-gradient(to bottom left, transparent 50%, red 50%);
 	box-shadow: 2px 0px 5px grey;
-	border-bottom-color: black;
 	margin-right: -8px;
-	border-color: blue;
+	outline: 0; /*remove box when tab is selected*/
+
+	/*background-image: linear-gradient(white, #999999);*/
 }

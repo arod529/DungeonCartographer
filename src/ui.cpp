@@ -4,10 +4,10 @@
 
 #include <gtkmm/cssprovider.h>
 #include <gtkmm/box.h>
-#include <gtkmm/toolbutton.h>
-#include <gtkmm/filechooserdialog.h>
 #include <gtkmm/dialog.h>
-#include <gtkmm/notebook.h>
+#include <gtkmm/filechooserdialog.h>
+#include <gtkmm/label.h>
+#include <gtkmm/toolbutton.h>
 
 /*!
 
@@ -23,13 +23,13 @@ UI::UI(Settings* settings)
 	//gtk ui builder object
 	builder = Gtk::Builder::create_from_file(uiFile);
 
+	//add static window content
 	Gtk::Box* content;
 	builder->get_widget("contentBox", content);
 	add(*content);
 
-	//this needs to be made dynamically;
-	layout.emplace_back();
-	builder->get_widget("layout", layout.back());
+	//get notebook
+	builder->get_widget("notebook", notebook);
 
 	//window
 	set_title("Dungeon Cartographer");
@@ -41,7 +41,7 @@ UI::UI(Settings* settings)
   \bug change to get tab from notebook; remove currTab var;
 **/
 int UI::getCurrTab() const
-	{return currTab;}
+	{return notebook->get_current_page();}
 
 /*!
   \bug change to get zoomSlider value; remove zoomSpeed var;
@@ -52,21 +52,35 @@ int UI::getZoomSpeed() const
 
 void UI::addLevel(Level* level)
 {
+	//make a builder for the tab
+	auto tabBuilder = Gtk::Builder::create_from_file(uiTab);
+
+	//get the notebook
+	int currTab = getCurrTab();
+
 	//create layout
-	auto newLayout = Gtk::Layout();
-	layout.emplace_back(&newLayout);
-	layout.back()->set_hexpand(true);
-	layout.back()->set_vexpand(true);
-	layout.back()->show();
+	layout.emplace_back();
+	tabBuilder->get_widget("layout", layout.back());	
 
 	//add level to layout
 	layout.back()->add(*level);
 	level->show();
 
-	//add layout to notebook
-	Gtk::Notebook* notebook;
-	builder->get_widget("notebook", notebook);
-	notebook->append_page(*layout.back());
+	//create tab
+	Gtk::Box* tab;
+	tabBuilder->get_widget("tab", tab);
+	//set default tab label
+	Gtk::Label* tabLabel;
+	tabBuilder->get_widget("tabLabel", tabLabel);
+	tabLabel->set_label("Level " + std::to_string(currTab+1));
+
+
+	//add layout and tab to notebook; insert inplace of new tab
+	notebook->insert_page(*layout.back(), *tab, currTab);
+	//show all
+	notebook->show_all_children();
+	//set to active page
+	notebook->set_current_page(currTab);
 }
 
 /*!

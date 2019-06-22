@@ -18,7 +18,7 @@
   @param[in] tilesetTile The TilesetTile struct that describes the tile image.
 **/
 Tile::Tile(int gridId, Level* tileLvl, TilesetTile* tilesetTile)
-:gridId(gridId), tileLvl(tileLvl), tilesetTile(tilesetTile)
+:gridId{gridId}, tileLvl{tileLvl}, tilesetTile{tilesetTile}
 {
   set_can_focus(true);
   set_size_request(25,25);

@@ -178,37 +178,8 @@
 			<object id="notebook" class="GtkNotebook">
 				<property name="scrollable">true</property>
 
-					<child>
-						<object id="layout" class="GtkLayout">
-							<property name="hexpand">true</property>
-							<property name="vexpand">true</property>
-
-						</object>
-					</child>
-
-				<child type="tab">
-					<object id="tabContent[0]" class="GtkBox">
-						<property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
-
-						<child>
-							<object id="tabLabel[0]" class="GtkLabel">
-								<property name="label">Level 1 </property>
-								<property name="visible">true</property>
-							</object>
-						</child>
-
-						<child>
-							<object id="tabButton[0]" class="GtkToolButton">
-								<property name="icon-name">window-close</property>
-								<property name="visible">true</property>
-							</object>
-						</child>
-
-					</object>
-				</child>
-
 				<child>
-					<object id="newTabPage" class="GtkBox">
+					<object id="newLevelTab" class="GtkBox">
 						<property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
 					</object>
 				</child>
@@ -277,4 +248,4 @@
 	</object>
 	<!-- /MENUS -->
 
-</interface
+</interface>

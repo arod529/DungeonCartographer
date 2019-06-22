@@ -3,11 +3,14 @@
 
 #include "tileset.h"
 #include "level.h"
-#include "settings.h"
 #include "ui.h"
+#include "settings.h"
+#include "constants.h"
 
 #include <string>
 #include <vector>
+
+#include <gtkmm/widget.h>
 
 /*!
   Map data structure. Tileset, and grid size for new maps default to the the global
@@ -24,6 +27,7 @@ class Map
     std::vector<Level> level;    //array of levels for a map
 
     Map(Settings*, UI* ui);
+    void signalInit();
 
     //utility
     bool saveToFile(std::string filepath);
@@ -32,6 +36,7 @@ class Map
     //event handlers
     void save();
     void saveAs();
+    void addLevel(Gtk::Widget* page, uint pageNum);
 
     //overloads
     friend std::ostream& operator<<(std::ostream& out, const Map& map);

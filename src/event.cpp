@@ -3,6 +3,12 @@
 // //----------------
 // //-----EVENTS-----
 // //----------------
+// bool Event::tileClick(GdkEventButton* btn, Level* level, int i)
+// {
+//   level->tile[i].updateTile();
+//   return false;
+}
+
 
 // /*!
 //   Zooms the level in on zoom in button press.

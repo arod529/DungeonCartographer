@@ -1,0 +1,26 @@
+<interface>
+  
+  <object id="layout" class="GtkLayout">
+    <property name="hexpand">true</property>
+    <property name="vexpand">true</property>
+  </object>
+  
+  <object id="tab" class="GtkBox">
+    <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+
+    <child>
+      <object id="tabLabel" class="GtkLabel">
+        <property name="label">Level 5 </property>
+        <property name="visible">true</property>
+      </object>
+    </child>
+
+    <child>
+      <object id="tabButton" class="GtkToolButton">
+        <property name="icon-name">window-close</property>
+        <property name="visible">true</property>
+      </object>
+    </child>
+  </object>
+  
+</interface>

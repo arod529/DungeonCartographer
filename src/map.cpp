@@ -3,8 +3,9 @@
 #include <fstream>
 #include <limits>
 
-#include <gtkmm/toolbutton.h>
 #include <gtkmm/menuitem.h>
+#include <gtkmm/notebook.h>
+#include <gtkmm/toolbutton.h>
 
 /*!
   Initializes a map with defaults from Settings. Creates a starting Level.
@@ -15,6 +16,15 @@ Map::Map(Settings* settings, UI* ui)
 : size{settings->mapSize}
 , tileset{&settings->tileset}
 , ui{ui}
+{
+  signalInit();
+  addLevel(NULL, 0);
+  addLevel(NULL, 1);
+  addLevel(NULL, 2);
+  addLevel(NULL, 3);
+}
+
+void Map::signalInit()
 {
   Gtk::ToolButton* btn;
   ui->getWidget<Gtk::ToolButton>("saveBtn", btn);
@@ -28,10 +38,14 @@ Map::Map(Settings* settings, UI* ui)
   ui->getWidget<Gtk::MenuItem>("saveAsMenu", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &Map::saveAs));
 
-  level.emplace_back(ui, tileset, 0, size);
-  ui->addLevel(&level.back());
+  Gtk::Notebook* notebook;
+  ui->getWidget<Gtk::Notebook>("notebook", notebook);
+  notebook->signal_switch_page().connect(sigc::mem_fun(*this, &Map::addLevel));
 }
 
+//-------------------
+//----- Utility -----
+//-------------------
 /*!
   Writes a map to file.
 
@@ -58,9 +72,6 @@ bool Map::saveToFile(std::string filepath)
   return true;
 }
 
-//-------------------
-//----- Utility -----
-//-------------------
 bool Map::openFile(std::string fPath)
 {
   std::ifstream file(fPath);
@@ -105,6 +116,15 @@ void Map::saveAs()
   {
     filepath = fpath;
     saveToFile(filepath);
+  }
+}
+
+void Map::addLevel(Gtk::Widget* page, uint pageNum)
+{
+  if(pageNum == level.size()) //the page is the new tab page
+  {
+    level.emplace_back(ui, tileset, level.size(), size);
+    ui->addLevel(&level.back());
   }
 }
 
