@@ -1,11 +1,5 @@
 #include "settings.h"
 
-#include "constants.h"
-
-#include <fstream>
-#include <cstdio>
-#include <limits>
-
 /*!
 	Initialize settings from default settings file.
 **/

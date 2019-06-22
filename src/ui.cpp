@@ -1,18 +1,9 @@
 #include "ui.h"
 
-#include "event.h"
-
-#include <gtkmm/cssprovider.h>
-#include <gtkmm/box.h>
-#include <gtkmm/dialog.h>
-#include <gtkmm/filechooserdialog.h>
-#include <gtkmm/label.h>
-#include <gtkmm/toolbutton.h>
-
 /*!
 
 **/
-UI::UI(Settings* settings)
+UI::UI(Settings& settings)
 : settings{settings}
 {
 	//css style
@@ -38,52 +29,6 @@ UI::UI(Settings* settings)
 }
 
 /*!
-  \bug change to get tab from notebook; remove currTab var;
-**/
-int UI::getCurrTab() const
-	{return notebook->get_current_page();}
-
-/*!
-  \bug change to get zoomSlider value; remove zoomSpeed var;
-**/
-int UI::getZoomSpeed() const
-	{return zoomSpeed;}
-
-
-void UI::addLevel(Level* level)
-{
-	//make a builder for the tab
-	auto tabBuilder = Gtk::Builder::create_from_file(uiTab);
-
-	//get the notebook
-	int currTab = getCurrTab();
-
-	//create layout
-	layout.emplace_back();
-	tabBuilder->get_widget("layout", layout.back());	
-
-	//add level to layout
-	layout.back()->add(*level);
-	level->show();
-
-	//create tab
-	Gtk::Box* tab;
-	tabBuilder->get_widget("tab", tab);
-	//set default tab label
-	Gtk::Label* tabLabel;
-	tabBuilder->get_widget("tabLabel", tabLabel);
-	tabLabel->set_label("Level " + std::to_string(currTab+1));
-
-
-	//add layout and tab to notebook; insert inplace of new tab
-	notebook->insert_page(*layout.back(), *tab, currTab);
-	//show all
-	notebook->show_all_children();
-	//set to active page
-	notebook->set_current_page(currTab);
-}
-
-/*!
   \bug overwrite confirmation does not work
 **/
 std::string UI::saveAs()
@@ -99,3 +44,15 @@ std::string UI::saveAs()
   else
   	return "";
 }
+
+/*!
+  \bug change to get tab from notebook; remove currTab var;
+**/
+int UI::getCurrTab() const
+	{return notebook->get_current_page();}
+
+/*!
+  \bug change to get zoomSlider value; remove zoomSpeed var;
+**/
+int UI::getZoomSpeed() const
+	{return zoomSpeed;}

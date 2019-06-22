@@ -1,23 +1,24 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
-
 #include "tileset.h"
 
+#include <fstream>
+#include <limits>
 #include <string>
 
 
 class Settings
 {
 	public:
-		Tileset tileset;
-		std::string tilesetFile{""};
+		Tileset tileset;             //global program tileset
+		std::string tilesetFile{""}; //file associated with the tileset
 
+		//global map defaults
 		int mapSize{0};
-		
-		int zoomSpeed{0};
-		int scrollSpeed{0};
-		bool zoomFollowsMouse{0};
-		int tabCount{0};
+
+		int zoomSpeed{5};
+		int scrollSpeed{5};
+		bool zoomFollowsMouse{true};
 
 		Settings();
 
@@ -30,8 +31,8 @@ class Settings
 		friend std::istream& operator>>(std::istream& in, Settings& settings);
 
 	private:
-		const std::string defaultSettingsFile = "./ui/config"; 
-		const std::string defaultTilesetFile = "./tiles/defaultSet";
+		const std::string defaultSettingsFile = "./ui/config";
+		const std::string defaultTilesetFile  = "./tiles/defaultSet";
 };
 
 #endif

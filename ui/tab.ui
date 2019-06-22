@@ -15,12 +15,12 @@
       </object>
     </child>
 
-    <child>
+    <!-- <child>
       <object id="tabButton" class="GtkToolButton">
         <property name="icon-name">window-close</property>
         <property name="visible">true</property>
       </object>
-    </child>
+    </child> -->
   </object>
   
 </interface>

@@ -1,16 +1,59 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "tileset.h"
-#include "level.h"
-#include "ui.h"
-#include "settings.h"
 #include "constants.h"
+#include "settings.h"
+#include "ui.h"
+#include "tileset.h"
 
+#include <fstream>
+#include <limits>
 #include <string>
 #include <vector>
 
+#include <gtkmm/box.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/drawingarea.h>
+#include <gtkmm/grid.h>
+#include <gtkmm/label.h>
+#include <gtkmm/menuitem.h>
+#include <gtkmm/notebook.h>
+#include <gtkmm/toolbutton.h>
 #include <gtkmm/widget.h>
+
+struct Tile : public Gtk::DrawingArea
+{
+  friend class Map;
+
+  Tile(const Tileset* tileset, uint tilesetTileId, int gridId, int gridSize);
+
+  //overloads
+  friend std::ostream& operator<<(std::ostream& out, const Tile& tile);
+  friend std::istream& operator>>(std::istream& in, Tile& tile);
+
+private:
+  int gridId;             // The tile's grid locaton
+  int gridSize;           // The size of the grid the tile is on
+  uint tilesetTileId;     // The id of the tilesetTile(image) this tile displays
+  const Tileset* tileset; // The Tileset this tile uses
+};
+
+struct Level : public Gtk::Grid
+{
+  friend class Map;
+
+  Level(Tileset* tileset, int id, int size);
+
+  //overloads
+  friend std::ostream& operator<<(std::ostream& out, const Level& level);
+  friend std::istream& operator>>(std::istream& in, Level& level);
+
+private:
+  int id;                 // The levels id
+  int size;               // The levels size
+  Tileset* tileset;       // The tileset that the tiles use
+  std::vector<Tile> tile; // The tiles in the level
+};
 
 /*!
   Map data structure. Tileset, and grid size for new maps default to the the global
@@ -24,9 +67,7 @@
 class Map
 {
   public:
-    std::vector<Level> level;    //array of levels for a map
-
-    Map(Settings*, UI* ui);
+    Map(Settings* settings, UI* ui);
     void signalInit();
 
     //utility
@@ -43,10 +84,11 @@ class Map
     friend std::istream& operator>>(std::istream& in, Map& map);
 
   private:
-    int size; //default level size
-    std::string filepath = "";
-    Tileset* tileset;
-    UI* ui;
+    UI* ui;                    // UI for managing interface
+    int size;                  // default level size
+    Tileset* tileset;          // The tile set that the map uses
+    std::string filepath = ""; // The file path associated with this map
+    std::vector<Level> level;  // The levels in the map
 };
 
 #endif
