@@ -1,59 +1,63 @@
 OBJD=./obj
 SRCD=./src
 
-IDIR=./headers
+INCD=./src/include
+INC=-I./src/include -I./src/template
 
 DEBUG=-g
 CFLAGS=`pkg-config --cflags --libs gtkmm-3.0` -std=c++17 $(DEBUG)
 LFLAGS=$(CFLAGS)
 
-CC=g++ $(CFLAGS) -c
+CC=g++ $(INC) $(CFLAGS) -c
 LC=g++ $(LFLAGS) -o
 
-OBJS=$(OBJD)/dungeonCartographer.o $(OBJD)/settings.o $(OBJD)/tileset.o $(OBJD)/ui.o $(OBJD)/map.o
+OBJS=dungeonCartographer.o \
+		 settings.o ui.o \
+		 map.o level.o tile.o tileset.o
 
 .PHONY: clean
 
 all: dungeonCartographer
-settings.o: $(OBJD)/settings.o
-tileset.o: $(OBJD)/tileset.o
-ui.o: $(OBJD)/ui.o
-map.o: $(OBJD)/map.o
-
 
 #--------
 #Programs
 #--------
 dungeonCartographer: $(OBJS)
-	$(LC) dungeonCartographer $(OBJD)/dungeonCartographer.o $(OBJD)/settings.o $(OBJD)/ui.o \
-				$(OBJD)/tileset.o $(OBJD)/map.o
+	$(LC) dungeonCartographer $(OBJD)/dungeonCartographer.o \
+														$(OBJD)/settings.o $(OBJD)/ui.o \
+														$(OBJD)/map.o $(OBJD)/level.o $(OBJD)/tile.o $(OBJD)/tileset.o
 
 #------------
 #Object Files
 #------------
-$(OBJD)/dungeonCartographer.o: $(SRCD)/dungeonCartographer.cpp $(SRCD)/settings.h
+dungeonCartographer.o: $(SRCD)/dungeonCartographer.cpp $(INCD)/settings.h
 	$(CC) -o $(OBJD)/dungeonCartographer.o $(SRCD)/dungeonCartographer.cpp
 
-$(OBJD)/settings.o: $(SRCD)/settings.cpp $(SRCD)/settings.h $(SRCD)/tileset.h
+settings.o: $(SRCD)/settings.cpp $(INCD)/settings.h $(INCD)/tileset.h
 	$(CC) -o $(OBJD)/settings.o $(SRCD)/settings.cpp
 
-$(OBJD)/ui.o: $(SRCD)/ui.cpp $(SRCD)/ui.cpp $(SRCD)/ui.h $(SRCD)/settings.h
+ui.o: $(SRCD)/ui.cpp $(SRCD)/ui.cpp $(INCD)/ui.h $(INCD)/settings.h
 	$(CC) -o $(OBJD)/ui.o $(SRCD)/ui.cpp
 
-$(OBJD)/tileset.o: $(SRCD)/tileset.cpp $(SRCD)/tileset.h $(SRCD)/constants.h
-	$(CC) -o $(OBJD)/tileset.o $(SRCD)/tileset.cpp
-
-$(OBJD)/map.o: $(SRCD)/map.cpp $(SRCD)/map.h $(SRCD)/settings.h $(SRCD)/ui.h $(SRCD)/tileset.h $(SRCD)/constants.h
+map.o: $(SRCD)/map.cpp $(INCD)/map.h $(INCD)/settings.h $(INCD)/ui.h $(INCD)/tileset.h $(INCD)/constants.h
 	$(CC) -o $(OBJD)/map.o $(SRCD)/map.cpp
 
+level.o: $(SRCD)/level.cpp $(INCD)/level.h $(INCD)/tileset.h
+	$(CC) -o $(OBJD)/level.o $(SRCD)/level.cpp
+
+tile.o: $(SRCD)/tile.cpp $(INCD)/tile.h $(INCD)/tileset.h $(INCD)/constants.h
+	$(CC) -o $(OBJD)/tile.o $(SRCD)/tile.cpp
+
+tileset.o: $(SRCD)/tileset.cpp $(INCD)/tileset.h $(INCD)/constants.h
+	$(CC) -o $(OBJD)/tileset.o $(SRCD)/tileset.cpp
 
 
 #-------
 #Utility
 #-------
 clean:
-	rm $(OBJD)/*.o
-	rm dungeonCartographer
+	rm -f $(OBJD)/*.o
+	rm -f dungeonCartographer
 
 run:
 	./dungeonCartographer

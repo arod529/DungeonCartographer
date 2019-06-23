@@ -1,28 +1,106 @@
 <interface>
 	<!-- Window Content -->
 	<object id="contentBox" class="GtkBox">
-		<property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+		<property name="orientation">vertical</property>
 
 		<!-- MENUBAR -->
 		<child>
 			<object class="GtkMenuBar">
-
 				<child>
 					<object class="GtkMenuItem">
-						<property name="label">File</property>
-						<property name="submenu">fileMenu</property>
+						<property name="label">_File</property>
+						<property name="use_underline">true</property>
+						<child type="submenu">
+							<object class="GtkMenu">
+								<child>
+									<object id="menu_new" class="GtkImageMenuItem">
+										<property name="label">gtk-new</property>
+										<property name="use_underline">true</property>
+										<property name="use_stock">true</property>
+									</object>
+								</child>
+								<child>
+									<object id="menu_open" class="GtkImageMenuItem">
+										<property name="label">gtk-open</property>
+										<property name="use_underline">true</property>
+										<property name="use_stock">true</property>
+									</object>
+								</child>
+								<child>
+									<object id="menu_openRecent" class="GtkMenuItem">
+										<property name="label">Open _Recent</property>
+										<property name="use_underline">true</property>
+										<child type="submenu">
+	                    <object class="GtkRecentChooserMenu">
+	                      <property name="limit">10</property>
+	                    </object>
+	                  </child>
+									</object>
+								</child>
+								<child>
+                  <object class="GtkSeparatorMenuItem"></object>
+                </child>
+								<child>
+									<object id="menu_save" class="GtkImageMenuItem">
+										<property name="label">gtk-save</property>
+										<property name="use_underline">true</property>
+										<property name="use_stock">true</property>
+									</object>
+								</child>
+								<child>
+									<object id="menu_saveAs" class="GtkImageMenuItem">
+										<property name="label">gtk-save-as</property>
+										<property name="use_underline">true</property>
+										<property name="use_stock">true</property>
+									</object>
+								</child>
+								<child>
+                  <object class="GtkSeparatorMenuItem"></object>
+                </child>
+              	<child>
+                  <object class="GtkImageMenuItem">
+                    <property name="label">gtk-print</property>
+                    <property name="use_underline">True</property>
+                    <property name="use_stock">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkSeparatorMenuItem"></object>
+                </child>
+                <child>
+									<object id="menu_quit" class="GtkImageMenuItem">
+										<property name="label">gtk-quit</property>
+										<property name="use_underline">true</property>
+										<property name="use_stock">true</property>
+									</object>
+								</child>
+							</object>
+						</child>
 					</object>
 				</child>
 
 				<child>
 					<object class="GtkMenuItem">
-						<property name="label">About</property>
+						<property name="label">_Settings</property>
+						<property name="use_underline">true</property>
 					</object>
 				</child>
 
 				<child>
 					<object class="GtkMenuItem">
-						<property name="label">Help</property>
+						<property name="label">_Help</property>
+						<property name="use_underline">true</property>
+						<child type="submenu">
+              <object class="GtkMenu">
+                <child>
+                  <object class="GtkImageMenuItem">
+                    <property name="label">gtk-about</property>
+                    <property name="use_underline">True</property>
+                    <property name="use_stock">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
 					</object>
 				</child>
 
@@ -39,6 +117,7 @@
 					<object id="newMap" class="GtkToolButton">
 						<property name="icon-name">document-new</property>
 						<property name="label">New</property>
+						<property name="tooltip_text">New</property>
 					</object>
 				</child>
 
@@ -46,20 +125,28 @@
 					<object id="openMap" class="GtkMenuToolButton">
 						<property name="icon-name">document-open</property>
 						<property name="label">Open</property>
+						<property name="tooltip_text">Open</property>
+						<child type="menu">
+              <object class="GtkRecentChooserMenu">
+                <property name="limit">10</property>
+              </object>
+            </child>
 					</object>
 				</child>
 
 				<child>
-					<object id="saveBtn" class="GtkToolButton">
+					<object id="btn_save" class="GtkToolButton">
 						<property name="icon-name">document-save</property>
 						<property name="label">Save</property>
+						<property name="tooltip_text">Save</property>
 					</object>
 				</child>
 
 				<child>
-					<object id="saveAsBtn" class="GtkToolButton">
+					<object id="btn_saveAs" class="GtkToolButton">
 						<property name="icon-name">document-save-as</property>
 						<property name="label">Save As</property>
+						<property name="tooltip_text">Save As</property>
 					</object>
 				</child>
 
@@ -71,6 +158,7 @@
 					<object id="zoom[0]" class="GtkToolButton">
 						<property name="icon-name">zoom-in</property>
 						<property name="label">Zoom In</property>
+						<property name="tooltip_text">Zoom In</property>
 					</object>
 				</child>
 
@@ -78,6 +166,7 @@
 					<object id="zoom[1]" class="GtkToolButton">
 						<property name="icon-name">zoom-out</property>
 						<property name="label">Zoom Out</property>
+						<property name="tooltip_text">Zoom Out</property>
 					</object>
 				</child>
 
@@ -85,6 +174,7 @@
 					<object id="zoomFit" class="GtkToolButton">
 						<property name="icon-name">zoom-fit-best</property>
 						<property name="label">Zoom To Fit</property>
+						<property name="tooltip_text">Zoom To Fit</property>
 					</object>
 				</child>
 
@@ -100,6 +190,7 @@
 						<property name="icon-name">emblem-system</property>
 						<property name="label">Settings</property>
 						<property name="hexpand">true</property>
+						<property name="tooltip_text">Settings</property>
 					</object>
 				</child>
 
@@ -120,27 +211,25 @@
 
 				<child>
 					<object id="zoomBox" class="GtkBox">
-					<property name="orientation">GTK_ORIENTATION_VERTICAL</property>
-					<style>
-	    			<class name="zoomBox"/>
-	  			</style>
+						<property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+						<style><class name="zoomBox"/></style>
 
-					<child>
-						<object class="GtkLabel">
-							<property name="label">Zoom Speed</property>
-							<property name="xalign">.01</property>
-						</object>
-					</child>
+						<child>
+							<object class="GtkLabel">
+								<property name="label">Zoom Speed</property>
+								<property name="xalign">.01</property>
+							</object>
+						</child>
 
-					<child>
-						<object id="zoomSpeedSlider" class="GtkScale">
-							<property name="adjustment">zoomAdjustment</property>
-							<property name="has-origin">true</property>
-							<property name="draw-value">true</property>
-							<property name="value-pos">GTK_POS_RIGHT</property>
-							<property name="digits">0</property>
-						</object>
-					</child>
+						<child>
+							<object id="zoomSpeedSlider" class="GtkScale">
+								<property name="adjustment">zoomAdjustment</property>
+								<property name="has-origin">true</property>
+								<property name="draw-value">true</property>
+								<property name="value-pos">GTK_POS_RIGHT</property>
+								<property name="digits">0</property>
+							</object>
+						</child>
 
 					</object>
 				</child>
@@ -179,9 +268,7 @@
 				<property name="scrollable">true</property>
 
 				<child>
-					<object id="newLevelTab" class="GtkBox">
-						<property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
-					</object>
+					<object class="GtkBox"></object>
 				</child>
 
 				<child type="tab">
@@ -213,39 +300,5 @@
 		<property name="value">5</property>
 	</object>
 	<!-- /ADJUSTMENTS -->
-
-	<!-- MENUS -->
-	<object id="fileMenu" class="GtkMenu">
-
-		<child>
-			<object class="GtkMenuItem">
-				<property name="label">New</property>
-			</object>
-		</child>
-
-		<child>
-			<object class="GtkMenuItem">
-				<property name="label">Open</property>
-			</object>
-		</child>
-
-		<child>
-			<object class="GtkSeparatorMenuItem"></object>
-		</child>
-
-		<child>
-			<object id="saveMenu" class="GtkMenuItem">
-				<property name="label">Save</property>
-			</object>
-		</child>
-
-		<child>
-			<object id="saveAsMenu" class="GtkMenuItem">
-				<property name="label">Save As</property>
-			</object>
-		</child>
-
-	</object>
-	<!-- /MENUS -->
 
 </interface>

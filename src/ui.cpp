@@ -56,3 +56,4 @@ int UI::getCurrTab() const
 **/
 int UI::getZoomSpeed() const
 	{return zoomSpeed;}
+	

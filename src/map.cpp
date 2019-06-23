@@ -1,8 +1,18 @@
 #include "map.h"
 
-//------------------------
-//----- INITIALIZERS -----
-//------------------------
+#include <limits> //operator>>
+
+//signalInit()
+#include <gtkmm/menuitem.h>
+#include <gtkmm/notebook.h> 
+#include <gtkmm/toolbutton.h>
+
+//addLevel()
+#include <gtkmm/builder.h>
+#include <gtkmm/box.h>
+#include <gtkmm/label.h>
+#include <gtkmm/widget.h>
+
 /*!
   Initializes a map with defaults from Settings. Creates a starting Level.
 
@@ -17,48 +27,18 @@ Map::Map(Settings* settings, UI* ui)
   addLevel(NULL, 0);
 }
 
-Level::Level(Tileset* tileset, int id, int size)
-: tileset{tileset}, id{id}, size{size}
-{
-  //set grid properties
-  set_row_homogeneous(true); set_column_homogeneous(true);
-  set_row_spacing(0); set_column_spacing(0);
-  get_style_context()->add_class("mainWindow");
-
-  //Fill level with background tiles
-  for(int i = 0; i < size*size; i++)
-  {
-    tile.emplace_back(tileset, BACKGROUND, i, size);
-    attach(tile[i], i%size, i/size, 1, 1);
-  }
-};
-
-Tile::Tile(const Tileset* tileset, uint tilesetTileId, int gridId, int gridSize)
-: tileset{tileset}, tilesetTileId{tilesetTileId}, gridId{gridId}, gridSize{gridSize}
-{
-  //set drawing area properties
-  set_can_focus(true);
-  set_size_request(25,25);
-
-  //mouse click mask
-  add_events(Gdk::EventMask::BUTTON_PRESS_MASK);
-
-  //make them visible
-  show();
-};
-
 void Map::signalInit()
 {
   Gtk::ToolButton* btn;
-  ui->getWidget<Gtk::ToolButton>("saveBtn", btn);
+  ui->getWidget<Gtk::ToolButton>("btn_save", btn);
   btn->signal_clicked().connect(sigc::mem_fun(*this, &Map::save));
-  ui->getWidget<Gtk::ToolButton>("saveAsBtn", btn);
+  ui->getWidget<Gtk::ToolButton>("btn_saveAs", btn);
   btn->signal_clicked().connect(sigc::mem_fun(*this, &Map::saveAs));
 
   Gtk::MenuItem* menu;
-  ui->getWidget<Gtk::MenuItem>("saveMenu", menu);
+  ui->getWidget<Gtk::MenuItem>("menu_save", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &Map::save));
-  ui->getWidget<Gtk::MenuItem>("saveAsMenu", menu);
+  ui->getWidget<Gtk::MenuItem>("menu_saveAs", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &Map::saveAs));
 
   Gtk::Notebook* notebook;
@@ -180,73 +160,6 @@ std::istream& operator>>(std::istream& in, Map& map)
     {map.tileset = new Tileset(tilesetFile);}
 
   in.ignore(MAX, '\n'); //getline doesn't eat this newline
-
-  //leave stream in good state by discarding empty lines
-  while(in.peek() == '\n')
-    {in.get();}
-
-  return in;
-}
-
-std::ostream& operator<<(std::ostream& out, const Level& level)
-{
-  out << "Level["
-       << level.id << ','
-       << level.size << ','
-       << level.tileset->filepath << ']' << '\n';
-  out.flush();
-  return out;
-}
-
-std::istream& operator>>(std::istream& in, Level& level)
-{
-  static const std::streamsize MAX = std::numeric_limits<std::streamsize>::max();
-
-  in.ignore(MAX, '[');
-  in >> level.id;
-  in.get(); //discard comma
-  in >> level.size;
-  in.get(); //discard comma
-
-  std::string tilesetFile = "";
-  std::getline(in, tilesetFile, ']');
-  if(!level.tileset->isTileset(tilesetFile))
-    {level.tileset = new Tileset(tilesetFile);}
-
-  in.ignore(MAX, '\n'); //getline doesn't eat this newline
-
-  //leave stream in good state by discarding empty lines
-  while(in.peek() == '\n')
-    {in.get();}
-
-  return in;
-}
-
-/*!
-  Writes a Tile to a file stream.
-**/
-std::ostream& operator<<(std::ostream& out, const Tile& tile)
-{
-  if(tile.gridId%tile.gridSize != 0)
-  {
-    out.seekp(-1, std::ios::cur);
-    out << '|';
-  }
-
-  out << tile.tilesetTileId << '\n';
-  out.flush();
-  return out;
-}
-
-/*!
-  Reads a Tile from a file stream.
-
-  The Tile must have a valid tileLvl, and therefore cannot be initialized with this.
-**/
-std::istream& operator>>(std::istream& in, Tile& tile)
-{
-  in >> tile.tilesetTileId;
-  if(in.peek() == '|') in.get(); //scrap separator
 
   //leave stream in good state by discarding empty lines
   while(in.peek() == '\n')

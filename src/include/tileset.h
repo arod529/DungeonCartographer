@@ -17,6 +17,7 @@
 **/
 struct TilesetTile
 {
+  friend class Tile;
 public:
   //accessors
   uint getId() const;
