@@ -4,6 +4,9 @@
 
 #include <gdkmm/general.h> //on_draw()::set_source_pixbuf()
 
+/*!
+  Initilizes a Tile, adds mouse click mask, and makes visible.
+**/
 Tile::Tile(Tileset* tileset, uint tileId, int gridId, int gridSize)
 : tileset{tileset}, tileId{tileId}, gridId{gridId}, gridSize{gridSize}
 {
@@ -21,6 +24,7 @@ Tile::Tile(Tileset* tileset, uint tileId, int gridId, int gridSize)
 //-------------------
 //----- Utility -----
 //-------------------
+
 /*!
   Get an array of adjacent tile exists truths. Each value in the array describes
   whether the tile adjacent to the calling tile exists. The directions are: \n
@@ -73,8 +77,11 @@ void Tile::getAdjacentIndex(int* adjacentIndex)
 //--------------------------
 //----- Event Handlers -----
 //--------------------------
+
 /*!
   The draw event of the tile.
+
+  @param[in] cr The Cairo::Context associated with the draw event.
 **/
 bool Tile::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
@@ -89,9 +96,6 @@ bool Tile::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 //---------------------
 //----- Overloads -----
 //---------------------
-/*!
-  Writes a Tile to a file stream.
-**/
 std::ostream& operator<<(std::ostream& out, const Tile& tile)
 {
   if(tile.gridId%tile.gridSize != 0)
@@ -105,9 +109,6 @@ std::ostream& operator<<(std::ostream& out, const Tile& tile)
   return out;
 }
 
-/*!
-  Reads a Tile from a file stream.
-**/
 std::istream& operator>>(std::istream& in, Tile& tile)
 {
   in >> tile.tileId;

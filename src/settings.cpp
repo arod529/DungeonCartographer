@@ -16,7 +16,9 @@ Settings::Settings()
 /*!
   Load Settings from a file on disk.
 
-  @return Whether or not the load was successful.
+	@param[in] fPath The path to the settings file.
+
+  @return Load was successful.
 **/
 bool Settings::loadSettingsFile(const std::string fPath)
 {
@@ -39,6 +41,8 @@ bool Settings::loadSettingsFile(const std::string fPath)
 
 /*!
   Writes a default Settings file to disk.
+
+  @return File write success.
 **/
 bool Settings::writeDefaultSettingsFile()
 {
@@ -66,6 +70,9 @@ bool Settings::writeDefaultSettingsFile()
 	return true;
 }
 
+//---------------------
+//----- Overloads -----
+//---------------------
 std::ostream& operator<<(std::ostream& out, const Settings& settings)
 {
 	out << "Tileset=" << settings.tilesetFile << '\n'

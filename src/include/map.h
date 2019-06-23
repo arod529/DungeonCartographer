@@ -8,6 +8,7 @@
 #include "level.h"     //level
 
 #include <fstream> //operator<<|operator>>
+#include <memory>  //level
 #include <string>  //saveToFile()|openFile()|filepath
 #include <vector>  //level
 
@@ -26,7 +27,7 @@ class Map
 {
   public:
     Map(Settings* settings, UI* ui);
-    void signalInit();
+    void sigInit();
 
     //utility
     bool saveToFile(std::string filepath);
@@ -42,11 +43,11 @@ class Map
     friend std::istream& operator>>(std::istream& in, Map& map);
 
   private:
-    UI* ui;                    // UI for managing interface
-    int size;                  // default level size
-    Tileset* tileset;          // The tile set that the map uses
-    std::string filepath = ""; // The file path associated with this map
-    std::vector<Level> level;  // The levels in the map
+    UI* ui;                                    // UI for managing interface
+    int size;                                  // default level size
+    Tileset* tileset;                          // The tile set that the map uses
+    std::string filepath = "";                 // The file path associated with this map
+    std::vector<std::unique_ptr<Level>> level; // The levels in the map
 };
 
 #endif

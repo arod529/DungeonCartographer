@@ -3,6 +3,12 @@
 //-------------------
 //----- Tileset -----
 //-------------------
+
+/*!
+  Initilizes the Tileset by loading a file.
+
+  @param[in] fpath The path to the file to load.
+**/
 Tileset::Tileset(std::string fpath)
 : filepath{fpath}
 {
@@ -51,14 +57,28 @@ bool Tileset::loadFile(std::string fpath)
   return true;
 }
 
+/*!
+  Reloads the Tileset from the current file.
+**/
 bool Tileset::reload()
   {return loadFile(filepath);}
 
+/*!
+  Determines if the Tileset is using the file.
+
+  @param[in] fpath The path of the file to compare to.
+
+  @return Whether the Tileset is using the file.
+**/
 bool Tileset::isTileset(std::string fpath)
   {return (fpath == filepath);}
 
 /*!
   Writes a default Tileset file to disk.
+
+  @param[in] fpath The file path to write the file too.
+
+  @return The file write success
 **/
 bool Tileset::writeDefaultTilesetFile(std::string fpath)
 {
@@ -138,23 +158,9 @@ bool Tileset::writeDefaultTilesetFile(std::string fpath)
   return true;
 }
 
-//------------------------
-//----- Tileset Tile -----
-//------------------------
-uint TilesetTile::getId() const
-  {return id;}
-
-std::string TilesetTile::getName() const
-  {return name;}
-
-std::string TilesetTile::getFilePath() const
-  {return (std::string)filePath;}
-
-/*!
-  Initialize a TilesetTile from a file stream.
-
-  Creates a new pixbuf.
-**/
+//---------------------
+//----- Overloads -----
+//---------------------
 std::istream& operator>>(std::istream& in, TilesetTile& tilesettile)
 {
   static const std::streamsize MAX = std::numeric_limits<std::streamsize>::max();

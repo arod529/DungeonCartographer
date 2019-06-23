@@ -19,17 +19,21 @@
   Initializes a map with defaults from Settings. Creates a starting Level.
 
   @param[in] settings The program settings
+  @param[in] ui The ui
 **/
 Map::Map(Settings* settings, UI* ui)
 : size{settings->mapSize}
 , tileset{&settings->tileset}
 , ui{ui}
 {
-  signalInit();
+  sigInit();
   addLevel(NULL, 0);
 }
 
-void Map::signalInit()
+/*!
+  Initilizes signal events managed by Map
+**/
+void Map::sigInit()
 {
   Gtk::ToolButton* btn;
   ui->getWidget<Gtk::ToolButton>("btn_save", btn);
@@ -51,6 +55,7 @@ void Map::signalInit()
 //-------------------
 //----- Utility -----
 //-------------------
+
 /*!
   Writes a map to file.
 
@@ -66,10 +71,11 @@ bool Map::saveToFile(std::string filepath)
   //append levels to file
   for(int i = 0; i < level.size(); i++)
   {
-    file << level[i];
-    for(int j = 0; j < level[i].tile.size(); j++)
+    file << *level[i];
+    //append tiles to file
+    for(int j = 0; j < level[i]->tile.size(); j++)
     {
-      file << level[i].tile[j];
+      file << *level[i]->tile[j];
     }
   }
 
@@ -80,6 +86,11 @@ bool Map::saveToFile(std::string filepath)
 //--------------------------
 //----- Event Handlers -----
 //--------------------------
+
+/*!
+  Saves to the file associated with the Map.
+  If there is no file associated, displays save as dialog.
+**/
 void Map::save()
 {
   if(filepath == "") //there is no associated file
@@ -88,9 +99,12 @@ void Map::save()
     saveToFile(filepath);
 }
 
+/*!
+  Displays a save as dialog, and subsequently saves the file if a name is chosen.
+**/
 void Map::saveAs()
 {
-  //request save as dialogue
+  //request save as dialog
   std::string fpath{ui->saveAs()};
 
   if(fpath != "")
@@ -100,11 +114,17 @@ void Map::saveAs()
   }
 }
 
+/*!
+  Creates a new Level and adds it to the UI.
+
+  @param[in] page unused; gtk_signal requirement
+  @param[in] pageNum The page to add the level to.
+**/
 void Map::addLevel(Gtk::Widget* page, uint pageNum)
 {
   if(pageNum == level.size()) //the page is the new tab page
   {
-    level.emplace_back(tileset, pageNum, size);
+    level.emplace_back(std::make_unique<Level>(tileset, pageNum, size));
 
     //make a builder for the tab
     auto tabBuilder = Gtk::Builder::create_from_file(ui->uiTab);
@@ -116,7 +136,7 @@ void Map::addLevel(Gtk::Widget* page, uint pageNum)
     tabBuilder->get_widget("viewport", viewport);
 
     //add level viewport
-    viewport->add(level[pageNum]);
+    viewport->add(*level[pageNum]);
 
     //get the current tab
     int currTab = ui->getCurrTab();
@@ -131,22 +151,7 @@ void Map::addLevel(Gtk::Widget* page, uint pageNum)
     //show all
     ui->notebook->show_all_children();
     //set to active page
-    ui->notebook->set_current_page(currTab); //causes seg fault on exit if tab not changed
-    
-    /*!
-      \bug closing program when no new tab is created causes segfault;
-           not setting current page and selecting the first page causes segfault on exit;
-           creating a new page does not cause segfault on exit on any tab;
-           creating a new page progamatically(calling newLevel()) does not result in
-           segfault on any tab;
-
-      \bug creating a new page progamatically resutls in the second page not responding
-           to click events;
-           creating a new page causes the old page to not respond to click events,
-           this seems to work/notwork in a predictable pattern
-
-
-    **/
+    ui->notebook->set_current_page(currTab);
   }
 }
 

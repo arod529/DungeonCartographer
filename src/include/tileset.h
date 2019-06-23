@@ -19,19 +19,15 @@ struct TilesetTile
 {
   friend class Tile;
 public:
-  //accessors
-  uint getId() const;
-  std::string getName() const;
-  std::string getFilePath() const;
 
   //overloads
   friend std::istream& operator>>(std::istream& in, TilesetTile& tilesettile);
 
 private:
-  uint id;
-  std::string name;
-  std::string filePath;
-  Glib::RefPtr<Gdk::Pixbuf> pixbuf;
+  uint id;                          // The id representing the image
+  std::string name;                 // The display name of the image
+  std::string filePath;             // The path to the image
+  Glib::RefPtr<Gdk::Pixbuf> pixbuf; // A pixbuf created from the image
 };
 
 class Tileset

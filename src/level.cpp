@@ -3,6 +3,9 @@
 #include <limits> //operator>>
 #include <string> //operator>>
 
+/*!
+  Initilizes a level and fills it with background tiles.
+**/
 Level::Level(Tileset* tileset, int id, int size)
 : tileset{tileset}, id{id}, size{size}
 {
@@ -14,16 +17,19 @@ Level::Level(Tileset* tileset, int id, int size)
   //Fill level with background tiles
   for(int i = 0; i < size*size; i++)
   {
-    tile.emplace_back(tileset, BACKGROUND, i, size);
-    attach(tile[i], i%size, i/size, 1, 1);
+    tile.emplace_back(std::make_unique<Tile>(tileset, BACKGROUND, i, size));
+    attach(*tile[i], i%size, i/size, 1, 1);
   }
-  sigConnect();
+  sigInit();
 }
 
-void Level::sigConnect()
+/*!
+  Initilizes the signals managed by Level
+**/
+void Level::sigInit()
 {
   for(int i = 0; i < size*size; i++)
-    tile[i].signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[i].gridId), false);
+    (*tile[i]).signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[i]->gridId), false);
 
 }
 
@@ -44,15 +50,20 @@ void Level::sigConnect()
     2a) If the adjacent tile exists and is a room.
       2a1.1) If this tile was a room (is now background), add shared wall to adjacent tile.
       2a1.2) If the tile was background (is now a room), remove shared wall of this tile
-               and adjacent tile
+               and adjacent tile.
       2a2) Add adjacent tile to draw queue.
   ^<-
   3) Update corner bits of this tile.
 </pre>
+
+  @param[in] btn unused; gtk_signal requirement.
+  @param[in] gridId The grid id of the tile to update.
+
+  @return Indicates that the event has been fully handled; gtk_signal requirement.
 **/
 bool Level::updateTile(GdkEventButton* btn, int gridId)
 {
-  Tile* tile = &this->tile[gridId]; //the tile to update
+  Tile* tile = this->tile[gridId].get(); //the tile to update
   Tile* aTile = NULL;         //adjacent tile
 
   //adjacent tile exist truths
@@ -77,7 +88,7 @@ bool Level::updateTile(GdkEventButton* btn, int gridId)
   {
     if(tileExists[i]) //adjacent tile exists
     {
-      aTile = &this->tile[a[i]]; //get adjacent tile
+      aTile = this->tile[a[i]].get(); //get adjacent tile
 
       if (aTile->tileId < BACKGROUND) //adjacent tile is a room
       {
@@ -131,10 +142,13 @@ bool Level::updateTile(GdkEventButton* btn, int gridId)
   5) Queue draw for this tile.
   6) Unlock tile.
 </pre>
+
+  @param[in] gridId The grid id of the tile to update.
+  @param[in] propagate Weather the update should propagate to other tiles.
 **/
 void Level::updateCornerBits(int gridId, bool propagate)
 {
-  Tile* tile = &this->tile[gridId];
+  Tile* tile = this->tile[gridId].get();
 
   if(tile->locked) return; //don't run if this tile already part of recursion chain
   tile->locked = true;     //lock the function for this tile
@@ -174,7 +188,7 @@ void Level::updateCornerBits(int gridId, bool propagate)
 
     if(tileExists[j]) //corner tile exists
     {
-      aTile = &this->tile[a[j]];
+      aTile = this->tile[a[j]].get();
 
       //don't update this tile if it is background AND
       //update adjacent if not a background tile
@@ -208,7 +222,7 @@ void Level::updateCornerBits(int gridId, bool propagate)
       {
         if(propagate)
         {
-          aTile = &this->tile[a[(int)(pow[0]+2)%4]]; //get the adjacent tile
+          aTile = this->tile[a[(int)(pow[0]+2)%4]].get(); //get the adjacent tile
           updateCornerBits(aTile->gridId, false);
         } 
       }

@@ -1,7 +1,9 @@
 #include "ui.h"
 
 /*!
+	Initilizes the program UI.
 
+	@param[in] settings The settings to use for initial set up.
 **/
 UI::UI(Settings& settings)
 : settings{settings}
@@ -29,6 +31,10 @@ UI::UI(Settings& settings)
 }
 
 /*!
+  Dipslays a save as dialog.
+
+  @return The file path to the chosen file.
+
   \bug overwrite confirmation does not work
 **/
 std::string UI::saveAs()
@@ -46,7 +52,9 @@ std::string UI::saveAs()
 }
 
 /*!
-  \bug change to get tab from notebook; remove currTab var;
+  Get the index of active tab.
+
+  @return The active tab's index.
 **/
 int UI::getCurrTab() const
 	{return notebook->get_current_page();}
