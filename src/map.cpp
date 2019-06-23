@@ -11,7 +11,9 @@
 #include <gtkmm/builder.h>
 #include <gtkmm/box.h>
 #include <gtkmm/label.h>
+#include <gtkmm/scrolledwindow.h>
 #include <gtkmm/widget.h>
+#include <gtkmm/viewport.h>
 
 /*!
   Initializes a map with defaults from Settings. Creates a starting Level.
@@ -102,35 +104,49 @@ void Map::addLevel(Gtk::Widget* page, uint pageNum)
 {
   if(pageNum == level.size()) //the page is the new tab page
   {
-    level.emplace_back(tileset, pageNum, size);  
+    level.emplace_back(tileset, pageNum, size);
 
     //make a builder for the tab
     auto tabBuilder = Gtk::Builder::create_from_file(ui->uiTab);
 
-    //get the notebook
+    //get scrolled window and viewport
+    Gtk::ScrolledWindow* scrolledWindow;
+    tabBuilder->get_widget("scrolledWindow", scrolledWindow);
+    Gtk::Viewport* viewport;
+    tabBuilder->get_widget("viewport", viewport);
+
+    //add level viewport
+    viewport->add(level[pageNum]);
+
+    //get the current tab
     int currTab = ui->getCurrTab();
 
-    //create layout
-    ui->layout.emplace_back();
-    tabBuilder->get_widget("layout", ui->layout.back());  
-
-    //add level to layout
-    ui->layout.back()->add(level[pageNum]);
-
     //create tab
-    Gtk::Box* tab;
-    tabBuilder->get_widget("tab", tab);
-    //set default tab label
     Gtk::Label* tabLabel;
     tabBuilder->get_widget("tabLabel", tabLabel);
     tabLabel->set_label("Level " + std::to_string(currTab+1));
 
-    //add layout and tab to notebook; insert inplace of new tab
-    ui->notebook->insert_page(*ui->layout.back(), *tab, currTab);
+    //add scrolled window and tab to notebook; insert inplace of new tab
+    ui->notebook->insert_page(*scrolledWindow, *tabLabel, currTab);
     //show all
     ui->notebook->show_all_children();
     //set to active page
-    ui->notebook->set_current_page(currTab);
+    ui->notebook->set_current_page(currTab); //causes seg fault on exit if tab not changed
+    
+    /*!
+      \bug closing program when no new tab is created causes segfault;
+           not setting current page and selecting the first page causes segfault on exit;
+           creating a new page does not cause segfault on exit on any tab;
+           creating a new page progamatically(calling newLevel()) does not result in
+           segfault on any tab;
+
+      \bug creating a new page progamatically resutls in the second page not responding
+           to click events;
+           creating a new page causes the old page to not respond to click events,
+           this seems to work/notwork in a predictable pattern
+
+
+    **/
   }
 }
 
