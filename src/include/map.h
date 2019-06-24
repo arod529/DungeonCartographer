@@ -15,13 +15,7 @@
 #include <gtkmm/widget.h> //addLevel()
 
 /*!
-  Map data structure. Tileset, and grid size for new maps default to the the global
-  values in Settings.
-
-  \bug make level private
-  \bug incomplete definition
-  \bug add map file
-  \bug tileset should be pointer? have global in seetings?
+  Map data structure. Handles map file manipulation, and Level interface with the UI.
 **/
 class Map
 {
@@ -30,13 +24,15 @@ class Map
     void sigInit();
 
     //utility
+    void addLevel(uint pageNum);
+    bool loadFile(std::string filepath);
     bool saveToFile(std::string filepath);
-    bool openFile(std::string filepath);
 
     //event handlers
+    void createNewLevel(Gtk::Widget* page = NULL, uint pageNum = 0);
+    void open();
     void save();
     void saveAs();
-    void addLevel(Gtk::Widget* page, uint pageNum);
 
     //overloads
     friend std::ostream& operator<<(std::ostream& out, const Map& map);

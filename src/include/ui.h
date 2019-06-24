@@ -27,7 +27,7 @@ public:
 	UI(Settings& settings);
 
 	std::string saveAs();
-	// void addLevel(Gtk::Grid* level);
+	std::string openFile();
 	
 	int getCurrTab() const;
 	int getZoomSpeed() const;

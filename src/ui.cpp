@@ -52,6 +52,26 @@ std::string UI::saveAs()
 }
 
 /*!
+  Dipslays a save as dialog.
+
+  @return The file path to the chosen file.
+
+  \bug overwrite confirmation does not work
+**/
+std::string UI::openFile()
+{
+	auto dOpen = Gtk::FileChooserDialog(*this, "Open", Gtk::FileChooserAction::FILE_CHOOSER_ACTION_OPEN);
+	dOpen.add_button("Open", 1);
+	dOpen.add_button("Cancel", 0);
+  auto response = dOpen.run();
+
+  if(response)
+  	return dOpen.get_filename();
+  else
+  	return "";
+}
+
+/*!
   Get the index of active tab.
 
   @return The active tab's index.

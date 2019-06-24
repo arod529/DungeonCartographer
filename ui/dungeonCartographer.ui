@@ -122,7 +122,7 @@
 				</child>
 
 				<child>
-					<object id="openMap" class="GtkMenuToolButton">
+					<object id="btn_open" class="GtkMenuToolButton">
 						<property name="icon-name">document-open</property>
 						<property name="label">Open</property>
 						<property name="tooltip_text">Open</property>
@@ -266,6 +266,7 @@
 		<child>
 			<object id="notebook" class="GtkNotebook">
 				<property name="scrollable">true</property>
+				<property name="enable_popup">true</property>
 
 				<child>
 					<object class="GtkBox"></object>

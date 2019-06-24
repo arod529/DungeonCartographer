@@ -30,6 +30,9 @@ private:
   Glib::RefPtr<Gdk::Pixbuf> pixbuf; // A pixbuf created from the image
 };
 
+/*!
+  Tileset data structure. Manages tileset files.
+**/
 class Tileset
 {
 public:

@@ -9,6 +9,10 @@
 #include <glibmm/refptr.h>     //on_draw()
 #include <gtkmm/drawingarea.h> //inheritance
 
+/*!
+  Tile data structure. Handles draw updates, provides information functions about the
+  surrounding Tiles.
+**/
 struct Tile : public Gtk::DrawingArea
 {
   friend class Level; //Tile is owned by Level

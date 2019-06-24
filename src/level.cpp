@@ -4,6 +4,25 @@
 #include <string> //operator>>
 
 /*!
+  Initilizes a level from a file
+**/
+Level::Level(Tileset* tileset, std::ifstream& file)
+: tileset{tileset}
+{
+  //get level from file
+  file >> *this;
+
+  //fill with tiles
+  for(int i = 0; i < size*size; i++)
+  {
+    createNewTile();
+    file >> *tile.back();
+  }
+  //connect signals
+  sigInit();
+}
+
+/*!
   Initilizes a level and fills it with background tiles.
 **/
 Level::Level(Tileset* tileset, int id, int size)
@@ -17,9 +36,9 @@ Level::Level(Tileset* tileset, int id, int size)
   //Fill level with background tiles
   for(int i = 0; i < size*size; i++)
   {
-    tile.emplace_back(std::make_unique<Tile>(tileset, BACKGROUND, i, size));
-    attach(*tile[i], i%size, i/size, 1, 1);
+    createNewTile();
   }
+  //connect signals
   sigInit();
 }
 
@@ -36,6 +55,13 @@ void Level::sigInit()
 //-------------------
 //----- Utility -----
 //-------------------
+
+void Level::createNewTile()
+{
+  int i = tile.size();
+  tile.emplace_back(std::make_unique<Tile>(tileset, BACKGROUND, i, size));
+  attach(*tile[i], i%size, i/size, 1, 1);
+}
 
 /*!
   Updates the tile by either making it a room or a background tile based

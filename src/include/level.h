@@ -10,14 +10,19 @@
 
 #include <gtkmm/grid.h> //inheritance
 
+/*!
+  Level data structure. Handles Tile updates.
+**/
 struct Level : public Gtk::Grid
 {
   friend class Map; //Level is owned by Map
 
   Level(Tileset* tileset, int id, int size);
+  Level(Tileset* tileset, std::ifstream& file);
   void sigInit();
 
   //utility
+  void createNewTile();
   bool updateTile(GdkEventButton* btn, int gridId);
   void updateCornerBits(int gridId, bool propagate);
 
