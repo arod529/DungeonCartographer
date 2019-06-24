@@ -8,15 +8,11 @@
 
 #include <glibmm/refptr.h>
 
-#include <gtkmm/box.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/cssprovider.h>
-#include <gtkmm/dialog.h>
-#include <gtkmm/filechooserdialog.h>
-#include <gtkmm/layout.h>
 #include <gtkmm/label.h>
 #include <gtkmm/notebook.h>
-#include <gtkmm/toolbutton.h>
+#include <gdkmm/pixbuf.h>
 #include <gtkmm/window.h>
 
 class UI : public Gtk::Window
@@ -28,22 +24,26 @@ public:
 
 	std::string saveAs();
 	std::string openFile();
-	
-	int getCurrTab() const;
-	int getZoomSpeed() const;
+
+	void addTab(uint pageNum, Gtk::Widget* widget);
+	void clearTabs();
+	double getScrollSpeed();
+	void scroll(double dx, double dy);
+	void zoom(int scrollDir, int gridSize, Gtk::Widget* widget);
+
 
 	template <class T> void getWidget(std::string name, T*& widget);
 
 private:
 	//access to static window elements
 	Glib::RefPtr<Gtk::Builder> builder;
-	//vector for containing level containers
-	std::vector<Gtk::Layout*> layout;
 	//notebook
 	Gtk::Notebook* notebook;
+	//icon
+	std::vector<Glib::RefPtr<Gdk::Pixbuf>> iconList;
 	
-	Settings settings;
-	int zoomSpeed{5};
+	// Settings settings;
+	// int zoomSpeed{5};
 
 	const char* uiFile  = (char*)"./ui/dungeonCartographer.ui";
 	const char* uiTab   = (char*)"./ui/tab.ui";

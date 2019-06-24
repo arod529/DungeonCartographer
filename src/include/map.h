@@ -21,18 +21,7 @@ class Map
 {
   public:
     Map(Settings* settings, UI* ui);
-    void sigInit();
-
-    //utility
-    void addLevel(uint pageNum);
-    bool loadFile(std::string filepath);
-    bool saveToFile(std::string filepath);
-
-    //event handlers
-    void createNewLevel(Gtk::Widget* page = NULL, uint pageNum = 0);
-    void open();
-    void save();
-    void saveAs();
+    ~Map();
 
     //overloads
     friend std::ostream& operator<<(std::ostream& out, const Map& map);
@@ -40,10 +29,27 @@ class Map
 
   private:
     UI* ui;                                    // UI for managing interface
+    Settings* settings;                        // Settings for managing defaults
     int size;                                  // default level size
     Tileset* tileset;                          // The tile set that the map uses
     std::string filepath = "";                 // The file path associated with this map
     std::vector<std::unique_ptr<Level>> level; // The levels in the map
+
+    //utility
+    void addLevel(uint pageNum);
+    void clearMap();
+    bool loadFile(std::string filepath);
+    bool saveToFile(std::string filepath);
+    void sigInit();
+
+    //event handlers
+    void createNewLevel(Gtk::Widget* page = NULL, uint pageNum = 0);
+    void newMap();
+    void open();
+    void save();
+    void saveAs();
+    bool scroll(GdkEventScroll* scroll_event);
+    void zoom(int scrollDir);
 };
 
 #endif

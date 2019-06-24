@@ -20,6 +20,8 @@ Level::Level(Tileset* tileset, std::ifstream& file)
   }
   //connect signals
   sigInit();
+  //initilize properties
+  propInit();
 }
 
 /*!
@@ -28,10 +30,6 @@ Level::Level(Tileset* tileset, std::ifstream& file)
 Level::Level(Tileset* tileset, int id, int size)
 : tileset{tileset}, id{id}, size{size}
 {
-  //set grid properties
-  set_row_homogeneous(true); set_column_homogeneous(true);
-  set_row_spacing(0); set_column_spacing(0);
-  get_style_context()->add_class("mainWindow");
 
   //Fill level with background tiles
   for(int i = 0; i < size*size; i++)
@@ -40,6 +38,22 @@ Level::Level(Tileset* tileset, int id, int size)
   }
   //connect signals
   sigInit();
+  //initilize properties
+  propInit();
+}
+
+/*!
+  Initilizes Level Grid properties
+**/
+void Level::propInit()
+{
+  //set grid properties
+  set_row_homogeneous(true); set_column_homogeneous(true);
+  set_row_spacing(0); set_column_spacing(0);
+  set_border_width(50);
+
+  //set initial size of tiles
+  (*tile[0]).set_size_request(25,25);
 }
 
 /*!
@@ -49,7 +63,6 @@ void Level::sigInit()
 {
   for(int i = 0; i < size*size; i++)
     (*tile[i]).signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[i]->gridId), false);
-
 }
 
 //-------------------

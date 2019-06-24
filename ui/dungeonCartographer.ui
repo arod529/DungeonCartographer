@@ -114,7 +114,7 @@
 				<property name="icon-size">GTK_ICON_SIZE_SMALL_TOOLBAR</property>
 
 				<child>
-					<object id="newMap" class="GtkToolButton">
+					<object id="btn_new" class="GtkToolButton">
 						<property name="icon-name">document-new</property>
 						<property name="label">New</property>
 						<property name="tooltip_text">New</property>
@@ -155,7 +155,7 @@
 				</child>
 
 				<child>
-					<object id="zoom[0]" class="GtkToolButton">
+					<object id="btn_zoomIn" class="GtkToolButton">
 						<property name="icon-name">zoom-in</property>
 						<property name="label">Zoom In</property>
 						<property name="tooltip_text">Zoom In</property>
@@ -163,7 +163,7 @@
 				</child>
 
 				<child>
-					<object id="zoom[1]" class="GtkToolButton">
+					<object id="btn_zoomOut" class="GtkToolButton">
 						<property name="icon-name">zoom-out</property>
 						<property name="label">Zoom Out</property>
 						<property name="tooltip_text">Zoom Out</property>
@@ -171,7 +171,7 @@
 				</child>
 
 				<child>
-					<object id="zoomFit" class="GtkToolButton">
+					<object id="btn_zoomFit" class="GtkToolButton">
 						<property name="icon-name">zoom-fit-best</property>
 						<property name="label">Zoom To Fit</property>
 						<property name="tooltip_text">Zoom To Fit</property>
@@ -299,7 +299,7 @@
 	</object>
 	<object id="scrollAdjustment" class="GtkAdjustment">
 		<property name="lower">1</property>
-		<property name="upper">10</property>
+		<property name="upper">15</property>
 		<property name="step-increment">1</property>
 		<property name="page-increment">1</property>
 		<property name="value">5</property>

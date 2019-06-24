@@ -1,4 +1,4 @@
-button {
+toolbar button {
 	padding: 0px;
 	margin: 0px;
 }
@@ -12,12 +12,16 @@ scale {
 	padding-left: 5px;
 }
 
-grid.mainWindow {
+notebook stack {
+	background-color: #999999;
+}
+
+notebook grid {
 	box-shadow: 0 0 15px 10px #333333;
 }
 
-stack {
-	background-color: #999999;
+notebook viewport {
+	background-color: transparent;
 }
 
 tab {

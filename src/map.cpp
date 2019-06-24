@@ -9,11 +9,10 @@
 
 //addLevel()
 #include <gtkmm/builder.h>
-#include <gtkmm/box.h>
-#include <gtkmm/label.h>
 #include <gtkmm/scrolledwindow.h>
-#include <gtkmm/widget.h>
-#include <gtkmm/viewport.h>
+
+//scroll()
+#include <gtkmm/adjustment.h>
 
 #include <iostream>
 
@@ -26,34 +25,16 @@
 Map::Map(Settings* settings, UI* ui)
 : size{settings->mapSize}
 , tileset{&settings->tileset}
+, settings{settings}
 , ui{ui}
 {
   sigInit();
   createNewLevel();
 }
 
-/*!
-  Initializes signal events managed by Map
-**/
-void Map::sigInit()
+Map::~Map()
 {
-  Gtk::ToolButton* btn;
-  ui->getWidget<Gtk::ToolButton>("btn_open", btn);
-  btn->signal_clicked().connect(sigc::mem_fun(*this, &Map::open));
-  ui->getWidget<Gtk::ToolButton>("btn_save", btn);
-  btn->signal_clicked().connect(sigc::mem_fun(*this, &Map::save));
-  ui->getWidget<Gtk::ToolButton>("btn_saveAs", btn);
-  btn->signal_clicked().connect(sigc::mem_fun(*this, &Map::saveAs));
-
-  Gtk::MenuItem* menu;
-  ui->getWidget<Gtk::MenuItem>("menu_save", menu);
-  menu->signal_activate().connect(sigc::mem_fun(*this, &Map::save));
-  ui->getWidget<Gtk::MenuItem>("menu_saveAs", menu);
-  menu->signal_activate().connect(sigc::mem_fun(*this, &Map::saveAs));
-
-  Gtk::Notebook* notebook;
-  ui->getWidget<Gtk::Notebook>("notebook", notebook);
-  notebook->signal_switch_page().connect(sigc::mem_fun(*this, &Map::createNewLevel));
+  clearMap(); //prevents some a double free err on exit; find cause later?
 }
 
 //-------------------
@@ -64,30 +45,24 @@ void Map::sigInit()
   Adds a Level to the UI. It must exist.
 **/
 void Map::addLevel(uint pageNum)
+{ 
+  ui->addTab(pageNum, level[pageNum].get());
+
+  //set up scroll zoom event for tab
+  auto scrolledWindow = (Gtk::ScrolledWindow*)ui->notebook->get_nth_page(pageNum);
+  scrolledWindow->signal_scroll_event().connect(sigc::mem_fun(*this, &Map::scroll), false);
+}
+
+/*!
+  Clears the ui of the map. Deletes the Levels.
+**/
+void Map::clearMap()
 {
-  //make a builder for the tab
-  auto tabBuilder = Gtk::Builder::create_from_file(ui->uiTab);
+  //clear levels from ui
+  ui->clearTabs();
 
-  //get scrolled window and viewport
-  Gtk::ScrolledWindow* scrolledWindow;
-  tabBuilder->get_widget("scrolledWindow", scrolledWindow);
-  Gtk::Viewport* viewport;
-  tabBuilder->get_widget("viewport", viewport);
-
-  //add level viewport
-  viewport->add(*level[pageNum]);
-
-  //create tab
-  Gtk::Label* tabLabel;
-  tabBuilder->get_widget("tabLabel", tabLabel);
-  tabLabel->set_label("Level " + std::to_string(pageNum+1));
-
-  //add scrolled window and tab to notebook; insert in-place of new tab
-  ui->notebook->insert_page(*scrolledWindow, *tabLabel, pageNum);
-  //show all
-  ui->notebook->show_all_children();
-  //set to active page
-  ui->notebook->set_current_page(pageNum);
+  //clear existing levels
+  level.clear();
 }
 
 bool Map::loadFile(std::string fPath)
@@ -101,12 +76,7 @@ bool Map::loadFile(std::string fPath)
     return false;
   }
 
-  //remove notebook pages
-  while(ui->notebook->get_n_pages() > 1)
-    {ui->notebook->remove_page();}
-
-  //clear existing levels
-  level.clear();
+  clearMap();
 
   //read map
   file >> *this;
@@ -151,6 +121,46 @@ bool Map::saveToFile(std::string filepath)
   return true;
 }
 
+/*!
+  Initializes signal events managed by Map
+**/
+void Map::sigInit()
+{
+  Gtk::ToolButton* btn;
+  ui->getWidget<Gtk::ToolButton>("btn_new", btn);
+  btn->signal_clicked().connect(sigc::mem_fun(*this, &Map::newMap));
+
+  ui->getWidget<Gtk::ToolButton>("btn_open", btn);
+  btn->signal_clicked().connect(sigc::mem_fun(*this, &Map::open));
+
+  ui->getWidget<Gtk::ToolButton>("btn_save", btn);
+  btn->signal_clicked().connect(sigc::mem_fun(*this, &Map::save));
+  ui->getWidget<Gtk::ToolButton>("btn_saveAs", btn);
+  btn->signal_clicked().connect(sigc::mem_fun(*this, &Map::saveAs));
+
+  ui->getWidget<Gtk::ToolButton>("btn_zoomIn", btn);
+  btn->signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &Map::zoom), -1));
+  ui->getWidget<Gtk::ToolButton>("btn_zoomOut", btn);
+  btn->signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &Map::zoom), 1));
+  ui->getWidget<Gtk::ToolButton>("btn_zoomFit", btn);
+  btn->signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &Map::zoom), 0));
+
+
+  Gtk::MenuItem* menu;
+  ui->getWidget<Gtk::MenuItem>("menu_new", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &Map::newMap));
+
+  ui->getWidget<Gtk::MenuItem>("menu_open", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &Map::open));
+
+  ui->getWidget<Gtk::MenuItem>("menu_save", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &Map::save));
+  ui->getWidget<Gtk::MenuItem>("menu_saveAs", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &Map::saveAs));
+
+  ui->notebook->signal_switch_page().connect(sigc::mem_fun(*this, &Map::createNewLevel));
+}
+
 //--------------------------
 //----- Event Handlers -----
 //--------------------------
@@ -172,6 +182,21 @@ void Map::createNewLevel(Gtk::Widget* page, uint pageNum)
     level.emplace_back(std::make_unique<Level>(tileset, level.size(), size));
     addLevel(level.back()->id);
   }
+}
+
+/*!
+  Creates a new map from default global settings.
+**/
+void Map::newMap()
+{
+  clearMap();
+
+  //reload defaults from settings
+  size = settings->mapSize;
+  tileset = &settings->tileset;
+  filepath = "";
+
+  createNewLevel();
 }
 
 /*!
@@ -202,6 +227,30 @@ void Map::saveAs()
 }
 
 /*!
+  Calls zooms or scrolls the Level on mouse wheel input based on modifer keys.
+
+  @param[in] scroll_event The event information.
+
+  @return The signal has been fully handled.
+**/
+bool Map::scroll(GdkEventScroll* scroll_event)
+{
+  //call zoom event if ctrl key is held
+  if(scroll_event->state == Gdk::ModifierType::CONTROL_MASK)
+  {
+    zoom(scroll_event->delta_y);
+  }
+  else
+  {
+    if(scroll_event->state == Gdk::ModifierType::SHIFT_MASK)
+      ui->scroll(scroll_event->delta_y, 0);
+    else
+      ui->scroll(0, scroll_event->delta_y);
+  }
+  return true; //don't pass on event
+}
+
+/*!
   Displays a open file dialog, and subsequently loads the file if a name is chosen.
 **/
 void Map::open()
@@ -214,6 +263,14 @@ void Map::open()
     if(loadFile(fPath))
       {filepath = fPath;}
   }
+}
+
+/*!
+  Zooms the Level.
+**/
+void Map::zoom(int scrollDir)
+{
+  ui->zoom(scrollDir, size, level[ui->notebook->get_current_page()]->tile[0].get());
 }
 
 //---------------------

@@ -12,7 +12,7 @@ Tile::Tile(Tileset* tileset, uint tileId, int gridId, int gridSize)
 {
   //set drawing area properties
   set_can_focus(true);
-  set_size_request(25,25);
+  // set_size_request(25,25);
 
   //mouse click mask
   add_events(Gdk::EventMask::BUTTON_PRESS_MASK);
