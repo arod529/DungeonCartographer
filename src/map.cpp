@@ -221,7 +221,7 @@ void Map::saveAs()
 
   if(fpath != "")
   {
-    if(saveToFile(filepath));
+    if(saveToFile(fpath));
       {filepath = fpath;}
   }
 }

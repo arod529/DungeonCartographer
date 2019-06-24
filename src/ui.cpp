@@ -3,6 +3,7 @@
 #include <gtkmm/adjustment.h>
 #include <gtkmm/box.h>
 #include <gtkmm/filechooserdialog.h>
+#include <gtkmm/filefilter.h>
 #include <gtkmm/grid.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/viewport.h>
@@ -94,12 +95,29 @@ std::string UI::saveAs()
 {
 	auto dSaveAs = Gtk::FileChooserDialog(*this, "Save As", Gtk::FileChooserAction::FILE_CHOOSER_ACTION_SAVE);
 	dSaveAs.set_do_overwrite_confirmation(true);
-	dSaveAs.add_button("Save", 1);
+	dSaveAs.add_button("Save", 1)->grab_default();
 	dSaveAs.add_button("Cancel", 0);
-  auto response = dSaveAs.run();
 
-  if(response)
-  	return dSaveAs.get_filename();
+	//add file filters
+	auto dcm = Gtk::FileFilter::create();
+	dcm->add_pattern("*.dcm");
+	dcm->set_name("Dungeon Cartographer Map (*.dcm)");
+	dSaveAs.add_filter(dcm);
+	auto all = Gtk::FileFilter::create();
+	all->add_pattern("*");
+	all->set_name("All Files (*)");
+	dSaveAs.add_filter(all);
+
+  if(dSaveAs.run())
+  {
+  	std::string fpath = dSaveAs.get_filename();
+
+  	//append .dcm file extension if no extension was given and the dcm filter selected
+  	if(fpath.find('.') == std::string::npos && dSaveAs.get_filter() == dcm)
+  		fpath += ".dcm";
+
+  	return fpath;
+  }
   else
   	return "";
 }
@@ -113,12 +131,24 @@ std::string UI::saveAs()
 **/
 std::string UI::openFile()
 {
+	//make dialog
 	auto dOpen = Gtk::FileChooserDialog(*this, "Open", Gtk::FileChooserAction::FILE_CHOOSER_ACTION_OPEN);
-	dOpen.add_button("Open", 1);
+	dOpen.add_button("Open", 1)->grab_default();
 	dOpen.add_button("Cancel", 0);
-  auto response = dOpen.run();
 
-  if(response)
+	//add file filters
+	auto fileFilter = Gtk::FileFilter::create();
+	fileFilter->add_pattern("*.dcm");
+	fileFilter->set_name("Dungeon Cartographer Map (*.dcm)");
+	dOpen.add_filter(fileFilter);
+	fileFilter = Gtk::FileFilter::create();
+	fileFilter->add_pattern("*");
+	fileFilter->set_name("All Files (*)");
+	dOpen.add_filter(fileFilter);
+
+  
+  //display dialog
+  if(dOpen.run())
   	return dOpen.get_filename();
   else
   	return "";

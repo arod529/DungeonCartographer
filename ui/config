@@ -1,4 +1,4 @@
-Tileset=./tiles/defaultSet
+Tileset=./tiles/defaultSet.dct
 MapSize=25
 ZoomSpeed=5
 ScrollSpeed=5

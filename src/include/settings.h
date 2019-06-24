@@ -14,7 +14,7 @@ class Settings
 		std::string tilesetFile{""}; //file associated with the tileset
 
 		//global map defaults
-		int mapSize{0};
+		int mapSize{25};
 
 		int zoomSpeed{5};
 		int scrollSpeed{5};
@@ -32,7 +32,7 @@ class Settings
 
 	private:
 		const std::string defaultSettingsFile = "./ui/config";
-		const std::string defaultTilesetFile  = "./tiles/defaultSet";
+		const std::string defaultTilesetFile  = "./tiles/defaultSet.dct";
 };
 
 #endif
