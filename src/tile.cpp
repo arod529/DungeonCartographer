@@ -74,6 +74,20 @@ void Tile::getAdjacentIndex(int* adjacentIndex)
   std::copy(tmp, tmp+8, adjacentIndex);
 }
 
+void Tile::print(Cairo::RefPtr<Cairo::Context>& cr)
+{
+  //get tile size
+  int tilesize = tileset->tile[tileId].pixbuf->get_width();
+  //get origin coordinats of this tile
+  int x = (gridId%gridSize)*tilesize;
+  int y = (gridId/gridSize)*tilesize;
+
+  //paint tile at orign
+  Gdk::Cairo::set_source_pixbuf(cr, tileset->tile[tileId].pixbuf, x, y);
+  cr->rectangle(x, y, tilesize, tilesize);
+  cr->fill();
+}
+
 //--------------------------
 //----- Event Handlers -----
 //--------------------------

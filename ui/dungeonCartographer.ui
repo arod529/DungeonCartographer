@@ -58,7 +58,7 @@
                   <object class="GtkSeparatorMenuItem"></object>
                 </child>
               	<child>
-                  <object class="GtkImageMenuItem">
+                  <object id="menu_print" class="GtkImageMenuItem">
                     <property name="label">gtk-print</property>
                     <property name="use_underline">True</property>
                     <property name="use_stock">True</property>

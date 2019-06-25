@@ -76,6 +76,19 @@ void Level::createNewTile()
   attach(*tile[i], i%size, i/size, 1, 1);
 }
 
+void Level::print(Cairo::RefPtr<Cairo::PdfSurface>& surface, Cairo::RefPtr<Cairo::Context>& cr)
+{
+  //set page size to tile size * num of tiles
+  int tileSize = tileset->tile[BACKGROUND].getSize();
+  surface->set_size(tileSize*size, tileSize*size);
+
+  //print tiles
+  for(int i = 0; i < size*size; i++)
+  {
+    tile[i]->print(cr);
+  }
+}
+
 /*!
   Updates the tile by either making it a room or a background tile based
   on its previous state. Updates the shared walls of the adjacent tiles

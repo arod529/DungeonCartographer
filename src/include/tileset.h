@@ -20,6 +20,8 @@ struct TilesetTile
   friend class Tile;
 public:
 
+  int getSize();
+
   //overloads
   friend std::istream& operator>>(std::istream& in, TilesetTile& tilesettile);
 

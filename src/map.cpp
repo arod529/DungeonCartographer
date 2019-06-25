@@ -94,6 +94,24 @@ bool Map::loadFile(std::string fPath)
   return true;
 }
 
+void Map::print()
+{
+  std::string fpath = "./test.pdf";
+  
+  //create surface
+  auto surface = Cairo::PdfSurface::create(fpath, 0, 0);
+
+  //create context
+  auto cr = Cairo::Context::create(surface);
+
+  //print levels to pdf
+  for(int i = 0; i < level.size(); i++)
+  {
+    level[i]->print(surface, cr);
+    cr->show_page();
+  }
+}
+
 /*!
   Writes a map to file.
 
@@ -157,6 +175,9 @@ void Map::sigInit()
   menu->signal_activate().connect(sigc::mem_fun(*this, &Map::save));
   ui->getWidget<Gtk::MenuItem>("menu_saveAs", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &Map::saveAs));
+
+  ui->getWidget<Gtk::MenuItem>("menu_print", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &Map::print));
 
   ui->notebook->signal_switch_page().connect(sigc::mem_fun(*this, &Map::createNewLevel));
 }

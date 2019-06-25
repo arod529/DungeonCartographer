@@ -178,3 +178,8 @@ std::istream& operator>>(std::istream& in, TilesetTile& tilesettile)
 
   return in;
 }
+
+int TilesetTile::getSize()
+{
+  return pixbuf->get_width();
+}

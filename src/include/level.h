@@ -24,6 +24,7 @@ struct Level : public Gtk::Grid
 
   //utility
   void createNewTile();
+  void print(Cairo::RefPtr<Cairo::PdfSurface>& surface, Cairo::RefPtr<Cairo::Context>& cr);
   bool updateTile(GdkEventButton* btn, int gridId);
 
   //overloads

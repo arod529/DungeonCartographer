@@ -39,6 +39,7 @@ class Map
     void addLevel(uint pageNum);
     void clearMap();
     bool loadFile(std::string filepath);
+    void print();
     bool saveToFile(std::string filepath);
     void sigInit();
 

@@ -22,6 +22,7 @@ struct Tile : public Gtk::DrawingArea
   //utility
   void getTileExists(bool* tileExists);
   void getAdjacentIndex(int* adjacentIndex);
+  void print(Cairo::RefPtr<Cairo::Context>& cr);
 
   //overloads
   friend std::ostream& operator<<(std::ostream& out, const Tile& tile);
