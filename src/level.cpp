@@ -47,7 +47,7 @@ void Level::propInit()
   //set grid properties
   set_row_homogeneous(true); set_column_homogeneous(true);
   set_row_spacing(0); set_column_spacing(0);
-  set_border_width(50);
+  // set_border_width(50);
 }
 
 //-------------------

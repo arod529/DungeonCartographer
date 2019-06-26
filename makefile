@@ -12,7 +12,7 @@ CC=g++ $(INC) $(CFLAGS) -c
 LC=g++ $(LFLAGS) -o
 
 OBJS=dungeonCartographer.o \
-		 settings.o ui.o \
+		 settings.o ui.o refgrid.o \
 		 map.o level.o tile.o tileset.o
 
 .PHONY: clean
@@ -24,7 +24,7 @@ all: dungeonCartographer
 #--------
 dungeonCartographer: $(OBJS)
 	$(LC) dungeonCartographer $(OBJD)/dungeonCartographer.o \
-														$(OBJD)/settings.o $(OBJD)/ui.o \
+														$(OBJD)/settings.o $(OBJD)/ui.o $(OBJD)/refgrid.o \
 														$(OBJD)/map.o $(OBJD)/level.o $(OBJD)/tile.o $(OBJD)/tileset.o
 
 #------------
@@ -50,6 +50,9 @@ tile.o: $(SRCD)/tile.cpp $(INCD)/tile.h $(INCD)/tileset.h $(INCD)/constants.h
 
 tileset.o: $(SRCD)/tileset.cpp $(INCD)/tileset.h $(INCD)/constants.h
 	$(CC) -o $(OBJD)/tileset.o $(SRCD)/tileset.cpp
+
+refgrid.o: $(SRCD)/refgrid.cpp $(INCD)/refgrid.h
+	$(CC) -o $(OBJD)/refgrid.o $(SRCD)/refgrid.cpp
 
 
 #-------

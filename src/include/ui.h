@@ -3,6 +3,7 @@
 
 #include "level.h"
 #include "map.h"
+#include "refgrid.h"
 #include "settings.h"
 
 #include <string>
@@ -14,15 +15,15 @@
 #include <gtkmm/cssprovider.h>
 #include <gtkmm/label.h>
 #include <gtkmm/notebook.h>
+#include <gtkmm/overlay.h>
 #include <gdkmm/pixbuf.h>
 #include <gtkmm/window.h>
 
 class UI : public Gtk::Window
 {
 public:
-	friend class Map;
-
 	UI(Settings* settings, Map* map);
+	~UI();
 
 	void open();
 	void save();
@@ -36,12 +37,15 @@ private:
 	Glib::RefPtr<Gtk::Builder> builder;
 	//notebook
 	Gtk::Notebook* notebook;
-	//
 	//icon
 	std::vector<Glib::RefPtr<Gdk::Pixbuf>> iconList;
 	
+	//page switch signal
+	sigc::connection pageSwitchCon;
+
 	Map* map;
 	Settings* settings;
+	std::vector<RefGrid> refgrid;
 	// int zoomSpeed{5};
 
 	const char* uiFile  = (char*)"./ui/dungeonCartographer.ui";

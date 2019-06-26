@@ -3,13 +3,15 @@
   <object id="scrolledWindow" class="GtkScrolledWindow">
     <property name="hscrollbar_policy">always</property>
     <property name="vscrollbar_policy">always</property>
-
-    <child>
-      <object id="viewport" class="GtkViewport">
-        <property name="halign">center</property>
-        <property name="valign">center</property>
-      </object>
-    </child>
+      <child>
+        <object id="viewport" class="GtkViewport">
+          <property name="halign">center</property>
+          <property name="valign">center</property>
+            <child>
+              <object id="overlay" class="GtkOverlay"></object>
+            </child>
+        </object>
+      </child>
   </object>
   
   <object id="tabLabel" class="GtkLabel">

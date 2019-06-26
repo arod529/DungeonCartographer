@@ -1,7 +1,5 @@
 #include "tile.h"
 
-#include "level.h"
-
 #include <gdkmm/general.h> //on_draw()::set_source_pixbuf()
 
 /*!

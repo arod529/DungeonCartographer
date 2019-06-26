@@ -6,6 +6,7 @@
 #include <gtkmm/filefilter.h>
 #include <gtkmm/grid.h>
 #include <gtkmm/menu.h>
+#include <gtkmm/overlay.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/toolbutton.h>
 #include <gtkmm/viewport.h>
@@ -95,7 +96,7 @@ UI::UI(Settings* settings, Map* map)
   menu->signal_activate().connect(sigc::mem_fun(*this, &UI::hide));
 
   //notebook
-  notebook->signal_switch_page().connect(sigc::mem_fun(*this, &UI::pageSwitch));
+  pageSwitchCon = notebook->signal_switch_page().connect(sigc::mem_fun(*this, &UI::pageSwitch));
 
   //map signals
   map->signal_levelCreated.connect(sigc::mem_fun(*this, &UI::addTab));
@@ -105,6 +106,12 @@ UI::UI(Settings* settings, Map* map)
 	//----- Make a New Map -----
 	//--------------------------
   map->newMap(&settings->tileset, settings->mapSize);
+}
+
+UI::~UI()
+{
+  //This damn signal crashes the program on exit if not disconnected first.
+  pageSwitchCon.disconnect();
 }
 
 /*!
@@ -124,11 +131,17 @@ void UI::addTab(int levelId, Level* level)
   scrolledWindow->add_events(Gdk::EventMask::SCROLL_MASK);
   scrolledWindow->signal_scroll_event().connect(sigc::mem_fun(*this, &UI::scrollEvent), false);
 
-  Gtk::Viewport* viewport;
-  tabBuilder->get_widget("viewport", viewport);
+  Gtk::Overlay* overlay;
+  tabBuilder->get_widget("overlay", overlay);
 
-  //add level viewport
-  viewport->add(*level);
+  //add level to overlay as base
+  overlay->add(*level);
+  // map->setTileSize(levelId, 25);
+
+  //add reference grid overlay
+  refgrid.emplace_back();
+  overlay->add_overlay(refgrid[levelId]);
+  overlay->set_overlay_pass_through(refgrid[levelId], true);
 
   //create tab
   Gtk::Label* tabLabel;
