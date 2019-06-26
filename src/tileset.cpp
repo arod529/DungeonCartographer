@@ -5,7 +5,7 @@
 //-------------------
 
 /*!
-  Initilizes the Tileset by loading a file.
+  Initializes the Tileset by loading a file.
 
   @param[in] fpath The path to the file to load.
 **/

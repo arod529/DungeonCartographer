@@ -5,7 +5,9 @@
 #include <gtkmm/filechooserdialog.h>
 #include <gtkmm/filefilter.h>
 #include <gtkmm/grid.h>
+#include <gtkmm/menu.h>
 #include <gtkmm/scrolledwindow.h>
+#include <gtkmm/toolbutton.h>
 #include <gtkmm/viewport.h>
 
 /*!
@@ -13,8 +15,14 @@
 
 	@param[in] settings The settings to use for initial set up.
 **/
-UI::UI(Settings& settings)
+UI::UI(Settings* settings, Map* map)
+: settings{settings}
+, map{map}
 {
+	//-------------------------
+	//----- Create Window -----
+	//-------------------------
+
 	//css style
 	auto css = Gtk::CssProvider::create();
 	css->load_from_path(cssFile);
@@ -37,41 +45,102 @@ UI::UI(Settings& settings)
 	set_icon_list(iconList);
 	maximize();
 	show_all_children();
+
+	//------------------------------------
+	//----- Load Default UI Settings -----
+	//------------------------------------
+
+
+	//---------------------------
+	//----- Connect Signals -----
+	//---------------------------
+	
+	//tool buttons
+	Gtk::ToolButton* btn;
+  builder->get_widget("btn_new", btn);
+  btn->signal_clicked().connect(sigc::bind<Tileset*, uint>(sigc::mem_fun(*map, &Map::newMap), &settings->tileset, settings->mapSize));
+
+  builder->get_widget("btn_open", btn);
+  btn->signal_clicked().connect(sigc::mem_fun(*this, &UI::open));
+
+  builder->get_widget("btn_save", btn);
+  btn->signal_clicked().connect(sigc::mem_fun(*this, &UI::save));
+  builder->get_widget("btn_saveAs", btn);
+  btn->signal_clicked().connect(sigc::mem_fun(*this, &UI::saveAs));
+
+  builder->get_widget("btn_zoomIn", btn);
+  btn->signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &UI::zoom), -1));
+  builder->get_widget("btn_zoomOut", btn);
+  btn->signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &UI::zoom), 1));
+  builder->get_widget("btn_zoomFit", btn);
+  btn->signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &UI::zoom), 0));
+
+  //menus
+  Gtk::MenuItem* menu;
+  builder->get_widget("menu_new", menu);
+  menu->signal_activate().connect(sigc::bind<Tileset*, uint>(sigc::mem_fun(*map, &Map::newMap), &settings->tileset, settings->mapSize));
+
+  builder->get_widget("menu_open", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &UI::open));
+
+  builder->get_widget("menu_save", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &UI::save));
+  builder->get_widget("menu_saveAs", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &UI::saveAs));
+
+  builder->get_widget("menu_print", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*map, &Map::print));
+
+	builder->get_widget("menu_quit", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &UI::hide));
+
+  //notebook
+  notebook->signal_switch_page().connect(sigc::mem_fun(*this, &UI::pageSwitch));
+
+  //map signals
+  map->signal_levelCreated.connect(sigc::mem_fun(*this, &UI::addTab));
+  map->signal_mapCleared.connect(sigc::mem_fun(*this, &UI::clearTabs));
+
+	//--------------------------
+	//----- Make a New Map -----
+	//--------------------------
+  map->newMap(&settings->tileset, settings->mapSize);
 }
 
 /*!
   Adds a tab to the interface and populates it with widget of type Level.
 
-  @param[in] pageNum The page to add a tab at.
-  @param[in] widget The widget to add to the tab.
+  @param[in] 
+  @param[in] 
 **/
-void UI::addTab(uint pageNum, Gtk::Widget* widget)
+void UI::addTab(int levelId, Level* level)
 {
 	//make a builder for the tab
   auto tabBuilder = Gtk::Builder::create_from_file(uiTab);
 
-  //get scrolled window and viewport
+  //get scrolled window and viewport; connect scroll signal
   Gtk::ScrolledWindow* scrolledWindow;
   tabBuilder->get_widget("scrolledWindow", scrolledWindow);
   scrolledWindow->add_events(Gdk::EventMask::SCROLL_MASK);
+  scrolledWindow->signal_scroll_event().connect(sigc::mem_fun(*this, &UI::scrollEvent), false);
 
   Gtk::Viewport* viewport;
   tabBuilder->get_widget("viewport", viewport);
 
   //add level viewport
-  viewport->add(*widget);
+  viewport->add(*level);
 
   //create tab
   Gtk::Label* tabLabel;
   tabBuilder->get_widget("tabLabel", tabLabel);
-  tabLabel->set_label("Level " + std::to_string(pageNum+1));
+  tabLabel->set_label("Level " + std::to_string(levelId+1));
 
   //add scrolled window and tab to notebook; insert in-place of new tab
-  notebook->insert_page(*scrolledWindow, *tabLabel, pageNum);
+  notebook->insert_page(*scrolledWindow, *tabLabel, levelId);
   //show all
   notebook->show_all_children();
   //set to active page
-  notebook->set_current_page(pageNum);
+  notebook->set_current_page(levelId);
 }
 
 /*!
@@ -85,13 +154,24 @@ void UI::clearTabs()
 }
 
 /*!
-  Dipslays a save as dialog.
+  Saves to the file associated with the Map.
+  If there is no file associated, displays save as dialog.
+**/
+void UI::save()
+{
+	std::string fPath = map->getFilePath();
+  if(fPath == "") //there is no associated file
+    saveAs();
+  else //save the file
+    map->saveToFile(fPath);
+}
 
-  @return The file path to the chosen file.
+/*!
+  Dipslays a save as dialog.
 
   \bug overwrite confirmation does not work
 **/
-std::string UI::saveAs()
+void UI::saveAs()
 {
 	auto dSaveAs = Gtk::FileChooserDialog(*this, "Save As", Gtk::FileChooserAction::FILE_CHOOSER_ACTION_SAVE);
 	dSaveAs.set_do_overwrite_confirmation(true);
@@ -110,26 +190,24 @@ std::string UI::saveAs()
 
   if(dSaveAs.run())
   {
-  	std::string fpath = dSaveAs.get_filename();
+  	std::string fPath = dSaveAs.get_filename();
 
-  	//append .dcm file extension if no extension was given and the dcm filter selected
-  	if(fpath.find('.') == std::string::npos && dSaveAs.get_filter() == dcm)
-  		fpath += ".dcm";
+  	if(fPath != "")
+  	{
+			//append .dcm file extension if no extension was given and the dcm filter selected
+  		if(fPath.find('.') == std::string::npos && dSaveAs.get_filter() == dcm)
+  		fPath += ".dcm";
 
-  	return fpath;
+  		//save file
+  		map->saveToFile(fPath);
+  	}
   }
-  else
-  	return "";
 }
 
 /*!
-  Dipslays a save as dialog.
-
-  @return The file path to the chosen file.
-
-  \bug overwrite confirmation does not work
+  Displays a open file dialog, and subsequently loads the file if a name is chosen.
 **/
-std::string UI::openFile()
+void UI::open()
 {
 	//make dialog
 	auto dOpen = Gtk::FileChooserDialog(*this, "Open", Gtk::FileChooserAction::FILE_CHOOSER_ACTION_OPEN);
@@ -137,32 +215,37 @@ std::string UI::openFile()
 	dOpen.add_button("Cancel", 0);
 
 	//add file filters
-	auto fileFilter = Gtk::FileFilter::create();
-	fileFilter->add_pattern("*.dcm");
-	fileFilter->set_name("Dungeon Cartographer Map (*.dcm)");
-	dOpen.add_filter(fileFilter);
-	fileFilter = Gtk::FileFilter::create();
-	fileFilter->add_pattern("*");
-	fileFilter->set_name("All Files (*)");
-	dOpen.add_filter(fileFilter);
-
+	auto dcm = Gtk::FileFilter::create();
+	dcm->add_pattern("*.dcm");
+	dcm->set_name("Dungeon Cartographer Map (*.dcm)");
+	dOpen.add_filter(dcm);
+	auto all = Gtk::FileFilter::create();
+	all->add_pattern("*");
+	all->set_name("All Files (*)");
+	dOpen.add_filter(all);
   
   //display dialog
   if(dOpen.run())
-  	return dOpen.get_filename();
-  else
-  	return "";
+  {
+  	std::string fPath = dOpen.get_filename();
+
+  	if(fPath != "")
+	  {
+	  	//load map file
+	    map->loadFile(fPath);
+	  }
+	}
 }
 
-/*!
-  Gets the scrollSpeed slider value.
-
-  @return The value of the scroll speed slider.
-**/
-double UI::getScrollSpeed()
+void UI::pageSwitch(Gtk::Widget* page, uint pageNum)
 {
-	auto scrollAdjustment = (Gtk::Adjustment*)builder->get_object("scrollAdjustment").get();
-	return scrollAdjustment->get_value();
+  //triggered by tab change && (is only page || tab not newtab)
+  if(page != NULL && (pageNum == 0 || ((Gtk::Label*)notebook->get_tab_label(*page))->get_text() != "+"))
+    {return;}
+  else //append a new Level
+  {
+    map->appendLevel();
+  }
 }
 
 /*!
@@ -184,54 +267,98 @@ void UI::scroll(double dx, double dy)
 }
 
 /*!
+  Zooms or scrolls the Level on mouse wheel input based on modifer keys.
+
+  @param[in] scroll_event The event information.
+
+  @return The signal has been fully handled.
+**/
+bool UI::scrollEvent(GdkEventScroll* scroll_event)
+{
+  //call zoom event if ctrl key is held
+  if(scroll_event->state == Gdk::ModifierType::CONTROL_MASK)
+  {
+    zoom(scroll_event->delta_y);
+  }
+  else
+  {
+    if(scroll_event->state == Gdk::ModifierType::SHIFT_MASK)
+      scroll(scroll_event->delta_y, 0);
+    else
+      scroll(0, scroll_event->delta_y);
+  }
+  return true; //don't pass on event
+}
+
+/*!
   Zooms the grid by adjusting the tile size. Maintains focus.
 
   @param[in] scrollDir The direction to zoom; <0 zooms in; >0 zooms out; =0 zooms to fit.
   @param[in] gridSize The size of the grid.
   @param[in] widget The tile widget at (0,0).
 **/
-void UI::zoom(int scrollDir, int gridSize, Gtk::Widget* widget)
+void UI::zoom(int scrollDir)
 {
-	auto scrolledWindow = (Gtk::ScrolledWindow*)notebook->get_nth_page(notebook->get_current_page());
+	int levelIndex = notebook->get_current_page();
+	int gridSize = map->getLevelSize(levelIndex);
+
+	//get current active scrolled window
+	auto scrolledWindow = (Gtk::ScrolledWindow*)notebook->get_nth_page(levelIndex);
 	
-	//get width and height of the scrolled window
+	//get width and height of the scrolled window; get adjustments
 	double wWidth = scrolledWindow->get_allocated_width();
 	double wHeight = scrolledWindow->get_allocated_height();
 	auto hAdjust = scrolledWindow->get_hadjustment();
 	auto vAdjust = scrolledWindow->get_vadjustment();
 
-	//get the current width of the widget
-	double s = widget->get_allocated_width();
-
-	//get the zoom speed value from ui
-	auto zoomAdjustment = (Gtk::Adjustment*)builder->get_object("zoomAdjustment").get();
-	double ds = zoomAdjustment->get_value(); //size delta
-	double dp = gridSize/2*ds; //position delta
-
-	//change widget size
-	if(scrollDir < 0) //scroll up, zoom in
-	{
-		widget->set_size_request(s+ds, s+ds);
-		hAdjust->set_value(hAdjust->get_value()+dp);
-		vAdjust->set_value(vAdjust->get_value()+dp);
-	}
-	else if(scrollDir > 0) //scroll down, zoom out
-	{
-		if(ds < s) //don't shrink to nothing
-		{
-			widget->set_size_request(s-ds, s-ds);
-			hAdjust->set_value(hAdjust->get_value()-dp);
-			vAdjust->set_value(vAdjust->get_value()-dp);
-		}
-	}
-	else //fit to window
+	if(scrollDir == 0) //fit to window
 	{
 		//set tile size to min dimension/(number of tiles + padding of 4 tiles)
-		s = std::min(wWidth, wHeight)/(gridSize+4);
+		int s = std::min(wWidth, wHeight)/(gridSize+4);
 		if(s < 0) s = 1; //make sure s is not <= 0
-		widget->set_size_request(s, s);
+		map->setTileSize(levelIndex, s);
+	}
+	else
+	{
+		//get the current width of the a tile
+		double s = map->getTileSize(levelIndex);
+
+		//get the zoom speed value from ui
+		auto zoomAdjustment = (Gtk::Adjustment*)builder->get_object("zoomAdjustment").get();
+		double ds = zoomAdjustment->get_value(); //size delta
+		double dp = gridSize/2*ds; //position delta
+
+		//change tile size
+		if(scrollDir < 0) //scroll up, zoom in
+		{
+			map->setTileSize(levelIndex, s+ds);
+			hAdjust->set_value(hAdjust->get_value()+dp);
+			vAdjust->set_value(vAdjust->get_value()+dp);
+		}
+		else if(scrollDir > 0) //scroll down, zoom out
+		{
+			if(ds < s) //don't shrink to nothing
+			{
+				map->setTileSize(levelIndex, s-ds);
+				hAdjust->set_value(hAdjust->get_value()-dp);
+				vAdjust->set_value(vAdjust->get_value()-dp);
+			}
+		}
 	}
 
 	//refresh viewport to prevent draw artifacts on drop shadow
 	scrolledWindow->get_child()->queue_draw();
 }
+
+
+/*!
+  Gets the scrollSpeed slider value.
+
+  @return The value of the scroll speed slider.
+**/
+double UI::getScrollSpeed()
+{
+	auto scrollAdjustment = (Gtk::Adjustment*)builder->get_object("scrollAdjustment").get();
+	return scrollAdjustment->get_value();
+}
+

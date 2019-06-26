@@ -9,6 +9,9 @@
 Level::Level(Tileset* tileset, std::ifstream& file)
 : tileset{tileset}
 {
+  //initilize properties
+  propInit();
+
   //get level from file
   file >> *this;
 
@@ -18,10 +21,6 @@ Level::Level(Tileset* tileset, std::ifstream& file)
     createNewTile();
     file >> *tile.back();
   }
-  //connect signals
-  sigInit();
-  //initilize properties
-  propInit();
 }
 
 /*!
@@ -30,16 +29,14 @@ Level::Level(Tileset* tileset, std::ifstream& file)
 Level::Level(Tileset* tileset, int id, int size)
 : tileset{tileset}, id{id}, size{size}
 {
+  //initilize properties
+  propInit();
 
   //Fill level with background tiles
   for(int i = 0; i < size*size; i++)
   {
     createNewTile();
   }
-  //connect signals
-  sigInit();
-  //initilize properties
-  propInit();
 }
 
 /*!
@@ -51,29 +48,21 @@ void Level::propInit()
   set_row_homogeneous(true); set_column_homogeneous(true);
   set_row_spacing(0); set_column_spacing(0);
   set_border_width(50);
-
-  //set initial size of tiles
-  (*tile[0]).set_size_request(25,25);
-}
-
-/*!
-  Initilizes the signals managed by Level
-**/
-void Level::sigInit()
-{
-  for(int i = 0; i < size*size; i++)
-    (*tile[i]).signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[i]->gridId), false);
 }
 
 //-------------------
 //----- Utility -----
 //-------------------
 
+/*!
+  Creates a tile, attaches it to the grid, and connects the button press event.
+**/
 void Level::createNewTile()
 {
   int i = tile.size();
   tile.emplace_back(std::make_unique<Tile>(tileset, BACKGROUND, i, size));
   attach(*tile[i], i%size, i/size, 1, 1);
+  tile[i]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[i]->gridId), false);
 }
 
 void Level::print(Cairo::RefPtr<Cairo::PdfSurface>& surface, Cairo::RefPtr<Cairo::Context>& cr)
@@ -284,6 +273,16 @@ void Level::updateCornerBits(int gridId, bool propagate)
 
   tile->queue_draw();
   tile->locked = false;
+}
+
+int Level::getTileSize() const
+{
+  return tile[0]->get_allocated_width();
+}
+
+void Level::setTileSize(int tileSize)
+{
+  tile[0]->set_size_request(tileSize, tileSize);
 }
 
 //---------------------

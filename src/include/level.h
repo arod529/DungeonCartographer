@@ -19,13 +19,12 @@ struct Level : public Gtk::Grid
 
   Level(Tileset* tileset, int id, int size);
   Level(Tileset* tileset, std::ifstream& file);
-  void propInit();
-  void sigInit();
+
+  bool updateTile(GdkEventButton* btn, int gridId);
 
   //utility
-  void createNewTile();
-  void print(Cairo::RefPtr<Cairo::PdfSurface>& surface, Cairo::RefPtr<Cairo::Context>& cr);
-  bool updateTile(GdkEventButton* btn, int gridId);
+  int getTileSize() const;
+  void setTileSize(int levelIndex);
 
   //overloads
   friend std::ostream& operator<<(std::ostream& out, const Level& level);
@@ -37,6 +36,9 @@ private:
   Tileset* tileset;                        // The Tileset that the Level uses
   std::vector<std::unique_ptr<Tile>> tile; // The Tiles in the Level
   
+  void createNewTile();
+  void print(Cairo::RefPtr<Cairo::PdfSurface>& surface, Cairo::RefPtr<Cairo::Context>& cr);
+  void propInit();
   void updateCornerBits(int gridId, bool propagate);
 };
 

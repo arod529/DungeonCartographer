@@ -1,70 +1,43 @@
 #include "map.h"
 
-#include <limits> //operator>>
-
-//signalInit()
-#include <gtkmm/menuitem.h>
-#include <gtkmm/notebook.h> 
-#include <gtkmm/toolbutton.h>
-
-//addLevel()
-#include <gtkmm/builder.h>
-#include <gtkmm/scrolledwindow.h>
-
-//scroll()
-#include <gtkmm/adjustment.h>
-
-#include <iostream>
-
-/*!
-  Initializes a map with defaults from Settings. Creates a starting Level.
-
-  @param[in] settings The program settings
-  @param[in] ui The ui
-**/
-Map::Map(Settings* settings, UI* ui)
-: size{settings->mapSize}
-, tileset{&settings->tileset}
-, settings{settings}
-, ui{ui}
-{
-  sigInit();
-  createNewLevel();
-}
+#include <limits>   // operator>>
+#include <iostream> // operator<<|operator>>
 
 Map::~Map()
 {
   clearMap(); //prevents some a double free err on exit; find cause later?
 }
 
-//-------------------
-//----- Utility -----
-//-------------------
-
 /*!
-  Adds a Level to the UI. It must exist.
+  Appends a Level to the Map.
 **/
-void Map::addLevel(uint pageNum)
-{ 
-  ui->addTab(pageNum, level[pageNum].get());
-
-  //set up scroll zoom event for tab
-  auto scrolledWindow = (Gtk::ScrolledWindow*)ui->notebook->get_nth_page(pageNum);
-  scrolledWindow->signal_scroll_event().connect(sigc::mem_fun(*this, &Map::scroll), false);
+void Map::appendLevel()
+{
+  level.emplace_back(std::make_unique<Level>(tileset, level.size(), size));
+  signal_levelCreated(level.back()->id, level.back().get());
 }
 
 /*!
-  Clears the ui of the map. Deletes the Levels.
+  Deletes all levels from the Map.
 **/
 void Map::clearMap()
 {
-  //clear levels from ui
-  ui->clearTabs();
+  //emit map cleared signal
+  signal_mapCleared();
 
   //clear existing levels
   level.clear();
 }
 
+/*!
+  Loads a map file.
+
+  @param[in] fPath The full path to the map file.
+
+  @return The file loaded successfully.
+
+  \bug no file content checks
+**/
 bool Map::loadFile(std::string fPath)
 {
   std::ifstream file(fPath);
@@ -85,11 +58,12 @@ bool Map::loadFile(std::string fPath)
   do
   {
     level.emplace_back(std::make_unique<Level>(tileset, file));
-    addLevel(level.back()->id);
+    signal_levelCreated(level.back()->id, level.back().get());
   }
   while(!file.eof());
 
   file.close();
+  filepath = fPath;
 
   return true;
 }
@@ -115,11 +89,20 @@ void Map::print()
 /*!
   Writes a map to file.
 
-  @param[in] _filename The path to the file.
+  @param[in] fPath The path to the file.
+
+  @return The file was written successfully.
 **/
-bool Map::saveToFile(std::string filepath)
+bool Map::saveToFile(std::string fPath)
 {
-  std::ofstream file(filepath);
+  std::ofstream file(fPath);
+
+  //check file is open
+  if(!file.is_open())
+  {
+    fprintf(stderr, "ERROR: Dungeon Cartographer @ Map::saveToFile: The file could not be opened: %s\n", fPath.c_str());
+    return false;
+  }
 
   //write map to file
   file << *this;
@@ -136,163 +119,45 @@ bool Map::saveToFile(std::string filepath)
   }
 
   file.close();
+  filepath = fPath;
+
   return true;
 }
 
 /*!
-  Initializes signal events managed by Map
+  Creates a new map.
+
+  @param[in] mapTileset The tileset to use for the Map.
+  @param[in] mapSize The default size of Levels in the Map.
 **/
-void Map::sigInit()
+void Map::newMap(Tileset* mapTileset, int mapSize)
 {
-  Gtk::ToolButton* btn;
-  ui->getWidget<Gtk::ToolButton>("btn_new", btn);
-  btn->signal_clicked().connect(sigc::mem_fun(*this, &Map::newMap));
-
-  ui->getWidget<Gtk::ToolButton>("btn_open", btn);
-  btn->signal_clicked().connect(sigc::mem_fun(*this, &Map::open));
-
-  ui->getWidget<Gtk::ToolButton>("btn_save", btn);
-  btn->signal_clicked().connect(sigc::mem_fun(*this, &Map::save));
-  ui->getWidget<Gtk::ToolButton>("btn_saveAs", btn);
-  btn->signal_clicked().connect(sigc::mem_fun(*this, &Map::saveAs));
-
-  ui->getWidget<Gtk::ToolButton>("btn_zoomIn", btn);
-  btn->signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &Map::zoom), -1));
-  ui->getWidget<Gtk::ToolButton>("btn_zoomOut", btn);
-  btn->signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &Map::zoom), 1));
-  ui->getWidget<Gtk::ToolButton>("btn_zoomFit", btn);
-  btn->signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &Map::zoom), 0));
-
-
-  Gtk::MenuItem* menu;
-  ui->getWidget<Gtk::MenuItem>("menu_new", menu);
-  menu->signal_activate().connect(sigc::mem_fun(*this, &Map::newMap));
-
-  ui->getWidget<Gtk::MenuItem>("menu_open", menu);
-  menu->signal_activate().connect(sigc::mem_fun(*this, &Map::open));
-
-  ui->getWidget<Gtk::MenuItem>("menu_save", menu);
-  menu->signal_activate().connect(sigc::mem_fun(*this, &Map::save));
-  ui->getWidget<Gtk::MenuItem>("menu_saveAs", menu);
-  menu->signal_activate().connect(sigc::mem_fun(*this, &Map::saveAs));
-
-  ui->getWidget<Gtk::MenuItem>("menu_print", menu);
-  menu->signal_activate().connect(sigc::mem_fun(*this, &Map::print));
-
-  ui->notebook->signal_switch_page().connect(sigc::mem_fun(*this, &Map::createNewLevel));
-}
-
-//--------------------------
-//----- Event Handlers -----
-//--------------------------
-
-/*!
-  Creates a new Level from the Map defaults
-
-  @param[in] page unused; gtk_signal requirement
-  @param[in] pageNum The page to add the level to.
-**/
-void Map::createNewLevel(Gtk::Widget* page, uint pageNum)
-{
-  //triggered by tab change && (is only page || tab not newtab)
-  if(page != NULL && (pageNum == 0 || ((Gtk::Label*)ui->notebook->get_tab_label(*page))->get_text() != "+"))
-    {return;}
-  else //manual call or new Level tab
-  {
-    //Make a level with defaults from map, add it to ui
-    level.emplace_back(std::make_unique<Level>(tileset, level.size(), size));
-    addLevel(level.back()->id);
-  }
-}
-
-/*!
-  Creates a new map from default global settings.
-**/
-void Map::newMap()
-{
+  //clear any existing levels
   clearMap();
 
-  //reload defaults from settings
-  size = settings->mapSize;
-  tileset = &settings->tileset;
+  //set properties
+  size = mapSize;
+  tileset = mapTileset;
   filepath = "";
 
-  createNewLevel();
+  //append a new level
+  appendLevel();
 }
 
-/*!
-  Saves to the file associated with the Map.
-  If there is no file associated, displays save as dialog.
-**/
-void Map::save()
-{
-  if(filepath == "") //there is no associated file
-    saveAs();
-  else //save the file
-    saveToFile(filepath);
-}
+//-------------------
+//----- Utility -----
+//-------------------
+std::string Map::getFilePath() const
+  {return filepath;}
 
-/*!
-  Displays a save as dialog, and subsequently saves the file if a name is chosen.
-**/
-void Map::saveAs()
-{
-  //request save as dialog
-  std::string fpath{ui->saveAs()};
+int Map::getLevelSize(int levelIndex) const
+  {return level[levelIndex]->size;}
 
-  if(fpath != "")
-  {
-    if(saveToFile(fpath));
-      {filepath = fpath;}
-  }
-}
+int Map::getTileSize(int levelIndex) const
+  {return level[levelIndex]->getTileSize();}
 
-/*!
-  Calls zooms or scrolls the Level on mouse wheel input based on modifer keys.
-
-  @param[in] scroll_event The event information.
-
-  @return The signal has been fully handled.
-**/
-bool Map::scroll(GdkEventScroll* scroll_event)
-{
-  //call zoom event if ctrl key is held
-  if(scroll_event->state == Gdk::ModifierType::CONTROL_MASK)
-  {
-    zoom(scroll_event->delta_y);
-  }
-  else
-  {
-    if(scroll_event->state == Gdk::ModifierType::SHIFT_MASK)
-      ui->scroll(scroll_event->delta_y, 0);
-    else
-      ui->scroll(0, scroll_event->delta_y);
-  }
-  return true; //don't pass on event
-}
-
-/*!
-  Displays a open file dialog, and subsequently loads the file if a name is chosen.
-**/
-void Map::open()
-{
-  //request save as dialog
-  std::string fPath{ui->openFile()};
-
-  if(fPath != "")
-  {
-    if(loadFile(fPath))
-      {filepath = fPath;}
-  }
-}
-
-/*!
-  Zooms the Level.
-**/
-void Map::zoom(int scrollDir)
-{
-  ui->zoom(scrollDir, size, level[ui->notebook->get_current_page()]->tile[0].get());
-}
+void Map::setTileSize(int levelIndex, int tileSize)
+  {level[levelIndex]->setTileSize(tileSize);}
 
 //---------------------
 //----- Overloads -----

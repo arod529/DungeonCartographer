@@ -1,6 +1,8 @@
 #ifndef UI_H
 #define UI_H
 
+#include "level.h"
+#include "map.h"
 #include "settings.h"
 
 #include <string>
@@ -20,37 +22,38 @@ class UI : public Gtk::Window
 public:
 	friend class Map;
 
-	UI(Settings& settings);
+	UI(Settings* settings, Map* map);
 
-	std::string saveAs();
-	std::string openFile();
-
-	void addTab(uint pageNum, Gtk::Widget* widget);
-	void clearTabs();
+	void open();
+	void save();
+	void saveAs();
+	
+	// Utility
 	double getScrollSpeed();
-	void scroll(double dx, double dy);
-	void zoom(int scrollDir, int gridSize, Gtk::Widget* widget);
-
-
-	template <class T> void getWidget(std::string name, T*& widget);
 
 private:
 	//access to static window elements
 	Glib::RefPtr<Gtk::Builder> builder;
 	//notebook
 	Gtk::Notebook* notebook;
+	//
 	//icon
 	std::vector<Glib::RefPtr<Gdk::Pixbuf>> iconList;
 	
-	// Settings settings;
+	Map* map;
+	Settings* settings;
 	// int zoomSpeed{5};
 
 	const char* uiFile  = (char*)"./ui/dungeonCartographer.ui";
 	const char* uiTab   = (char*)"./ui/tab.ui";
 	const char* cssFile = (char*)"./ui/dungeonCartographer.css";
+	
+	void addTab(int levelId, Level* level);
+	void clearTabs();
+	void pageSwitch(Gtk::Widget* page, uint pageNum);
+	void scroll(double dx, double dy);
+	bool scrollEvent(GdkEventScroll* scroll_event);
+	void zoom(int scrollDir);
 };
-
-#include "ui.tpp"
-
 
 #endif

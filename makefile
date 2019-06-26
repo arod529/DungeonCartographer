@@ -2,10 +2,10 @@ OBJD=./obj
 SRCD=./src
 
 INCD=./src/include
-INC=-I./src/include -I./src/template
+INC=-I./src/include
 
 DEBUG=-g
-CFLAGS=`pkg-config --cflags --libs gtkmm-3.0` -std=c++17 $(DEBUG)
+CFLAGS=`pkg-config --cflags --libs gtkmm-3.0 sigc++-2.0` -std=c++17 $(DEBUG)
 LFLAGS=$(CFLAGS)
 
 CC=g++ $(INC) $(CFLAGS) -c

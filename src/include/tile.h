@@ -22,7 +22,6 @@ struct Tile : public Gtk::DrawingArea
   //utility
   void getTileExists(bool* tileExists);
   void getAdjacentIndex(int* adjacentIndex);
-  void print(Cairo::RefPtr<Cairo::Context>& cr);
 
   //overloads
   friend std::ostream& operator<<(std::ostream& out, const Tile& tile);
@@ -35,6 +34,8 @@ private:
   Tileset* tileset;    //The Tileset this tile uses
   bool locked = false; //protection against multiple recursion
 
+  void print(Cairo::RefPtr<Cairo::Context>& cr);
+  
   //signal overload
   bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
