@@ -257,10 +257,24 @@
 
 					</object>
 				</child>
+				<!-- /SPEED SLIDERS -->
 
+				<child>
+					<object class="GtkToolbar">
+						<property name="icon-size">GTK_ICON_SIZE_SMALL_TOOLBAR</property>
+						<property name="vexpand">false</property>
+							<child>
+								<object id="btn_grid" class="GtkToggleToolButton">
+									<property name="halign">center</property>
+									<property name="valign">center</property>
+									<property name="icon_name">icon_grid</property>
+								</object>
+							</child>
+					</object>	
+				</child>
+			
 			</object>
 		</child>
-		<!-- /SPEED SLIDERS -->
 
 		<!-- NOTEBOOK -->
 		<child>

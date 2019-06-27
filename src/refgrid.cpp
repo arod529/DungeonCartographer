@@ -8,18 +8,28 @@ RefGrid::RefGrid()
   set_can_focus(false);
 }
 
-// RefGrid::RefGrid(const RefGrid& rg)
-// : lWidth{rg.lWidth}
-// , rgb{rg.rgb[0], rg.rgb[1], rg.rgb[2]}
-// , gridSize{rg.gridSize}
-// , tileNum{rg.tileNum}
-// {}
+bool RefGrid::isActive() const
+  {return active;}
 
-// RefGrid::~RefGrid()
-// {}
+void RefGrid::setActive(bool a)
+{
+  active = a;
+  
+  if(active)
+    show();
+  else
+    hide();
+}
 
 bool RefGrid::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
+  //prevent show when inactive when parent container calls show all
+  if(!active)
+  {
+    hide();
+    return true;
+  }
+
   int s = get_allocated_width();
 
   //set color

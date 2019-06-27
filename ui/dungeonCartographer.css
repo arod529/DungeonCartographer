@@ -16,12 +16,9 @@ notebook stack {
 	background-color: #999999;
 }
 
-notebook grid {
-	box-shadow: 0 0 15px 10px #333333;
-}
-
 notebook viewport {
 	background-color: transparent;
+	box-shadow: 0 0 15px 10px #333333;
 }
 
 tab {

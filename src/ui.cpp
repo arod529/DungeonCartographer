@@ -5,6 +5,7 @@
 #include <gtkmm/filechooserdialog.h>
 #include <gtkmm/filefilter.h>
 #include <gtkmm/grid.h>
+#include <gtkmm/icontheme.h>
 #include <gtkmm/menu.h>
 #include <gtkmm/overlay.h>
 #include <gtkmm/scrolledwindow.h>
@@ -21,31 +22,35 @@ UI::UI(Settings* settings, Map* map)
 , map{map}
 {
 	//-------------------------
-	//----- Create Window -----
-	//-------------------------
+  //----- Create Window -----
+  //-------------------------
 
-	//css style
-	auto css = Gtk::CssProvider::create();
-	css->load_from_path(cssFile);
-	get_style_context()->add_provider_for_screen(get_screen(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+  //icons
+  auto icontheme = Gtk::IconTheme::get_default();
+  icontheme->append_search_path ("./ui/icons") ;
 
-	//gtk ui builder object
-	builder = Gtk::Builder::create_from_file(uiFile);
+  //css style
+  auto css = Gtk::CssProvider::create();
+  css->load_from_path(cssFile);
+  get_style_context()->add_provider_for_screen(get_screen(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-	//add static window content
-	Gtk::Box* content;
-	builder->get_widget("contentBox", content);
-	add(*content);
+  //gtk ui builder object
+  builder = Gtk::Builder::create_from_file(uiFile);
 
-	//get notebook
-	builder->get_widget("notebook", notebook);
+  //add static window content
+  Gtk::Box* content;
+  builder->get_widget("contentBox", content);
+  add(*content);
 
-	//window
-	set_title("Dungeon Cartographer");
-	iconList.emplace_back(Gdk::Pixbuf::create_from_file("./ui/dc_icon.png"));
-	set_icon_list(iconList);
-	maximize();
-	show_all_children();
+  //get notebook
+  builder->get_widget("notebook", notebook);
+
+  //window
+  set_title("Dungeon Cartographer");
+  iconList.emplace_back(Gdk::Pixbuf::create_from_file("./ui/icons/icon_dc.png"));
+  set_icon_list(iconList);
+  maximize();
+  show_all_children();
 
 	//------------------------------------
 	//----- Load Default UI Settings -----
@@ -75,6 +80,9 @@ UI::UI(Settings* settings, Map* map)
   btn->signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &UI::zoom), 1));
   builder->get_widget("btn_zoomFit", btn);
   btn->signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &UI::zoom), 0));
+
+  builder->get_widget("btn_grid", gridToggle);
+  gridToggle->signal_toggled().connect(sigc::mem_fun(*this, &UI::toggleGrid));
 
   //menus
   Gtk::MenuItem* menu;
@@ -150,6 +158,7 @@ void UI::addTab(int levelId, Level* level)
 
   //add scrolled window and tab to notebook; insert in-place of new tab
   notebook->insert_page(*scrolledWindow, *tabLabel, levelId);
+  
   //show all
   notebook->show_all_children();
   //set to active page
@@ -164,57 +173,6 @@ void UI::clearTabs()
 	//remove notebook pages
   while(notebook->get_n_pages() > 1)
     {notebook->remove_page();}
-}
-
-/*!
-  Saves to the file associated with the Map.
-  If there is no file associated, displays save as dialog.
-**/
-void UI::save()
-{
-	std::string fPath = map->getFilePath();
-  if(fPath == "") //there is no associated file
-    saveAs();
-  else //save the file
-    map->saveToFile(fPath);
-}
-
-/*!
-  Dipslays a save as dialog.
-
-  \bug overwrite confirmation does not work
-**/
-void UI::saveAs()
-{
-	auto dSaveAs = Gtk::FileChooserDialog(*this, "Save As", Gtk::FileChooserAction::FILE_CHOOSER_ACTION_SAVE);
-	dSaveAs.set_do_overwrite_confirmation(true);
-	dSaveAs.add_button("Save", 1)->grab_default();
-	dSaveAs.add_button("Cancel", 0);
-
-	//add file filters
-	auto dcm = Gtk::FileFilter::create();
-	dcm->add_pattern("*.dcm");
-	dcm->set_name("Dungeon Cartographer Map (*.dcm)");
-	dSaveAs.add_filter(dcm);
-	auto all = Gtk::FileFilter::create();
-	all->add_pattern("*");
-	all->set_name("All Files (*)");
-	dSaveAs.add_filter(all);
-
-  if(dSaveAs.run())
-  {
-  	std::string fPath = dSaveAs.get_filename();
-
-  	if(fPath != "")
-  	{
-			//append .dcm file extension if no extension was given and the dcm filter selected
-  		if(fPath.find('.') == std::string::npos && dSaveAs.get_filter() == dcm)
-  		fPath += ".dcm";
-
-  		//save file
-  		map->saveToFile(fPath);
-  	}
-  }
 }
 
 /*!
@@ -253,11 +211,61 @@ void UI::open()
 void UI::pageSwitch(Gtk::Widget* page, uint pageNum)
 {
   //triggered by tab change && (is only page || tab not newtab)
-  if(page != NULL && (pageNum == 0 || ((Gtk::Label*)notebook->get_tab_label(*page))->get_text() != "+"))
-    {return;}
-  else //append a new Level
-  {
+  if(!(page != NULL && (pageNum == 0 || ((Gtk::Label*)notebook->get_tab_label(*page))->get_text() != "+")))
     map->appendLevel();
+
+  //make sure grid toggle immitates grid visibility
+  gridToggle->set_active(refgrid[pageNum].isActive());
+}
+
+/*!
+  Saves to the file associated with the Map.
+  If there is no file associated, displays save as dialog.
+**/
+void UI::save()
+{
+  std::string fPath = map->getFilePath();
+  if(fPath == "") //there is no associated file
+    saveAs();
+  else //save the file
+    map->saveToFile(fPath);
+}
+
+/*!
+  Dipslays a save as dialog.
+
+  \bug overwrite confirmation does not work
+**/
+void UI::saveAs()
+{
+  auto dSaveAs = Gtk::FileChooserDialog(*this, "Save As", Gtk::FileChooserAction::FILE_CHOOSER_ACTION_SAVE);
+  dSaveAs.set_do_overwrite_confirmation(true);
+  dSaveAs.add_button("Save", 1)->grab_default();
+  dSaveAs.add_button("Cancel", 0);
+
+  //add file filters
+  auto dcm = Gtk::FileFilter::create();
+  dcm->add_pattern("*.dcm");
+  dcm->set_name("Dungeon Cartographer Map (*.dcm)");
+  dSaveAs.add_filter(dcm);
+  auto all = Gtk::FileFilter::create();
+  all->add_pattern("*");
+  all->set_name("All Files (*)");
+  dSaveAs.add_filter(all);
+
+  if(dSaveAs.run())
+  {
+    std::string fPath = dSaveAs.get_filename();
+
+    if(fPath != "")
+    {
+      //append .dcm file extension if no extension was given and the dcm filter selected
+      if(fPath.find('.') == std::string::npos && dSaveAs.get_filter() == dcm)
+      fPath += ".dcm";
+
+      //save file
+      map->saveToFile(fPath);
+    }
   }
 }
 
@@ -301,6 +309,15 @@ bool UI::scrollEvent(GdkEventScroll* scroll_event)
       scroll(0, scroll_event->delta_y);
   }
   return true; //don't pass on event
+}
+
+/*!
+  Toggles the reference grid
+**/
+void UI::toggleGrid()
+{
+  int currPage = notebook->get_current_page();
+  refgrid[currPage].setActive(gridToggle->get_active());
 }
 
 /*!

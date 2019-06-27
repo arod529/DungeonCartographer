@@ -7,13 +7,14 @@ class RefGrid : public Gtk::Box
 {
 public:
   RefGrid();
-  // RefGrid(const RefGrid& rg);
-  // ~RefGrid();
+
+  bool isActive() const;
+  void setActive(bool a);
 
 private:
+  bool active{false};
   double lWidth{1}; //grid line width
   double rgb[3]{0, 0, 1}; //grid color
-  int gridSize{0};
   int tileNum{25}; //number of tiles
 
   //signal overload

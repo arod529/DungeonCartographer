@@ -11,12 +11,14 @@
 
 #include <glibmm/refptr.h>
 
+#include <gdkmm/pixbuf.h>
+
 #include <gtkmm/builder.h>
 #include <gtkmm/cssprovider.h>
 #include <gtkmm/label.h>
 #include <gtkmm/notebook.h>
 #include <gtkmm/overlay.h>
-#include <gdkmm/pixbuf.h>
+#include <gtkmm/toggletoolbutton.h>
 #include <gtkmm/window.h>
 
 class UI : public Gtk::Window
@@ -37,6 +39,8 @@ private:
 	Glib::RefPtr<Gtk::Builder> builder;
 	//notebook
 	Gtk::Notebook* notebook;
+	//grid toggle
+	Gtk::ToggleToolButton* gridToggle;
 	//icon
 	std::vector<Glib::RefPtr<Gdk::Pixbuf>> iconList;
 	
@@ -57,6 +61,7 @@ private:
 	void pageSwitch(Gtk::Widget* page, uint pageNum);
 	void scroll(double dx, double dy);
 	bool scrollEvent(GdkEventScroll* scroll_event);
+	void toggleGrid();
 	void zoom(int scrollDir);
 };
 
