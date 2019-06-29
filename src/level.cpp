@@ -77,6 +77,18 @@ void Level::print(Cairo::RefPtr<Cairo::PdfSurface>& surface, Cairo::RefPtr<Cairo
   }
 }
 
+
+/*!
+  Sets all the tiles back to background clearing the Level.
+**/
+void Level::reset()
+{
+  for(int i = 0; i < size*size; i++)
+    tile[i]->tileId = BACKGROUND;
+
+  queue_draw();
+}
+
 /*!
   Updates the tile by either making it a room or a background tile based
   on its previous state. Updates the shared walls of the adjacent tiles

@@ -103,6 +103,9 @@ UI::UI(Settings* settings, Map* map)
 	builder->get_widget("menu_quit", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &UI::hide));
 
+  builder->get_widget("menu_reset", menu);
+  menu->signal_activate().connect(sigc::bind<int>(sigc::mem_fun(*map, &Map::resetLevel), currPage));
+
   builder->get_widget("gridColor", gridColor);
   gridColor->signal_color_changed().connect(sigc::mem_fun(*this, &UI::setGridColor));
 

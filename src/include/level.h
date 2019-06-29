@@ -20,6 +20,7 @@ struct Level : public Gtk::Grid
   Level(Tileset* tileset, int id, int size);
   Level(Tileset* tileset, std::ifstream& file);
 
+  void reset();
   bool updateTile(GdkEventButton* btn, int gridId);
 
   //utility

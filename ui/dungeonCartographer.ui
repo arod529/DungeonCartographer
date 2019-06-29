@@ -81,6 +81,92 @@
 
 				<child>
 					<object class="GtkMenuItem">
+						<property name="label">_Map</property>
+						<property name="use_underline">true</property>
+						<child type="submenu">
+							<object class="GtkMenu">
+								<child>
+									<object id="menu_insertLevel" class="GtkImageMenuItem">
+										<property name="label">_Insert Level</property>
+										<property name="use_underline">true</property>
+									</object>
+								</child>
+								<child>
+									<object id="menu_deleteLevel" class="GtkImageMenuItem">
+										<property name="label">_Delete Level</property>
+										<property name="use_underline">true</property>
+									</object>
+								</child>
+							</object>
+						</child>
+					</object>
+				</child>
+
+				<child>
+					<object class="GtkMenuItem">
+						<property name="label">_Level</property>
+						<property name="use_underline">true</property>
+						<child type="submenu">
+							<object class="GtkMenu">
+								<child>
+									<object id="menu_insertRow" class="GtkImageMenuItem">
+										<property name="label">Insert _Row</property>
+										<property name="use_underline">true</property>
+									</object>
+								</child>
+								<child>
+									<object id="menu_insertColumn" class="GtkImageMenuItem">
+										<property name="label">Insert _Column</property>
+										<property name="use_underline">true</property>
+									</object>
+								</child>
+								<child>
+								  <object class="GtkSeparatorMenuItem"></object>
+								</child>
+								<child>
+									<object id="menu_changeSize" class="GtkImageMenuItem">
+										<property name="label">Change _Size</property>
+										<property name="use_underline">true</property>
+									</object>
+								</child>
+								<child>
+									<object id="menu_fit" class="GtkImageMenuItem">
+										<property name="label">_Fit</property>
+										<property name="use_underline">true</property>
+									</object>
+								</child>
+								<child>
+								  <object class="GtkSeparatorMenuItem"></object>
+								</child>
+								<child>
+									<object id="menu_shift" class="GtkImageMenuItem">
+										<property name="label">S_hift</property>
+										<property name="use_underline">true</property>
+									</object>
+								</child>
+								<child>
+									<object id="menu_center" class="GtkImageMenuItem">
+										<property name="label">C_enter</property>
+										<property name="use_underline">true</property>
+									</object>
+								</child>
+								<child>
+								  <object class="GtkSeparatorMenuItem"></object>
+								</child>
+								<child>
+									<object id="menu_reset" class="GtkImageMenuItem">
+										<property name="label">Rese_t</property>
+										<property name="use_underline">true</property>
+									</object>
+								</child>
+								
+							</object>
+						</child>
+					</object>
+				</child>
+
+				<child>
+					<object class="GtkMenuItem">
 						<property name="label">_Settings</property>
 						<property name="use_underline">true</property>
 					</object>

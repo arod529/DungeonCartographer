@@ -24,6 +24,7 @@ class Map
     bool loadFile(std::string filepath);
     void newMap(Tileset* mapTileset, int mapSize);
     void print();
+    void resetLevel(int levelIndex);
     bool saveToFile(std::string filepath);
     
     //utility

@@ -87,6 +87,14 @@ void Map::print()
 }
 
 /*!
+  Resets the Level back to default removing all modifications.
+**/
+void Map::resetLevel(int levelIndex)
+{
+  level[levelIndex]->reset();
+}
+
+/*!
   Writes a map to file.
 
   @param[in] fPath The path to the file.
