@@ -21,6 +21,15 @@ void RefGrid::setActive(bool a)
     hide();
 }
 
+void RefGrid::setRGB(double r, double g, double b)
+{
+  rgb[0] = r;
+  rgb[1] = g;
+  rgb[2] = b;
+
+  queue_draw();
+}
+
 bool RefGrid::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
   //prevent show when inactive when parent container calls show all

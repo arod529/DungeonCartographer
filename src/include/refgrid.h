@@ -10,6 +10,7 @@ public:
 
   bool isActive() const;
   void setActive(bool a);
+  void setRGB(double r, double g, double b);
 
 private:
   bool active{false};

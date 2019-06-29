@@ -9,14 +9,18 @@
     <property name="step_increment">1</property>
     <property name="page_increment">1</property>
   </object>
-  <object class="GtkImage" id="image1">
-    <property name="width_request">10</property>
-    <property name="height_request">10</property>
-    <property name="visible">True</property>
+  <object class="GtkPopover" id="popover1">
     <property name="can_focus">False</property>
-    <property name="halign">start</property>
-    <property name="valign">start</property>
-    <property name="icon_name">3d</property>
+    <child>
+      <object class="GtkColorChooserWidget">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="halign">start</property>
+        <property name="valign">start</property>
+        <property name="rgba">rgb(255,255,255)</property>
+        <property name="use_alpha">False</property>
+      </object>
+    </child>
   </object>
   <object class="GtkWindow">
     <property name="can_focus">False</property>
@@ -165,11 +169,35 @@
                         <property name="valign">center</property>
                         <property name="label" translatable="yes">toolbutton</property>
                         <property name="use_underline">True</property>
-                        <property name="icon_widget">image1</property>
+                        <property name="icon_name">3d</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolItem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkMenuButton">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                            <property name="relief">none</property>
+                            <property name="popover">popover1</property>
+                            <child>
+                              <placeholder/>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">False</property>
                       </packing>
                     </child>
                   </object>
@@ -198,7 +226,21 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <placeholder/>
+              <object class="GtkColorSelection">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="top_attach">2</property>
+              </packing>
             </child>
             <child>
               <placeholder/>

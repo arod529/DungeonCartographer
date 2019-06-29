@@ -270,6 +270,19 @@
 									<property name="icon_name">icon_grid</property>
 								</object>
 							</child>
+							<child>
+							  <object class="GtkToolItem">
+							    <child>
+							      <object class="GtkMenuButton">
+							      	<property name="relief">none</property>
+							      	<property name="can_focus">false</property>
+							        <property name="halign">center</property>
+							        <property name="valign">center</property>
+							        <property name="popover">popover_gridColor</property>
+							      </object>
+							    </child>
+							  </object>
+							</child>
 					</object>	
 				</child>
 			
@@ -319,5 +332,18 @@
 		<property name="value">5</property>
 	</object>
 	<!-- /ADJUSTMENTS -->
+
+	<!-- POPOVERS -->
+	<object id="popover_gridColor" class="GtkPopover">
+	  <child>
+	    <object id="gridColor" class="GtkColorSelection">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="has_palette">True</property>
+        <property name="current_rgba">rgb(0,0,255)</property>
+      </object>
+	  </child>
+	</object>
+	<!-- /POPOVERS -->
 
 </interface>

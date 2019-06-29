@@ -14,6 +14,7 @@
 #include <gdkmm/pixbuf.h>
 
 #include <gtkmm/builder.h>
+#include <gtkmm/colorselection.h>
 #include <gtkmm/cssprovider.h>
 #include <gtkmm/label.h>
 #include <gtkmm/notebook.h>
@@ -35,22 +36,18 @@ public:
 	double getScrollSpeed();
 
 private:
-	//access to static window elements
-	Glib::RefPtr<Gtk::Builder> builder;
-	//notebook
-	Gtk::Notebook* notebook;
-	//grid toggle
-	Gtk::ToggleToolButton* gridToggle;
-	//icon
-	std::vector<Glib::RefPtr<Gdk::Pixbuf>> iconList;
+	Glib::RefPtr<Gtk::Builder> builder;              // access to static window elements
+	Gtk::Notebook* notebook;                         // notebook
+	Gtk::ToggleToolButton* gridToggle;               // grid toggle
+	std::vector<Glib::RefPtr<Gdk::Pixbuf>> iconList; // window icon
+	Gtk::ColorSelection* gridColor;                  // grid color selector
 	
-	//page switch signal
-	sigc::connection pageSwitchCon;
+	sigc::connection pageSwitchCon; //page switch signal
 
 	Map* map;
 	Settings* settings;
+	int currPage{0};
 	std::vector<RefGrid> refgrid;
-	// int zoomSpeed{5};
 
 	const char* uiFile  = (char*)"./ui/dungeonCartographer.ui";
 	const char* uiTab   = (char*)"./ui/tab.ui";
@@ -61,6 +58,7 @@ private:
 	void pageSwitch(Gtk::Widget* page, uint pageNum);
 	void scroll(double dx, double dy);
 	bool scrollEvent(GdkEventScroll* scroll_event);
+	void setGridColor();
 	void toggleGrid();
 	void zoom(int scrollDir);
 };

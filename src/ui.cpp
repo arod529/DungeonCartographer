@@ -103,6 +103,9 @@ UI::UI(Settings* settings, Map* map)
 	builder->get_widget("menu_quit", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &UI::hide));
 
+  builder->get_widget("gridColor", gridColor);
+  gridColor->signal_color_changed().connect(sigc::mem_fun(*this, &UI::setGridColor));
+
   //notebook
   pageSwitchCon = notebook->signal_switch_page().connect(sigc::mem_fun(*this, &UI::pageSwitch));
 
@@ -214,6 +217,9 @@ void UI::pageSwitch(Gtk::Widget* page, uint pageNum)
   if(!(page != NULL && (pageNum == 0 || ((Gtk::Label*)notebook->get_tab_label(*page))->get_text() != "+")))
     map->appendLevel();
 
+  //update currpage
+  currPage = notebook->get_current_page();
+
   //make sure grid toggle immitates grid visibility
   gridToggle->set_active(refgrid[pageNum].isActive());
 }
@@ -277,7 +283,7 @@ void UI::saveAs()
 **/
 void UI::scroll(double dx, double dy)
 {
-	auto scrolledWindow = (Gtk::ScrolledWindow*)notebook->get_nth_page(notebook->get_current_page());
+	auto scrolledWindow = (Gtk::ScrolledWindow*)notebook->get_nth_page(currPage);
   auto hAdjust = scrolledWindow->get_hadjustment();
   auto vAdjust = scrolledWindow->get_vadjustment();
 
@@ -311,12 +317,17 @@ bool UI::scrollEvent(GdkEventScroll* scroll_event)
   return true; //don't pass on event
 }
 
+void UI::setGridColor()
+{  
+  auto rgba = gridColor->get_current_rgba();
+  refgrid[currPage].setRGB(rgba.get_red(), rgba.get_green(), rgba.get_blue()); 
+}
+
 /*!
   Toggles the reference grid
 **/
 void UI::toggleGrid()
 {
-  int currPage = notebook->get_current_page();
   refgrid[currPage].setActive(gridToggle->get_active());
 }
 
@@ -329,11 +340,10 @@ void UI::toggleGrid()
 **/
 void UI::zoom(int scrollDir)
 {
-	int levelIndex = notebook->get_current_page();
-	int gridSize = map->getLevelSize(levelIndex);
+	int gridSize = map->getLevelSize(currPage);
 
 	//get current active scrolled window
-	auto scrolledWindow = (Gtk::ScrolledWindow*)notebook->get_nth_page(levelIndex);
+	auto scrolledWindow = (Gtk::ScrolledWindow*)notebook->get_nth_page(currPage);
 	
 	//get width and height of the scrolled window; get adjustments
 	double wWidth = scrolledWindow->get_allocated_width();
@@ -346,12 +356,12 @@ void UI::zoom(int scrollDir)
 		//set tile size to min dimension/(number of tiles + padding of 4 tiles)
 		int s = std::min(wWidth, wHeight)/(gridSize+4);
 		if(s < 0) s = 1; //make sure s is not <= 0
-		map->setTileSize(levelIndex, s);
+		map->setTileSize(currPage, s);
 	}
 	else
 	{
 		//get the current width of the a tile
-		double s = map->getTileSize(levelIndex);
+		double s = map->getTileSize(currPage);
 
 		//get the zoom speed value from ui
 		auto zoomAdjustment = (Gtk::Adjustment*)builder->get_object("zoomAdjustment").get();
@@ -361,7 +371,7 @@ void UI::zoom(int scrollDir)
 		//change tile size
 		if(scrollDir < 0) //scroll up, zoom in
 		{
-			map->setTileSize(levelIndex, s+ds);
+			map->setTileSize(currPage, s+ds);
 			hAdjust->set_value(hAdjust->get_value()+dp);
 			vAdjust->set_value(vAdjust->get_value()+dp);
 		}
@@ -369,7 +379,7 @@ void UI::zoom(int scrollDir)
 		{
 			if(ds < s) //don't shrink to nothing
 			{
-				map->setTileSize(levelIndex, s-ds);
+				map->setTileSize(currPage, s-ds);
 				hAdjust->set_value(hAdjust->get_value()-dp);
 				vAdjust->set_value(vAdjust->get_value()-dp);
 			}

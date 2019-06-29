@@ -9,6 +9,18 @@
     <property name="step_increment">1</property>
     <property name="page_increment">1</property>
   </object>
+  <object class="GtkPopover" id="popover1">
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkColorSelection">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="has_palette">True</property>
+        <property name="current_rgba">rgb(0,0,255)</property>
+      </object>
+    </child>
+  </object>
   <object class="GtkWindow">
     <property name="can_focus">False</property>
     <child>
@@ -163,6 +175,30 @@
                         <property name="homogeneous">True</property>
                       </packing>
                     </child>
+                    <child>
+                      <object class="GtkToolItem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkMenuButton">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                            <property name="relief">none</property>
+                            <property name="popover">popover1</property>
+                            <child>
+                              <placeholder/>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">False</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -189,7 +225,23 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <placeholder/>
+              <object class="GtkColorSelection">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <property name="has_palette">True</property>
+                <property name="current_rgba">rgb(0,0,255)</property>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="top_attach">2</property>
+              </packing>
             </child>
             <child>
               <placeholder/>
