@@ -26,6 +26,7 @@ class Map
     void print();
     void resetLevel(int levelIndex);
     bool saveToFile(std::string filepath);
+    void shiftLevel(int levelIndex, int x, int y);
     
     //utility
     std::string getFilePath() const;

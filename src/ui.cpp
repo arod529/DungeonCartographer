@@ -103,8 +103,11 @@ UI::UI(Settings* settings, Map* map)
 	builder->get_widget("menu_quit", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &UI::hide));
 
+  builder->get_widget("menu_shift", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &UI::shiftLevel));
+
   builder->get_widget("menu_reset", menu);
-  menu->signal_activate().connect(sigc::bind<int>(sigc::mem_fun(*map, &Map::resetLevel), currPage));
+  menu->signal_activate().connect(sigc::mem_fun(*this, &UI::resetLevel));
 
   builder->get_widget("gridColor", gridColor);
   gridColor->signal_color_changed().connect(sigc::mem_fun(*this, &UI::setGridColor));
@@ -214,6 +217,14 @@ void UI::open()
 	}
 }
 
+/*!
+  Resets a Level to all background tiles.
+**/
+void UI::resetLevel()
+{
+  map->resetLevel(currPage);
+}
+
 void UI::pageSwitch(Gtk::Widget* page, uint pageNum)
 {
   //triggered by tab change && (is only page || tab not newtab)
@@ -320,10 +331,39 @@ bool UI::scrollEvent(GdkEventScroll* scroll_event)
   return true; //don't pass on event
 }
 
+/*!
+  Sets the color of the grid.
+**/
 void UI::setGridColor()
 {  
   auto rgba = gridColor->get_current_rgba();
   refgrid[currPage].setRGB(rgba.get_red(), rgba.get_green(), rgba.get_blue()); 
+}
+
+/*!
+  Shows a shift Level dialog. Shifts the Level the number of tiles input.
+**/
+void UI::shiftLevel()
+{
+  auto shiftDialog = Gtk::Dialog("Shift Level", *this, Gtk::DialogFlags::DIALOG_MODAL|Gtk::DialogFlags::DIALOG_DESTROY_WITH_PARENT);
+  shiftDialog.add_button("Accept", 1)->grab_default();
+  shiftDialog.add_button("Cancel", 0);
+
+  auto dialogBuilder = Gtk::Builder::create_from_file(uiShiftLevel);
+  auto content = shiftDialog.get_content_area();
+  Gtk::Box* spinners;
+  dialogBuilder->get_widget("spinners", spinners);
+  content->add(*spinners);
+
+  shiftDialog.show_all_children();
+
+  if(shiftDialog.run())
+  {
+    auto adjustment_x = (Gtk::Adjustment*)dialogBuilder->get_object("adjustment_x").get();
+    auto adjustment_y = (Gtk::Adjustment*)dialogBuilder->get_object("adjustment_y").get();
+
+    map->shiftLevel(currPage, adjustment_x->get_value(), adjustment_y->get_value());
+  }
 }
 
 /*!

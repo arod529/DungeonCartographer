@@ -29,8 +29,10 @@ public:
 	~UI();
 
 	void open();
+	void resetLevel();
 	void save();
 	void saveAs();
+	void shiftLevel();
 	
 	// Utility
 	double getScrollSpeed();
@@ -51,6 +53,7 @@ private:
 
 	const char* uiFile  = (char*)"./ui/dungeonCartographer.ui";
 	const char* uiTab   = (char*)"./ui/tab.ui";
+	const char* uiShiftLevel = (char*)"./ui/shiftLevel.ui";
 	const char* cssFile = (char*)"./ui/dungeonCartographer.css";
 	
 	void addTab(int levelId, Level* level);

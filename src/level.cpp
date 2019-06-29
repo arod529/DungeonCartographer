@@ -54,6 +54,154 @@ void Level::propInit()
 //-------------------
 
 /*!
+  Searches for the Level extents by scanline. This is more efficient the further
+  off center the Level is. The Level is then centered in the available space.
+**/
+void Level::center()
+{
+  //level extents {e, n, w, s}
+  int extents[4]{-1, -1, -1, -1};
+
+  int j = 1; //column offset
+  int i; 
+
+  //find max east extents by scanning east to west
+  do
+  {
+    i = size-j; //tile gridId
+    do
+    {
+      //the tile is a room, save the row number and end search
+      if(tile[i]->tileId != BACKGROUND)
+      {
+        extents[0] = i%size;
+        break;
+      } 
+
+      i += size;
+    } while(i < size*size);
+
+    j++;
+  } while(extents[0] == -1 && j <= size); 
+
+  if(extents[0] == -1) return; //there are no rooms, stop search
+
+  //find max north extents by scanning north to south
+  for(i = 0; i < size*size; i++)
+  {
+    //the tile is a room, save the row number and end search
+    if(tile[i]->tileId != BACKGROUND)
+    {
+      extents[1] = i/size;
+      break;
+    } 
+  }
+
+  //find max west column by scanning west to east
+  j = 0;
+  do
+  {
+    i = 0;
+    do
+    {
+      //the tile is a room, save the row number and end search
+      if(tile[i]->tileId != BACKGROUND)
+      {
+        extents[2] = i%size;
+        break;
+      }
+
+      i += size;
+    } while(i < size*size);
+
+    j++;
+  } while(extents[2] == -1 && j < size);
+
+  //find max south extents by scanning south to north
+  for(i = size*size-1; i >= 0; i--)
+  {
+    //the tile is a room, save the row number and end search
+    if(tile[i]->tileId != BACKGROUND)
+    {
+      extents[3] = i%size;
+      break;
+    }
+  }
+}
+
+/*!
+  Shifts the Level by n tiles in the specified direction and magnitude.
+
+  @param[in] x The direction and magnitude to shift horizontally.
+  @param[in] y The direction and magnitude to shift vertically.
+**/
+void Level::shift(int x, int y)
+{
+  int i{0}; //tile grid index
+  int j{0}; //column offset
+
+  //shift the level in the x axis 
+  if(x != 0)
+  {
+    do //shift by copying the tiles in column offset by x
+    {
+      i = (x > 0) ? size-j-1 : j;
+
+      do //scan down column
+      {
+        tile[i]->tileId = tile[i-x]->tileId; //copy from the column offset by x
+
+        i += size;
+      } while(i < size*size);
+
+      j++;
+    } while(j < size-abs(x)); //the column to copy is in bounds
+
+    
+    do //set the remaining tiles to background
+    {
+      i = (x > 0) ? size-j-1 : j; //tile grid index 
+
+      do
+      {
+        tile[i]->tileId = BACKGROUND;
+        i += size;
+      } while( i < size*size);
+
+      j++;
+    } while(j < size); //the column is in bounds
+  }
+
+  //shift the level in the y axis
+  if(y != 0)
+  {
+    j = (y > 0) ? 0 : size-1; //row offset
+
+    do
+    {
+      for(i = size*j; i < size*j+size; i++)
+      {
+        tile[i]->tileId = tile[i+size*y]->tileId; 
+      }
+
+      (y > 0) ? j++ : j--;
+    } while(j+y < size && j+y >= 0); //the row to copy is in bounds
+
+    do
+    {
+      for(i = size*j; i < size*j+size; i++)
+      {
+        tile[i]->tileId = BACKGROUND;
+      }
+
+      (y > 0) ? j++ : j--;
+    } while(j < size && j >= 0);
+  }
+
+  queue_draw();
+}
+
+/*!
   Creates a tile, attaches it to the grid, and connects the button press event.
 **/
 void Level::createNewTile()
@@ -76,7 +224,6 @@ void Level::print(Cairo::RefPtr<Cairo::PdfSurface>& surface, Cairo::RefPtr<Cairo
     tile[i]->print(cr);
   }
 }
-
 
 /*!
   Sets all the tiles back to background clearing the Level.

@@ -152,6 +152,11 @@ void Map::newMap(Tileset* mapTileset, int mapSize)
   appendLevel();
 }
 
+void Map::shiftLevel(int levelIndex, int x, int y)
+{
+  level[levelIndex]->shift(x, y);
+}
+
 //-------------------
 //----- Utility -----
 //-------------------

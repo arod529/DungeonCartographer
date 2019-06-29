@@ -48,10 +48,10 @@ bool RefGrid::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
   double x{0.0}, y{0.0}; //origin
   double X{0.0}, Y{0.0}; //end
-  double ds = s/tileNum; //width of a tile
+  double ds = s/size; //width of a tile
 
   //draw lines
-  for(int i = 1; i < tileNum; i++)
+  for(int i = 1; i < size; i++)
   {
     x = i*ds;
     X = x;
