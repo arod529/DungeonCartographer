@@ -1,5 +1,6 @@
 Tileset=./tiles/defaultSet.dct
-MapSize=25
+MapWidth=30
+MapHeight=10
 ZoomSpeed=5
 ScrollSpeed=5
 ZoomFollowsMouse=1

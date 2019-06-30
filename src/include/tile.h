@@ -17,7 +17,7 @@ struct Tile : public Gtk::DrawingArea
 {
   friend class Level; //Tile is owned by Level
 
-  Tile(Tileset* tileset, uint tileId, int gridId, int gridSize);
+  Tile(Tileset* tileset, uint tileId, int gridId, int gridWidth, int gridHeight);
 
   //utility
   void getTileExists(bool* tileExists);
@@ -29,7 +29,8 @@ struct Tile : public Gtk::DrawingArea
 
 private:
   int gridId;          //The tile's grid location
-  int gridSize;        //The size of the grid the tile is on
+  int gridWidth;       //The width of the grid the tile is on
+  int gridHeight;      //The height of the grid the tile is on
   uint tileId;         //The id of the tileset's tile(image) this tile displays
   Tileset* tileset;    //The Tileset this tile uses
   bool locked = false; //protection against multiple recursion

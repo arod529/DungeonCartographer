@@ -23,7 +23,7 @@ class Map
     void appendLevel();
     void centerLevel(int levelIndex);
     bool loadFile(std::string filepath);
-    void newMap(Tileset* mapTileset, int mapSize);
+    void newMap(Tileset* mapTileset, int mapWidth, int mapHeight);
     void print();
     void resetLevel(int levelIndex);
     bool saveToFile(std::string filepath);
@@ -31,7 +31,8 @@ class Map
     
     //utility
     std::string getFilePath() const;
-    int getLevelSize(int levelIndex) const;
+    int getLevelHeight(int levelIndex) const;
+    int getLevelWidth(int levelIndex) const;
     int getTileSize(int levelIndex) const;
     void setTileSize(int levelIndex, int tileSize);
 
@@ -44,10 +45,11 @@ class Map
     friend std::istream& operator>>(std::istream& in, Map& map);
 
   private:
-    int size;                                  // default level size
-    Tileset* tileset;                          // The tile set that the map uses
-    std::string filepath = "";                 // The file path associated with this map
-    std::vector<std::unique_ptr<Level>> level; // The levels in the map
+    int width;                                 //default level size
+    int height;                                //default level size
+    Tileset* tileset;                          //The tile set that the map uses
+    std::string filepath = "";                 //The file path associated with this map
+    std::vector<std::unique_ptr<Level>> level; //The levels in the map
     
     void clearMap();
 };

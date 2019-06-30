@@ -17,7 +17,7 @@ Map::~Map()
 **/
 void Map::appendLevel()
 {
-  level.emplace_back(std::make_unique<Level>(tileset, level.size(), size));
+  level.emplace_back(std::make_unique<Level>(tileset, level.size(), width, height));
   signal_levelCreated(level.back()->id, level.back().get());
 }
 
@@ -74,13 +74,14 @@ bool Map::loadFile(std::string fPath)
   @param[in] mapTileset The tileset to use for the Map.
   @param[in] mapSize The default size of Levels in the Map.
 **/
-void Map::newMap(Tileset* mapTileset, int mapSize)
+void Map::newMap(Tileset* mapTileset, int mapWidth, int mapHeight)
 {
   //clear any existing levels
   clearMap();
 
   //set properties
-  size = mapSize;
+  width = mapWidth;
+  height = mapHeight;
   tileset = mapTileset;
   filepath = "";
 
@@ -170,8 +171,11 @@ void Map::shiftLevel(int levelIndex, int x, int y)
 std::string Map::getFilePath() const
   {return filepath;}
 
-int Map::getLevelSize(int levelIndex) const
-  {return level[levelIndex]->size;}
+int Map::getLevelHeight(int levelIndex) const
+  {return level[levelIndex]->height;}
+
+int Map::getLevelWidth(int levelIndex) const
+  {return level[levelIndex]->width;}
 
 int Map::getTileSize(int levelIndex) const
   {return level[levelIndex]->getTileSize();}
@@ -201,7 +205,8 @@ void Map::clearMap()
 std::ostream& operator<<(std::ostream& out, const Map& map)
 {
   out << "Map["
-      << map.size << ','
+      << map.width << ','
+      << map.height << ','
       << map.tileset->filepath << ']' << '\n';
   out.flush();
   return out;
@@ -212,7 +217,9 @@ std::istream& operator>>(std::istream& in, Map& map)
   static const std::streamsize MAX = std::numeric_limits<std::streamsize>::max();
 
   in.ignore(MAX, '[');
-  in >> map.size;
+  in >> map.width;
+  in.get(); //discard comma
+  in >> map.height;
   in.get(); //discard comma
 
   std::string tilesetFile = "";

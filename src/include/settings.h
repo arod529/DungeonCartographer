@@ -14,7 +14,8 @@ class Settings
 		std::string tilesetFile{""}; //file associated with the tileset
 
 		//global map defaults
-		int mapSize{25};
+		int mapWidth{25};
+		int mapHeight{25};
 
 		int zoomSpeed{5};
 		int scrollSpeed{5};

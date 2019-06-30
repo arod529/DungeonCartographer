@@ -17,10 +17,11 @@ struct Level : public Gtk::Grid
 {
   friend class Map; //Level is owned by Map
 
-  Level(Tileset* tileset, int id, int size);
+  Level(Tileset* tileset, int id, int width, int height);
   Level(Tileset* tileset, std::ifstream& file);
 
   void center();
+  // void insertRow();
   void reset();
   void shift(int x, int y);
   bool updateTile(GdkEventButton* btn, int gridId);
@@ -36,7 +37,7 @@ struct Level : public Gtk::Grid
 
 private:
   int id;                                  // The Level's id
-  int size;                                // The Level's size
+  int width, height;                       // The Level's size
   Tileset* tileset;                        // The Tileset that the Level uses
   std::vector<std::unique_ptr<Tile>> tile; // The Tiles in the Level
   

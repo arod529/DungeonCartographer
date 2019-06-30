@@ -5,12 +5,16 @@
 /*!
   Initilizes a Tile, adds mouse click mask, and makes visible.
 **/
-Tile::Tile(Tileset* tileset, uint tileId, int gridId, int gridSize)
-: tileset{tileset}, tileId{tileId}, gridId{gridId}, gridSize{gridSize}
+Tile::Tile(Tileset* tileset, uint tileId, int gridId, int gridWidth, int gridHeight)
+: tileset{tileset}
+, tileId{tileId}
+, gridId{gridId}
+, gridWidth{gridWidth}
+, gridHeight{gridHeight}
 {
   //set drawing area properties
   set_can_focus(true);
-  // set_size_request(25,25);
+  set_size_request(25,25);
 
   //mouse click mask
   add_events(Gdk::EventMask::BUTTON_PRESS_MASK);
@@ -32,18 +36,18 @@ Tile::Tile(Tileset* tileset, uint tileId, int gridId, int gridSize)
 **/
 void Tile::getTileExists(bool* tileExists)
 {
-  int c = gridId%gridSize; // this tile's column number
-  int r = gridId/gridSize; // this tile's row number
+  int c = gridId%gridWidth; // this tile's column number
+  int r = gridId/gridWidth; // this tile's row number
 
   bool tmp[] = {
-    (c > 0),          //west tile
-    (r < gridSize-1), //south tile
-    (c < gridSize-1), //east tile
-    (r > 0),          //north tile
-    (r > 0 && c > 0),                   // northwest tile
-    (c > 0 && r < gridSize-1),          // southwest tile
-    (c < gridSize-1 && r < gridSize-1), // southeast tile
-    (c < gridSize-1 && r > 0)           // northeast tile
+    (c > 0),            //west tile
+    (r < gridHeight-1), //south tile
+    (c < gridWidth-1),  //east tile
+    (r > 0),            //north tile
+    (r > 0 && c > 0),                      //northwest tile
+    (c > 0 && r < gridHeight-1),           //southwest tile
+    (c < gridWidth-1 && r < gridHeight-1), //southeast tile
+    (c < gridWidth-1 && r > 0)             //northeast tile
   };
 
   std::copy(tmp, tmp+8, tileExists);
@@ -59,14 +63,14 @@ void Tile::getTileExists(bool* tileExists)
 void Tile::getAdjacentIndex(int* adjacentIndex)
 {
   int tmp[] = {
-    gridId-1,          // west tile
-    gridId+gridSize,   // south tile
-    gridId+1,          // east tile
-    gridId-gridSize,   // north tile
-    gridId-gridSize-1, // northwest tile
-    gridId+gridSize-1, // southwest tile
-    gridId+gridSize+1, // southeast tile
-    gridId-gridSize+1  // northeast tile
+    gridId-1,           //west tile
+    gridId+gridWidth,   //south tile
+    gridId+1,           //east tile
+    gridId-gridWidth,   //north tile
+    gridId-gridWidth-1, //northwest tile
+    gridId+gridWidth-1, //southwest tile
+    gridId+gridWidth+1, //southeast tile
+    gridId-gridWidth+1  //northeast tile
   };
 
   std::copy(tmp, tmp+8, adjacentIndex);
@@ -77,8 +81,8 @@ void Tile::print(Cairo::RefPtr<Cairo::Context>& cr)
   //get tile size
   int tilesize = tileset->tile[tileId].pixbuf->get_width();
   //get origin coordinats of this tile
-  int x = (gridId%gridSize)*tilesize;
-  int y = (gridId/gridSize)*tilesize;
+  int x = (gridId%gridWidth)*tilesize;
+  int y = (gridId/gridWidth)*tilesize;
 
   //paint tile at orign
   Gdk::Cairo::set_source_pixbuf(cr, tileset->tile[tileId].pixbuf, x, y);
@@ -110,7 +114,7 @@ bool Tile::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 //---------------------
 std::ostream& operator<<(std::ostream& out, const Tile& tile)
 {
-  if(tile.gridId%tile.gridSize != 0)
+  if(tile.gridId%tile.gridWidth != 0)
   {
     out.seekp(-1, std::ios::cur);
     out << '|';

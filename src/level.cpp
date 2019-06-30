@@ -9,14 +9,14 @@
 Level::Level(Tileset* tileset, std::ifstream& file)
 : tileset{tileset}
 {
-  //initilize properties
+  //initialize properties
   propInit();
 
   //get level from file
   file >> *this;
 
   //fill with tiles
-  for(int i = 0; i < size*size; i++)
+  for(int i = 0; i < width*height; i++)
   {
     createNewTile();
     file >> *tile.back();
@@ -26,14 +26,17 @@ Level::Level(Tileset* tileset, std::ifstream& file)
 /*!
   Initializes a level and fills it with background tiles.
 **/
-Level::Level(Tileset* tileset, int id, int size)
-: tileset{tileset}, id{id}, size{size}
+Level::Level(Tileset* tileset, int id, int width, int height)
+: tileset{tileset}
+, id{id}
+, width{width}
+, height{height}
 {
-  //initilize properties
+  //initialize properties
   propInit();
 
   //Fill level with background tiles
-  for(int i = 0; i < size*size; i++)
+  for(int i = 0; i < width*height; i++)
   {
     createNewTile();
   }
@@ -52,19 +55,28 @@ void Level::center()
   getExtents(extents);
 
   //calculate the x shift
-  int x = (extents[2]+(size-1-extents[0]))/2 - extents[2];
+  int x = (extents[2]+(width-1-extents[0]))/2 - extents[2];
   //calculate the y shift
-  int y = -((extents[1]+(size-1-extents[3]))/2 - extents[1]);
+  int y = -((extents[1]+(height-1-extents[3]))/2 - extents[1]);
 
   shift(x, y);
 }
+
+// void insertRow(int rowNum)
+// {
+//   //insert row in grid
+//   insert_row(rowNum);
+
+//   //update tile gridIds below row
+//   for(int i = size*rowNum)
+// }
 
 /*!
   Sets all the tiles back to background clearing the Level.
 **/
 void Level::reset()
 {
-  for(int i = 0; i < size*size; i++)
+  for(int i = 0; i < width*height; i++)
     tile[i]->tileId = BACKGROUND;
 
   queue_draw();
@@ -86,57 +98,57 @@ void Level::shift(int x, int y)
   {
     do //shift by copying the tiles in column offset by x
     {
-      i = (x > 0) ? size-j-1 : j;
+      i = (x > 0) ? width-j-1 : j;
 
       do //scan down column
       {
         tile[i]->tileId = tile[i-x]->tileId; //copy from the column offset by x
 
-        i += size;
-      } while(i < size*size);
+        i += width;
+      } while(i < width*height);
 
       j++;
-    } while(j < size-abs(x)); //the column to copy is in bounds
+    } while(j < width-abs(x)); //the column to copy is in bounds
 
     
     do //set the remaining tiles to background
     {
-      i = (x > 0) ? size-j-1 : j; //tile grid index 
+      i = (x > 0) ? width-j-1 : j; //tile grid index 
 
       do
       {
         tile[i]->tileId = BACKGROUND;
-        i += size;
-      } while( i < size*size);
+        i += width;
+      } while( i < width*height);
 
       j++;
-    } while(j < size); //the column is in bounds
+    } while(j < width); //the column is in bounds
   }
 
   //shift the level in the y axis
   if(y != 0)
   {
-    j = (y > 0) ? 0 : size-1; //row offset
+    j = (y > 0) ? 0 : height-1; //row offset
 
     do
     {
-      for(i = size*j; i < size*j+size; i++)
+      for(i = width*j; i < width*j+width; i++)
       {
-        tile[i]->tileId = tile[i+size*y]->tileId; 
+        tile[i]->tileId = tile[i+width*y]->tileId; 
       }
 
       (y > 0) ? j++ : j--;
-    } while(j+y < size && j+y >= 0); //the row to copy is in bounds
+    } while(j+y < height && j+y >= 0); //the row to copy is in bounds
 
-    do
+    do //set the remaining tiles to background
     {
-      for(i = size*j; i < size*j+size; i++)
+      for(i = width*j; i < width*j+width; i++)
       {
         tile[i]->tileId = BACKGROUND;
       }
 
       (y > 0) ? j++ : j--;
-    } while(j < size && j >= 0);
+    } while(j < height && j >= 0);
   }
 
   queue_draw();
@@ -169,7 +181,7 @@ void Level::shift(int x, int y)
 bool Level::updateTile(GdkEventButton* btn, int gridId)
 {
   Tile* tile = this->tile[gridId].get(); //the tile to update
-  Tile* aTile = NULL;         //adjacent tile
+  Tile* aTile = NULL;                    //adjacent tile
 
   //adjacent tile exist truths
   bool tileExists[8];
@@ -214,7 +226,7 @@ bool Level::updateTile(GdkEventButton* btn, int gridId)
     compare <<= 1; //shift compare to next wall
   }
   updateCornerBits(tile->gridId, true); //add valid corner bits
-  return true; //requred for Gtk::Grid::signal_button_press_event()
+  return true; //the event has been fully handled.
 }
 
 //-------------------
@@ -227,9 +239,7 @@ bool Level::updateTile(GdkEventButton* btn, int gridId)
   @return The render size of the tile in pixels.
 **/
 int Level::getTileSize() const
-{
-  return tile[0]->get_allocated_width();
-}
+  {return tile[0]->get_allocated_width();}
 
 /*!
   Sets the render size of the tile.
@@ -237,9 +247,7 @@ int Level::getTileSize() const
   @param[in] tileSize The render size of the tile in pixels.
 **/
 void Level::setTileSize(int tileSize)
-{
-  tile[0]->set_size_request(tileSize, tileSize);
-}
+  {tile[0]->set_size_request(tileSize, tileSize);}
 
 //-------------------
 //----- PRIVATE -----
@@ -251,8 +259,8 @@ void Level::setTileSize(int tileSize)
 void Level::createNewTile()
 {
   int i = tile.size();
-  tile.emplace_back(std::make_unique<Tile>(tileset, BACKGROUND, i, size));
-  attach(*tile[i], i%size, i/size, 1, 1);
+  tile.emplace_back(std::make_unique<Tile>(tileset, BACKGROUND, i, width, height));
+  attach(*tile[i], i%width, i/width, 1, 1);
   tile[i]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[i]->gridId), false);
 }
 
@@ -272,31 +280,31 @@ void Level::getExtents(int* extents)
   //find max east extents by scanning east to west
   do
   {
-    i = size-j; //tile gridId
+    i = width-j; //tile gridId
     do
     {
       //the tile is a room, save the row number and end search
       if(tile[i]->tileId != BACKGROUND)
       {
-        ext[0] = i%size;
+        ext[0] = i%width;
         break;
       } 
 
-      i += size;
-    } while(i < size*size);
+      i += width;
+    } while(i < width*height);
 
     j++;
-  } while(ext[0] == -1 && j <= size); 
+  } while(ext[0] == -1 && j <= width); 
 
   if(ext[0] == -1) return; //there are no rooms, stop search
 
   //find max north extents by scanning north to south
-  for(i = 0; i < size*size; i++)
+  for(i = 0; i < width*height; i++)
   {
     //the tile is a room, save the row number and end search
     if(tile[i]->tileId != BACKGROUND)
     {
-      ext[1] = i/size;
+      ext[1] = i/width;
       break;
     } 
   }
@@ -311,23 +319,23 @@ void Level::getExtents(int* extents)
       //the tile is a room, save the row number and end search
       if(tile[i]->tileId != BACKGROUND)
       {
-        ext[2] = i%size;
+        ext[2] = i%width;
         break;
       }
 
-      i += size;
-    } while(i < size*size);
+      i += width;
+    } while(i < width*height);
 
     j++;
-  } while(ext[2] == -1 && j < size);
+  } while(ext[2] == -1 && j < width);
 
   //find max south extents by scanning south to north
-  for(i = size*size-1; i >= 0; i--)
+  for(i = width*height-1; i >= 0; i--)
   {
     //the tile is a room, save the row number and end search
     if(tile[i]->tileId != BACKGROUND)
     {
-      ext[3] = i/size;
+      ext[3] = i/width;
       break;
     }
   }
@@ -337,12 +345,12 @@ void Level::getExtents(int* extents)
 
 void Level::print(Cairo::RefPtr<Cairo::PdfSurface>& surface, Cairo::RefPtr<Cairo::Context>& cr)
 {
-  //set page size to tile size * num of tiles
+  //set page size to tile size * num of tiles for width and height
   int tileSize = tileset->tile[BACKGROUND].getSize();
-  surface->set_size(tileSize*size, tileSize*size);
+  surface->set_size(tileSize*width, tileSize*height);
 
   //print tiles
-  for(int i = 0; i < size*size; i++)
+  for(int i = 0; i < width*height; i++)
   {
     tile[i]->print(cr);
   }
@@ -487,7 +495,8 @@ std::ostream& operator<<(std::ostream& out, const Level& level)
 {
   out << "Level["
        << level.id << ','
-       << level.size << ','
+       << level.width << ','
+       << level.height << ','
        << level.tileset->filepath << ']' << '\n';
   out.flush();
   return out;
@@ -500,8 +509,11 @@ std::istream& operator>>(std::istream& in, Level& level)
   in.ignore(MAX, '[');
   in >> level.id;
   in.get(); //discard comma
-  in >> level.size;
+  in >> level.width;
   in.get(); //discard comma
+  in >> level.height;
+  in.get(); //discard comma
+
 
   std::string tilesetFile = "";
   std::getline(in, tilesetFile, ']');

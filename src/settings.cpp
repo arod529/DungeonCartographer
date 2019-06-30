@@ -46,13 +46,8 @@ bool Settings::loadSettingsFile(const std::string fPath)
 **/
 bool Settings::writeDefaultSettingsFile()
 {
-	//set default settings
 	tilesetFile = defaultTilesetFile;
-	mapSize = 25;
-	zoomSpeed = 5;
-	scrollSpeed = 5;
-	zoomFollowsMouse = true;
-
+	
 	//open file
 	std::ofstream file(defaultSettingsFile);
 
@@ -76,7 +71,8 @@ bool Settings::writeDefaultSettingsFile()
 std::ostream& operator<<(std::ostream& out, const Settings& settings)
 {
 	out << "Tileset=" << settings.tilesetFile << '\n'
-			<< "MapSize=" << settings.mapSize << '\n'
+			<< "MapWidth=" << settings.mapWidth << '\n'
+			<< "MapHeight=" << settings.mapHeight << '\n'
 			<< "ZoomSpeed=" << settings.zoomSpeed << '\n'
 			<< "ScrollSpeed=" << settings.scrollSpeed << '\n'
 			<< "ZoomFollowsMouse=" << settings.zoomFollowsMouse << '\n';
@@ -89,7 +85,8 @@ std::istream& operator>>(std::istream& in, Settings& settings)
 	static const std::streamsize MAX = std::numeric_limits<std::streamsize>::max();
 
 	in.ignore(MAX, '='); in >> settings.tilesetFile;
-	in.ignore(MAX, '='); in >> settings.mapSize;
+	in.ignore(MAX, '='); in >> settings.mapWidth;
+	in.ignore(MAX, '='); in >> settings.mapHeight;
 	in.ignore(MAX, '='); in >> settings.zoomSpeed;
 	in.ignore(MAX, '='); in >> settings.scrollSpeed;
 	in.ignore(MAX, '='); in >> settings.zoomFollowsMouse;

@@ -64,7 +64,7 @@ UI::UI(Settings* settings, Map* map)
 	//tool buttons
 	Gtk::ToolButton* btn;
   builder->get_widget("btn_new", btn);
-  btn->signal_clicked().connect(sigc::bind<Tileset*, uint>(sigc::mem_fun(*map, &Map::newMap), &settings->tileset, settings->mapSize));
+  btn->signal_clicked().connect(sigc::bind<Tileset*, int, int>(sigc::mem_fun(*map, &Map::newMap), &settings->tileset, settings->mapWidth, settings->mapHeight));
 
   builder->get_widget("btn_open", btn);
   btn->signal_clicked().connect(sigc::mem_fun(*this, &UI::open));
@@ -87,7 +87,7 @@ UI::UI(Settings* settings, Map* map)
   //menus
   Gtk::MenuItem* menu;
   builder->get_widget("menu_new", menu);
-  menu->signal_activate().connect(sigc::bind<Tileset*, uint>(sigc::mem_fun(*map, &Map::newMap), &settings->tileset, settings->mapSize));
+  menu->signal_activate().connect(sigc::bind<Tileset*, uint>(sigc::mem_fun(*map, &Map::newMap), &settings->tileset, settings->mapWidth, settings->mapHeight));
 
   builder->get_widget("menu_open", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &UI::open));
@@ -125,7 +125,7 @@ UI::UI(Settings* settings, Map* map)
 	//--------------------------
 	//----- Make a New Map -----
 	//--------------------------
-  map->newMap(&settings->tileset, settings->mapSize);
+  map->newMap(&settings->tileset, settings->mapWidth, settings->mapHeight);
 }
 
 UI::~UI()
@@ -301,10 +301,9 @@ void UI::addTab(int levelId, Level* level)
 
   //add level to overlay as base
   overlay->add(*level);
-  // map->setTileSize(levelId, 25);
 
   //add reference grid overlay
-  refgrid.emplace_back();
+  refgrid.emplace_back(map->getLevelWidth(levelId), map->getLevelHeight(levelId));
   overlay->add_overlay(refgrid[levelId]);
   overlay->set_overlay_pass_through(refgrid[levelId], true);
 
@@ -330,6 +329,9 @@ void UI::clearTabs()
 	//remove notebook pages
   while(notebook->get_n_pages() > 1)
     {notebook->remove_page();}
+
+  //delete reference grids
+  refgrid.clear();
 }
 
 /*!
@@ -421,7 +423,8 @@ void UI::toggleGrid()
 **/
 void UI::zoom(int scrollDir)
 {
-	int gridSize = map->getLevelSize(currPage);
+  int gridWidth = map->getLevelWidth(currPage);
+	int gridHeight = map->getLevelHeight(currPage);
 
 	//get current active scrolled window
 	auto scrolledWindow = (Gtk::ScrolledWindow*)notebook->get_nth_page(currPage);
@@ -435,7 +438,7 @@ void UI::zoom(int scrollDir)
 	if(scrollDir == 0) //fit to window
 	{
 		//set tile size to min dimension/(number of tiles + padding of 4 tiles)
-		int s = std::min(wWidth, wHeight)/(gridSize+4);
+		int s = std::min(wWidth/(gridWidth+4), wHeight/(gridHeight+4));
 		if(s < 0) s = 1; //make sure s is not <= 0
 		map->setTileSize(currPage, s);
 	}
@@ -447,22 +450,23 @@ void UI::zoom(int scrollDir)
 		//get the zoom speed value from ui
 		auto zoomAdjustment = (Gtk::Adjustment*)builder->get_object("zoomAdjustment").get();
 		double ds = zoomAdjustment->get_value(); //size delta
-		double dp = gridSize/2*ds; //position delta
+    double dx = gridWidth/2*ds; //position delta
+		double dy = gridHeight/2*ds; //position delta
 
 		//change tile size
 		if(scrollDir < 0) //scroll up, zoom in
 		{
 			map->setTileSize(currPage, s+ds);
-			hAdjust->set_value(hAdjust->get_value()+dp);
-			vAdjust->set_value(vAdjust->get_value()+dp);
+			hAdjust->set_value(hAdjust->get_value()+dx);
+			vAdjust->set_value(vAdjust->get_value()+dy);
 		}
 		else if(scrollDir > 0) //scroll down, zoom out
 		{
 			if(ds < s) //don't shrink to nothing
 			{
 				map->setTileSize(currPage, s-ds);
-				hAdjust->set_value(hAdjust->get_value()-dp);
-				vAdjust->set_value(vAdjust->get_value()-dp);
+				hAdjust->set_value(hAdjust->get_value()-dx);
+				vAdjust->set_value(vAdjust->get_value()-dy);
 			}
 		}
 	}
