@@ -52,10 +52,11 @@ private:
 	int currPage{0};
 	std::vector<RefGrid> refgrid;
 
-	const char* uiFile  = (char*)"./ui/dungeonCartographer.ui";
-	const char* uiTab   = (char*)"./ui/tab.ui";
-	const char* uiShiftLevel = (char*)"./ui/shiftLevel.ui";
-	const char* cssFile = (char*)"./ui/dungeonCartographer.css";
+	const char* uiMain       = (char*)"/DungeonCartographer/dungeonCartographer.ui";
+	const char* uiTab        = (char*)"/DungeonCartographer/tab.ui";
+	const char* uiShiftLevel = (char*)"/DungeonCartographer/shiftLevel.ui";
+	const char* uiCSS        = (char*)"/DungeonCartographer/dungeonCartographer.css";
+	const char* uiIconMain   = (char*)"/DungeonCartographer/icon_dc.png";
 	
 	void addTab(int levelId, Level* level);
 	void clearTabs();

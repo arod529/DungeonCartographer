@@ -27,15 +27,15 @@ UI::UI(Settings* settings, Map* map)
 
   //icons
   auto icontheme = Gtk::IconTheme::get_default();
-  icontheme->append_search_path ("./ui/icons") ;
+  icontheme->add_resource_path ("/DungeonCartographer") ;
 
   //css style
   auto css = Gtk::CssProvider::create();
-  css->load_from_path(cssFile);
+  css->load_from_resource(uiCSS);
   get_style_context()->add_provider_for_screen(get_screen(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
   //gtk ui builder object
-  builder = Gtk::Builder::create_from_file(uiFile);
+  builder = Gtk::Builder::create_from_resource(uiMain);
 
   //add static window content
   Gtk::Box* content;
@@ -47,7 +47,7 @@ UI::UI(Settings* settings, Map* map)
 
   //window
   set_title("Dungeon Cartographer");
-  iconList.emplace_back(Gdk::Pixbuf::create_from_file("./ui/icons/icon_dc.png"));
+  iconList.emplace_back(Gdk::Pixbuf::create_from_resource(uiIconMain));
   set_icon_list(iconList);
   maximize();
   show_all_children();
@@ -243,7 +243,7 @@ void UI::shiftLevel()
   shiftDialog.add_button("Accept", 1)->grab_default();
   shiftDialog.add_button("Cancel", 0);
 
-  auto dialogBuilder = Gtk::Builder::create_from_file(uiShiftLevel);
+  auto dialogBuilder = Gtk::Builder::create_from_resource(uiShiftLevel);
   auto content = shiftDialog.get_content_area();
   Gtk::Box* spinners;
   dialogBuilder->get_widget("spinners", spinners);
@@ -288,7 +288,7 @@ double UI::getScrollSpeed()
 void UI::addTab(int levelId, Level* level)
 {
 	//make a builder for the tab
-  auto tabBuilder = Gtk::Builder::create_from_file(uiTab);
+  auto tabBuilder = Gtk::Builder::create_from_resource(uiTab);
 
   //get scrolled window and viewport; connect scroll signal
   Gtk::ScrolledWindow* scrolledWindow;

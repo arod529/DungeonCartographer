@@ -11,7 +11,7 @@ LFLAGS=$(CFLAGS)
 CC=g++ $(INC) $(CFLAGS) -c
 LC=g++ $(LFLAGS) -o
 
-OBJS=dungeonCartographer.o \
+OBJS=dungeonCartographer.o resources.o \
 		 settings.o ui.o refgrid.o \
 		 map.o level.o tile.o tileset.o
 
@@ -23,7 +23,7 @@ all: dungeonCartographer
 #Programs
 #--------
 dungeonCartographer: $(OBJS)
-	$(LC) dungeonCartographer $(OBJD)/dungeonCartographer.o \
+	$(LC) dungeonCartographer $(OBJD)/dungeonCartographer.o $(OBJD)/resources.o \
 														$(OBJD)/settings.o $(OBJD)/ui.o $(OBJD)/refgrid.o \
 														$(OBJD)/map.o $(OBJD)/level.o $(OBJD)/tile.o $(OBJD)/tileset.o
 
@@ -54,12 +54,18 @@ tileset.o: $(SRCD)/tileset.cpp $(INCD)/tileset.h $(INCD)/constants.h
 refgrid.o: $(SRCD)/refgrid.cpp $(INCD)/refgrid.h
 	$(CC) -o $(OBJD)/refgrid.o $(SRCD)/refgrid.cpp
 
+resources.o: resources.c
+	$(CC) -o $(OBJD)/resources.o $(SRCD)/resources.c
+
+resources.c: resources.xml
+	glib-compile-resources resources.xml --target=$(SRCD)/resources.c --generate-source --sourcedir=ui
 
 #-------
 #Utility
 #-------
 clean:
 	rm -f $(OBJD)/*.o
+	rm -f $(SRCD)/resources.c
 	rm -f dungeonCartographer
 
 run:

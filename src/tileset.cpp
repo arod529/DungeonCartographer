@@ -30,7 +30,7 @@ bool Tileset::loadFile(std::string fpath)
   //Make sure file can be opened
   if(!file.is_open())
   {
-    fprintf(stderr, "ERROR: Dungeon Cartographer @ loadFile: The file could not be opened: %s\n", fpath);
+    fprintf(stderr, "ERROR: Dungeon Cartographer @ Tileset::loadFile: The file could not be opened: %s\n", fpath);
     return false;
   }
 
