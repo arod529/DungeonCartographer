@@ -21,6 +21,7 @@ class Map
     ~Map();
 
     void appendLevel();
+    void centerLevel(int levelIndex);
     bool loadFile(std::string filepath);
     void newMap(Tileset* mapTileset, int mapSize);
     void print();

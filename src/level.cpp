@@ -4,7 +4,7 @@
 #include <string> //operator>>
 
 /*!
-  Initilizes a level from a file
+  Initializes a level from a file
 **/
 Level::Level(Tileset* tileset, std::ifstream& file)
 : tileset{tileset}
@@ -24,7 +24,7 @@ Level::Level(Tileset* tileset, std::ifstream& file)
 }
 
 /*!
-  Initilizes a level and fills it with background tiles.
+  Initializes a level and fills it with background tiles.
 **/
 Level::Level(Tileset* tileset, int id, int size)
 : tileset{tileset}, id{id}, size{size}
@@ -39,94 +39,35 @@ Level::Level(Tileset* tileset, int id, int size)
   }
 }
 
-/*!
-  Initilizes Level Grid properties
-**/
-void Level::propInit()
-{
-  //set grid properties
-  set_row_homogeneous(true); set_column_homogeneous(true);
-  set_row_spacing(0); set_column_spacing(0);
-}
-
-//-------------------
-//----- Utility -----
-//-------------------
+//------------------
+//----- PUBLIC -----
+//------------------
 
 /*!
-  Searches for the Level extents by scanline. This is more efficient the further
-  off center the Level is. The Level is then centered in the available space.
+  Centers the Level with an affinity for the NW corner if odd spacing.
 **/
 void Level::center()
 {
-  //level extents {e, n, w, s}
-  int extents[4]{-1, -1, -1, -1};
+  int extents[4];
+  getExtents(extents);
 
-  int j = 1; //column offset
-  int i; 
+  //calculate the x shift
+  int x = (extents[2]+(size-1-extents[0]))/2 - extents[2];
+  //calculate the y shift
+  int y = -((extents[1]+(size-1-extents[3]))/2 - extents[1]);
 
-  //find max east extents by scanning east to west
-  do
-  {
-    i = size-j; //tile gridId
-    do
-    {
-      //the tile is a room, save the row number and end search
-      if(tile[i]->tileId != BACKGROUND)
-      {
-        extents[0] = i%size;
-        break;
-      } 
+  shift(x, y);
+}
 
-      i += size;
-    } while(i < size*size);
+/*!
+  Sets all the tiles back to background clearing the Level.
+**/
+void Level::reset()
+{
+  for(int i = 0; i < size*size; i++)
+    tile[i]->tileId = BACKGROUND;
 
-    j++;
-  } while(extents[0] == -1 && j <= size); 
-
-  if(extents[0] == -1) return; //there are no rooms, stop search
-
-  //find max north extents by scanning north to south
-  for(i = 0; i < size*size; i++)
-  {
-    //the tile is a room, save the row number and end search
-    if(tile[i]->tileId != BACKGROUND)
-    {
-      extents[1] = i/size;
-      break;
-    } 
-  }
-
-  //find max west column by scanning west to east
-  j = 0;
-  do
-  {
-    i = 0;
-    do
-    {
-      //the tile is a room, save the row number and end search
-      if(tile[i]->tileId != BACKGROUND)
-      {
-        extents[2] = i%size;
-        break;
-      }
-
-      i += size;
-    } while(i < size*size);
-
-    j++;
-  } while(extents[2] == -1 && j < size);
-
-  //find max south extents by scanning south to north
-  for(i = size*size-1; i >= 0; i--)
-  {
-    //the tile is a room, save the row number and end search
-    if(tile[i]->tileId != BACKGROUND)
-    {
-      extents[3] = i%size;
-      break;
-    }
-  }
+  queue_draw();
 }
 
 /*!
@@ -197,41 +138,6 @@ void Level::shift(int x, int y)
       (y > 0) ? j++ : j--;
     } while(j < size && j >= 0);
   }
-
-  queue_draw();
-}
-
-/*!
-  Creates a tile, attaches it to the grid, and connects the button press event.
-**/
-void Level::createNewTile()
-{
-  int i = tile.size();
-  tile.emplace_back(std::make_unique<Tile>(tileset, BACKGROUND, i, size));
-  attach(*tile[i], i%size, i/size, 1, 1);
-  tile[i]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[i]->gridId), false);
-}
-
-void Level::print(Cairo::RefPtr<Cairo::PdfSurface>& surface, Cairo::RefPtr<Cairo::Context>& cr)
-{
-  //set page size to tile size * num of tiles
-  int tileSize = tileset->tile[BACKGROUND].getSize();
-  surface->set_size(tileSize*size, tileSize*size);
-
-  //print tiles
-  for(int i = 0; i < size*size; i++)
-  {
-    tile[i]->print(cr);
-  }
-}
-
-/*!
-  Sets all the tiles back to background clearing the Level.
-**/
-void Level::reset()
-{
-  for(int i = 0; i < size*size; i++)
-    tile[i]->tileId = BACKGROUND;
 
   queue_draw();
 }
@@ -309,6 +215,147 @@ bool Level::updateTile(GdkEventButton* btn, int gridId)
   }
   updateCornerBits(tile->gridId, true); //add valid corner bits
   return true; //requred for Gtk::Grid::signal_button_press_event()
+}
+
+//-------------------
+//----- Utility -----
+//-------------------
+
+/*!
+  Gets the render size of the tile.
+
+  @return The render size of the tile in pixels.
+**/
+int Level::getTileSize() const
+{
+  return tile[0]->get_allocated_width();
+}
+
+/*!
+  Sets the render size of the tile.
+
+  @param[in] tileSize The render size of the tile in pixels.
+**/
+void Level::setTileSize(int tileSize)
+{
+  tile[0]->set_size_request(tileSize, tileSize);
+}
+
+//-------------------
+//----- PRIVATE -----
+//-------------------
+
+/*!
+  Creates a tile, attaches it to the grid, and connects the button press event.
+**/
+void Level::createNewTile()
+{
+  int i = tile.size();
+  tile.emplace_back(std::make_unique<Tile>(tileset, BACKGROUND, i, size));
+  attach(*tile[i], i%size, i/size, 1, 1);
+  tile[i]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[i]->gridId), false);
+}
+
+/*!
+  Searches for the Level extents by scanline.
+
+  @param[in/out] extents The extents of the Level; size of 4.
+**/
+void Level::getExtents(int* extents)
+{
+  //level extents {e, n, w, s}
+  int ext[4]{-1, -1, -1, -1};
+
+  int j = 1; //column offset
+  int i; 
+
+  //find max east extents by scanning east to west
+  do
+  {
+    i = size-j; //tile gridId
+    do
+    {
+      //the tile is a room, save the row number and end search
+      if(tile[i]->tileId != BACKGROUND)
+      {
+        ext[0] = i%size;
+        break;
+      } 
+
+      i += size;
+    } while(i < size*size);
+
+    j++;
+  } while(ext[0] == -1 && j <= size); 
+
+  if(ext[0] == -1) return; //there are no rooms, stop search
+
+  //find max north extents by scanning north to south
+  for(i = 0; i < size*size; i++)
+  {
+    //the tile is a room, save the row number and end search
+    if(tile[i]->tileId != BACKGROUND)
+    {
+      ext[1] = i/size;
+      break;
+    } 
+  }
+
+  //find max west column by scanning west to east
+  j = 0;
+  do
+  {
+    i = j;
+    do
+    {
+      //the tile is a room, save the row number and end search
+      if(tile[i]->tileId != BACKGROUND)
+      {
+        ext[2] = i%size;
+        break;
+      }
+
+      i += size;
+    } while(i < size*size);
+
+    j++;
+  } while(ext[2] == -1 && j < size);
+
+  //find max south extents by scanning south to north
+  for(i = size*size-1; i >= 0; i--)
+  {
+    //the tile is a room, save the row number and end search
+    if(tile[i]->tileId != BACKGROUND)
+    {
+      ext[3] = i/size;
+      break;
+    }
+  }
+
+  std::copy(ext, ext+4, extents);
+}
+
+void Level::print(Cairo::RefPtr<Cairo::PdfSurface>& surface, Cairo::RefPtr<Cairo::Context>& cr)
+{
+  //set page size to tile size * num of tiles
+  int tileSize = tileset->tile[BACKGROUND].getSize();
+  surface->set_size(tileSize*size, tileSize*size);
+
+  //print tiles
+  for(int i = 0; i < size*size; i++)
+  {
+    tile[i]->print(cr);
+  }
+}
+
+/*!
+  Initializes Level Grid properties
+**/
+void Level::propInit()
+{
+  //set grid properties
+  set_row_homogeneous(true); set_column_homogeneous(true);
+  set_row_spacing(0); set_column_spacing(0);
 }
 
 /*!
@@ -431,16 +478,6 @@ void Level::updateCornerBits(int gridId, bool propagate)
 
   tile->queue_draw();
   tile->locked = false;
-}
-
-int Level::getTileSize() const
-{
-  return tile[0]->get_allocated_width();
-}
-
-void Level::setTileSize(int tileSize)
-{
-  tile[0]->set_size_request(tileSize, tileSize);
 }
 
 //---------------------

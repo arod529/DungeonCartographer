@@ -29,6 +29,7 @@ struct Level : public Gtk::Grid
   int getTileSize() const;
   void setTileSize(int levelIndex);
 
+
   //overloads
   friend std::ostream& operator<<(std::ostream& out, const Level& level);
   friend std::istream& operator>>(std::istream& in, Level& level);
@@ -40,6 +41,7 @@ private:
   std::vector<std::unique_ptr<Tile>> tile; // The Tiles in the Level
   
   void createNewTile();
+  void getExtents(int* extents);
   void print(Cairo::RefPtr<Cairo::PdfSurface>& surface, Cairo::RefPtr<Cairo::Context>& cr);
   void propInit();
   void updateCornerBits(int gridId, bool propagate);

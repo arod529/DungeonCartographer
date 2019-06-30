@@ -8,6 +8,10 @@ Map::~Map()
   clearMap(); //prevents some a double free err on exit; find cause later?
 }
 
+//------------------
+//----- PUBLIC -----
+//------------------
+
 /*!
   Appends a Level to the Map.
 **/
@@ -18,16 +22,12 @@ void Map::appendLevel()
 }
 
 /*!
-  Deletes all levels from the Map.
-**/
-void Map::clearMap()
-{
-  //emit map cleared signal
-  signal_mapCleared();
+  Centers the Level.
 
-  //clear existing levels
-  level.clear();
-}
+  @param[in] levelIndex The index of the level to center.
+**/
+void Map::centerLevel(int levelIndex)
+  {level[levelIndex]->center();}
 
 /*!
   Loads a map file.
@@ -66,6 +66,26 @@ bool Map::loadFile(std::string fPath)
   filepath = fPath;
 
   return true;
+}
+
+/*!
+  Creates a new map.
+
+  @param[in] mapTileset The tileset to use for the Map.
+  @param[in] mapSize The default size of Levels in the Map.
+**/
+void Map::newMap(Tileset* mapTileset, int mapSize)
+{
+  //clear any existing levels
+  clearMap();
+
+  //set properties
+  size = mapSize;
+  tileset = mapTileset;
+  filepath = "";
+
+  //append a new level
+  appendLevel();
 }
 
 void Map::print()
@@ -133,25 +153,12 @@ bool Map::saveToFile(std::string fPath)
 }
 
 /*!
-  Creates a new map.
+  Shifts the Level the given direction and magnitude.
 
-  @param[in] mapTileset The tileset to use for the Map.
-  @param[in] mapSize The default size of Levels in the Map.
+  @param[in] levelIndex The index of the Level to shift.
+  @param[in] x The direction and magnitude of the horizontal shift.
+  @param[in] y The direction and magnitude of the vertical shift.
 **/
-void Map::newMap(Tileset* mapTileset, int mapSize)
-{
-  //clear any existing levels
-  clearMap();
-
-  //set properties
-  size = mapSize;
-  tileset = mapTileset;
-  filepath = "";
-
-  //append a new level
-  appendLevel();
-}
-
 void Map::shiftLevel(int levelIndex, int x, int y)
 {
   level[levelIndex]->shift(x, y);
@@ -171,6 +178,22 @@ int Map::getTileSize(int levelIndex) const
 
 void Map::setTileSize(int levelIndex, int tileSize)
   {level[levelIndex]->setTileSize(tileSize);}
+
+//-------------------
+//----- PRIVATE -----
+//-------------------
+
+/*!
+  Deletes all levels from the Map.
+**/
+void Map::clearMap()
+{
+  //emit map cleared signal
+  signal_mapCleared();
+
+  //clear existing levels
+  level.clear();
+}
 
 //---------------------
 //----- Overloads -----

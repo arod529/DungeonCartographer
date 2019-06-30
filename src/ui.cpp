@@ -103,6 +103,9 @@ UI::UI(Settings* settings, Map* map)
 	builder->get_widget("menu_quit", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &UI::hide));
 
+  builder->get_widget("menu_center", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &UI::centerLevel));
+
   builder->get_widget("menu_shift", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &UI::shiftLevel));
 
@@ -131,112 +134,54 @@ UI::~UI()
   pageSwitchCon.disconnect();
 }
 
-/*!
-  Adds a tab to the interface and populates it with widget of type Level.
-
-  @param[in] 
-  @param[in] 
-**/
-void UI::addTab(int levelId, Level* level)
-{
-	//make a builder for the tab
-  auto tabBuilder = Gtk::Builder::create_from_file(uiTab);
-
-  //get scrolled window and viewport; connect scroll signal
-  Gtk::ScrolledWindow* scrolledWindow;
-  tabBuilder->get_widget("scrolledWindow", scrolledWindow);
-  scrolledWindow->add_events(Gdk::EventMask::SCROLL_MASK);
-  scrolledWindow->signal_scroll_event().connect(sigc::mem_fun(*this, &UI::scrollEvent), false);
-
-  Gtk::Overlay* overlay;
-  tabBuilder->get_widget("overlay", overlay);
-
-  //add level to overlay as base
-  overlay->add(*level);
-  // map->setTileSize(levelId, 25);
-
-  //add reference grid overlay
-  refgrid.emplace_back();
-  overlay->add_overlay(refgrid[levelId]);
-  overlay->set_overlay_pass_through(refgrid[levelId], true);
-
-  //create tab
-  Gtk::Label* tabLabel;
-  tabBuilder->get_widget("tabLabel", tabLabel);
-  tabLabel->set_label("Level " + std::to_string(levelId+1));
-
-  //add scrolled window and tab to notebook; insert in-place of new tab
-  notebook->insert_page(*scrolledWindow, *tabLabel, levelId);
-  
-  //show all
-  notebook->show_all_children();
-  //set to active page
-  notebook->set_current_page(levelId);
-}
+//------------------
+//----- PUBLIC -----
+//------------------
 
 /*!
-  Removes all tabs except for the new Level tab.
+  Centers the Level.
 **/
-void UI::clearTabs()
-{
-	//remove notebook pages
-  while(notebook->get_n_pages() > 1)
-    {notebook->remove_page();}
-}
+void UI::centerLevel()
+  {map->centerLevel(currPage);}
 
 /*!
   Displays a open file dialog, and subsequently loads the file if a name is chosen.
 **/
 void UI::open()
 {
-	//make dialog
-	auto dOpen = Gtk::FileChooserDialog(*this, "Open", Gtk::FileChooserAction::FILE_CHOOSER_ACTION_OPEN);
-	dOpen.add_button("Open", 1)->grab_default();
-	dOpen.add_button("Cancel", 0);
+  //make dialog
+  auto dOpen = Gtk::FileChooserDialog(*this, "Open", Gtk::FileChooserAction::FILE_CHOOSER_ACTION_OPEN);
+  dOpen.add_button("Open", 1)->grab_default();
+  dOpen.add_button("Cancel", 0);
 
-	//add file filters
-	auto dcm = Gtk::FileFilter::create();
-	dcm->add_pattern("*.dcm");
-	dcm->set_name("Dungeon Cartographer Map (*.dcm)");
-	dOpen.add_filter(dcm);
-	auto all = Gtk::FileFilter::create();
-	all->add_pattern("*");
-	all->set_name("All Files (*)");
-	dOpen.add_filter(all);
+  //add file filters
+  auto dcm = Gtk::FileFilter::create();
+  dcm->add_pattern("*.dcm");
+  dcm->set_name("Dungeon Cartographer Map (*.dcm)");
+  dOpen.add_filter(dcm);
+  auto all = Gtk::FileFilter::create();
+  all->add_pattern("*");
+  all->set_name("All Files (*)");
+  dOpen.add_filter(all);
   
   //display dialog
   if(dOpen.run())
   {
-  	std::string fPath = dOpen.get_filename();
+    std::string fPath = dOpen.get_filename();
 
-  	if(fPath != "")
-	  {
-	  	//load map file
-	    map->loadFile(fPath);
-	  }
-	}
+    if(fPath != "")
+    {
+      //load map file
+      map->loadFile(fPath);
+    }
+  }
 }
 
 /*!
   Resets a Level to all background tiles.
 **/
 void UI::resetLevel()
-{
-  map->resetLevel(currPage);
-}
-
-void UI::pageSwitch(Gtk::Widget* page, uint pageNum)
-{
-  //triggered by tab change && (is only page || tab not newtab)
-  if(!(page != NULL && (pageNum == 0 || ((Gtk::Label*)notebook->get_tab_label(*page))->get_text() != "+")))
-    map->appendLevel();
-
-  //update currpage
-  currPage = notebook->get_current_page();
-
-  //make sure grid toggle immitates grid visibility
-  gridToggle->set_active(refgrid[pageNum].isActive());
-}
+  {map->resetLevel(currPage);}
 
 /*!
   Saves to the file associated with the Map.
@@ -290,6 +235,126 @@ void UI::saveAs()
 }
 
 /*!
+  Shows a shift Level dialog. Shifts the Level the number of tiles input.
+**/
+void UI::shiftLevel()
+{
+  auto shiftDialog = Gtk::Dialog("Shift Level", *this, Gtk::DialogFlags::DIALOG_MODAL|Gtk::DialogFlags::DIALOG_DESTROY_WITH_PARENT);
+  shiftDialog.add_button("Accept", 1)->grab_default();
+  shiftDialog.add_button("Cancel", 0);
+
+  auto dialogBuilder = Gtk::Builder::create_from_file(uiShiftLevel);
+  auto content = shiftDialog.get_content_area();
+  Gtk::Box* spinners;
+  dialogBuilder->get_widget("spinners", spinners);
+  content->add(*spinners);
+
+  shiftDialog.show_all_children();
+
+  if(shiftDialog.run())
+  {
+    auto adjustment_x = (Gtk::Adjustment*)dialogBuilder->get_object("adjustment_x").get();
+    auto adjustment_y = (Gtk::Adjustment*)dialogBuilder->get_object("adjustment_y").get();
+
+    map->shiftLevel(currPage, adjustment_x->get_value(), adjustment_y->get_value());
+  }
+}
+
+//-------------------
+//----- Utiltiy -----
+//-------------------
+
+/*!
+  Gets the scrollSpeed slider value.
+
+  @return The value of the scroll speed slider.
+**/
+double UI::getScrollSpeed()
+{
+  auto scrollAdjustment = (Gtk::Adjustment*)builder->get_object("scrollAdjustment").get();
+  return scrollAdjustment->get_value();
+}
+
+//-------------------
+//----- PRIVATE -----
+//-------------------
+
+/*!
+  Adds a tab to the interface and populates it with widget of type Level.
+
+  @param[in] levelId The id of the Level to add.
+  @param[in] level The Level to add to the tab.
+**/
+void UI::addTab(int levelId, Level* level)
+{
+	//make a builder for the tab
+  auto tabBuilder = Gtk::Builder::create_from_file(uiTab);
+
+  //get scrolled window and viewport; connect scroll signal
+  Gtk::ScrolledWindow* scrolledWindow;
+  tabBuilder->get_widget("scrolledWindow", scrolledWindow);
+  scrolledWindow->add_events(Gdk::EventMask::SCROLL_MASK);
+  scrolledWindow->signal_scroll_event().connect(sigc::mem_fun(*this, &UI::scrollEvent), false);
+
+  Gtk::Overlay* overlay;
+  tabBuilder->get_widget("overlay", overlay);
+
+  //add level to overlay as base
+  overlay->add(*level);
+  // map->setTileSize(levelId, 25);
+
+  //add reference grid overlay
+  refgrid.emplace_back();
+  overlay->add_overlay(refgrid[levelId]);
+  overlay->set_overlay_pass_through(refgrid[levelId], true);
+
+  //create tab
+  Gtk::Label* tabLabel;
+  tabBuilder->get_widget("tabLabel", tabLabel);
+  tabLabel->set_label("Level " + std::to_string(levelId+1));
+
+  //add scrolled window and tab to notebook; insert in-place of new tab
+  notebook->insert_page(*scrolledWindow, *tabLabel, levelId);
+  
+  //show all
+  notebook->show_all_children();
+  //set to active page
+  notebook->set_current_page(levelId);
+}
+
+/*!
+  Removes all tabs except for the new Level tab.
+**/
+void UI::clearTabs()
+{
+	//remove notebook pages
+  while(notebook->get_n_pages() > 1)
+    {notebook->remove_page();}
+}
+
+/*!
+  Event handler for page switching. Appends levels, syncronizes the current page and 
+  grid toggle button.
+
+  @param[in] page The Gtk::Widget on the selected page.
+  @param[in] pageNum The index of the page calling the event.
+
+  \bug doesn't sync the grid color selector.
+**/
+void UI::pageSwitch(Gtk::Widget* page, uint pageNum)
+{
+  //triggered by tab change && (is only page || tab not newtab)
+  if(!(page != NULL && (pageNum == 0 || ((Gtk::Label*)notebook->get_tab_label(*page))->get_text() != "+")))
+    map->appendLevel();
+
+  //update currpage
+  currPage = notebook->get_current_page();
+
+  //make sure grid toggle immitates grid visibility
+  gridToggle->set_active(refgrid[pageNum].isActive());
+}
+
+/*!
   Scrolls the window based on the scroll speed slider value.
 
   @param[in] dx The chhange in direction x
@@ -340,39 +405,12 @@ void UI::setGridColor()
   refgrid[currPage].setRGB(rgba.get_red(), rgba.get_green(), rgba.get_blue()); 
 }
 
-/*!
-  Shows a shift Level dialog. Shifts the Level the number of tiles input.
-**/
-void UI::shiftLevel()
-{
-  auto shiftDialog = Gtk::Dialog("Shift Level", *this, Gtk::DialogFlags::DIALOG_MODAL|Gtk::DialogFlags::DIALOG_DESTROY_WITH_PARENT);
-  shiftDialog.add_button("Accept", 1)->grab_default();
-  shiftDialog.add_button("Cancel", 0);
-
-  auto dialogBuilder = Gtk::Builder::create_from_file(uiShiftLevel);
-  auto content = shiftDialog.get_content_area();
-  Gtk::Box* spinners;
-  dialogBuilder->get_widget("spinners", spinners);
-  content->add(*spinners);
-
-  shiftDialog.show_all_children();
-
-  if(shiftDialog.run())
-  {
-    auto adjustment_x = (Gtk::Adjustment*)dialogBuilder->get_object("adjustment_x").get();
-    auto adjustment_y = (Gtk::Adjustment*)dialogBuilder->get_object("adjustment_y").get();
-
-    map->shiftLevel(currPage, adjustment_x->get_value(), adjustment_y->get_value());
-  }
-}
 
 /*!
   Toggles the reference grid
 **/
 void UI::toggleGrid()
-{
-  refgrid[currPage].setActive(gridToggle->get_active());
-}
+  {refgrid[currPage].setActive(gridToggle->get_active());}
 
 /*!
   Zooms the grid by adjusting the tile size. Maintains focus.
@@ -432,16 +470,3 @@ void UI::zoom(int scrollDir)
 	//refresh viewport to prevent draw artifacts on drop shadow
 	scrolledWindow->get_child()->queue_draw();
 }
-
-
-/*!
-  Gets the scrollSpeed slider value.
-
-  @return The value of the scroll speed slider.
-**/
-double UI::getScrollSpeed()
-{
-	auto scrollAdjustment = (Gtk::Adjustment*)builder->get_object("scrollAdjustment").get();
-	return scrollAdjustment->get_value();
-}
-

@@ -28,6 +28,7 @@ public:
 	UI(Settings* settings, Map* map);
 	~UI();
 
+	void centerLevel();
 	void open();
 	void resetLevel();
 	void save();
