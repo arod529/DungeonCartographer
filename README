@@ -1,0 +1,65 @@
+ _____                                     
+|  __ \                                    
+| |  | |_   _ _ __   __ _  ___  ___  _ __  
+| |  | | | | | '_ \ / _` |/ _ \/ _ \| '_ \ 
+| |__| | |_| | | | | (_| |  __/ (_) | | | |
+|_____/ \__,_|_| |_|\__, |\___|\___/|_| |_|
+                     __/ |                 
+                    |___/                  
+  _____           _                              _               
+ / ____|         | |                            | |              
+| |     __ _ _ __| |_ ___   __ _ _ __ __ _ _ __ | |__   ___ _ __ 
+| |    / _` | '__| __/ _ \ / _` | '__/ _` | '_ \| '_ \ / _ \ '__|
+| |___| (_| | |  | || (_) | (_| | | | (_| | |_) | | | |  __/ |   
+ \_____\__,_|_|   \__\___/ \__, |_|  \__,_| .__/|_| |_|\___|_|   
+                            __/ |         | |                    
+                           |___/          |_|                    
+--------------------------------------------------------------------------------
+
+Copyright (C) 2019  Alexander L. Hopper
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+--------------------------------------------------------------------------------
+
+This software uses GTK which is licensed under the GNU LGPL.
+
+The grid icon (C) Webalys <https://www.webalys.com/>
+
+--------------------------------------------------------------------------------
+
+This Program is under active development, and currently has no version number.
+Some features are incomplete, or missing all together.
+
+Dungeon Cartographer is a grid mapping program. It provides an easy and quick
+method to draw grid or tile based maps. The maps can have multiple levels, each
+of different size. Expanding rooms is as easy as clicking, as an intelligent
+algorithm selects the correct tile. There are currently 48 unique tiles used to 
+visually describe rooms.
+
+A Tileset is a file that describes a collection of tile images, and is used to
+draw the map. A boring default set is provided, but custom images can be created
+by the user. Svg files are recommended for use as tiles for their ability to
+scale, but other standard images types will also work.
+
+Currently maps can be saved and opened, levels can be draw, and some editing
+features such as shifting are functional.
+
+Other core features are in line for development.
+
+A proper distribution does not exist yet, but a a windows binary for preview
+purposes can be downloaded from the following link. Download all the files and
+folders in the link to a folder.
+<https://drive.google.com/open?id=1y0JBGv_5QJRk7Tfqhnt_uXnAMH6KezOf>
+
