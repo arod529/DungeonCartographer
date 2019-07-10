@@ -80,14 +80,57 @@ void Level::center()
   shift(x, y);
 }
 
-// void insertRow(int rowNum)
-// {
-//   //insert row in grid
-//   insert_row(rowNum);
+/*!
+  Inserts rows into the Level.
 
-//   //update tile gridIds below row
-//   for(int i = size*rowNum)
-// }
+  @param[in] rowNum The index of the row at which to begin insertion.
+  @param[in] count The number of rows to insert.
+**/
+void Level::insertRows(int rowNum, int count)
+{
+  //reset size request of tile 0
+  int s;
+  tile[0]->get_size_request(s, s);
+  tile[0]->set_size_request();
+
+  //update height
+  height += count;
+  //update leading tiles gridHeight values
+  for(int j = 0; j < width*rowNum; j += width*rowNum)
+  {
+    for(int i = 0; i < width; i++)
+    {
+      tile[j+i]->gridHeight = height;
+    }
+  }
+
+  //insert count number of rows
+  for(int j = 0; j < count; j++)
+  {
+    //insert row in grid
+    insert_row(rowNum);
+
+    //add new tiles to new row
+    for(int i = 0; i < width; i++)
+    {
+      createNewTile(width*rowNum+i);
+    }
+
+    rowNum++;
+  }
+
+  //update tile gridIds, height and signals below inserted rows
+  for(int i = width*rowNum; i < width*height; i++)
+  {
+    tile[i]->gridId = i;
+    tile[i]->gridHeight = height;
+    tile[i]->clickSig.disconnect();
+    tile[i]->clickSig = tile[i]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[i]->gridId), false);
+  }
+
+  //set size of tile 0
+  tile[0]->set_size_request(s, s);
+}
 
 /*!
   Sets all the tiles back to background clearing the Level.
@@ -273,13 +316,20 @@ void Level::setTileSize(int tileSize)
 
 /*!
   Creates a tile, attaches it to the grid, and connects the button press event.
+
+  The tile is placed in the Level at the given index. If no index is given, it
+  is appended.
+
+  @param[in] i The grid index of the tile to create
 **/
-void Level::createNewTile()
+void Level::createNewTile(int i)
 {
-  int i = tile.size();
-  tile.emplace_back(std::make_unique<Tile>(tileset, BACKGROUND, i, width, height));
+  if(i == -1) i = tile.size();
+  auto iter = tile.begin() + i;
+  
+  tile.emplace(iter, std::make_unique<Tile>(tileset, BACKGROUND, i, width, height));
   attach(*tile[i], i%width, i/width, 1, 1);
-  tile[i]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[i]->gridId), false);
+  tile[i]->clickSig = tile[i]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[i]->gridId), false);
 }
 
 /*!

@@ -46,12 +46,13 @@ struct Tile : public Gtk::DrawingArea
   friend std::istream& operator>>(std::istream& in, Tile& tile);
 
 private:
-  int gridId;          //The tile's grid location
-  int gridWidth;       //The width of the grid the tile is on
-  int gridHeight;      //The height of the grid the tile is on
-  uint tileId;         //The id of the tileset's tile(image) this tile displays
-  Tileset* tileset;    //The Tileset this tile uses
-  bool locked = false; //protection against multiple recursion
+  sigc::connection clickSig; // The signal connection for the click event
+  int gridId;                // The tile's grid location
+  int gridWidth;             // The width of the grid the tile is on
+  int gridHeight;            // The height of the grid the tile is on
+  uint tileId;               // The id of the tileset's tile(image) this tile displays
+  Tileset* tileset;          // The Tileset this tile uses
+  bool locked = false;       // Protection against multiple recursion
 
   void print(Cairo::RefPtr<Cairo::Context>& cr);
   

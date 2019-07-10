@@ -127,8 +127,8 @@
 						<child type="submenu">
 							<object class="GtkMenu">
 								<child>
-									<object id="menu_insertRow" class="GtkImageMenuItem">
-										<property name="label">Insert _Row</property>
+									<object id="menu_insertRows" class="GtkImageMenuItem">
+										<property name="label">Insert _Rows</property>
 										<property name="use_underline">true</property>
 									</object>
 								</child>

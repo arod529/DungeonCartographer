@@ -118,8 +118,11 @@ UI::UI(Settings* settings, Map* map)
   builder->get_widget("menu_print", menu);
   menu->signal_activate().connect(sigc::mem_fun(*map, &Map::print));
 
-	builder->get_widget("menu_quit", menu);
-  menu->signal_activate().connect(sigc::mem_fun(*this, &UI::hide));
+	builder->get_widget("menu_insertRows", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &UI::insertRows));
+
+  builder->get_widget("menu_center", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &UI::centerLevel));
 
   builder->get_widget("menu_center", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &UI::centerLevel));
@@ -161,6 +164,40 @@ UI::~UI()
 **/
 void UI::centerLevel()
   {map->centerLevel(currPage);}
+
+/*!
+  Displays an insert rows dialog. Inserts the number of specified rows starting at
+  a specified row number.
+**/
+void UI::insertRows()
+{
+  //create dialog
+  auto insertDialog = Gtk::Dialog("Insert Rows", *this, Gtk::DialogFlags::DIALOG_MODAL|Gtk::DialogFlags::DIALOG_DESTROY_WITH_PARENT);
+  insertDialog.add_button("Accept", 1)->grab_default();
+  insertDialog.add_button("Cancel", 0);
+
+  auto dialogBuilder = Gtk::Builder::create_from_resource(uiInsertRow);
+  auto content = insertDialog.get_content_area();
+  Gtk::Box* spinners;
+  dialogBuilder->get_widget("spinners", spinners);
+  content->add(*spinners);
+
+  insertDialog.show_all_children();
+
+  //set upper for adjustment
+  auto adjustment_rowNum = (Gtk::Adjustment*)dialogBuilder->get_object("adjustment_rowNum").get();
+  adjustment_rowNum->set_upper(map->getLevelHeight(currPage));
+
+  if(insertDialog.run())
+  {
+    auto adjustment_count = (Gtk::Adjustment*)dialogBuilder->get_object("adjustment_count").get();
+
+    map->insertRows(currPage, (int)adjustment_rowNum->get_value(), (int)adjustment_count->get_value());
+  
+    //update refgrid
+    refgrid[currPage].setSize(map->getLevelWidth(currPage), map->getLevelHeight(currPage));
+  }
+}
 
 /*!
   Displays a open file dialog, and subsequently loads the file if a name is chosen.

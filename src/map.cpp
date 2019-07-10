@@ -48,6 +48,16 @@ void Map::centerLevel(int levelIndex)
   {level[levelIndex]->center();}
 
 /*!
+  Inserts rows into the Level.
+
+  @param[in] levelIndex The index of the Level to insert rows into.
+  @param[in] rowNum The index of the row at which to begin insertion.
+  @param[in] count The number of rows to insert.
+**/
+void Map::insertRows(int levelIndex, int rowNum, int count)
+  {level[levelIndex]->insertRows(rowNum, count);}
+
+/*!
   Loads a map file.
 
   @param[in] fPath The full path to the map file.
