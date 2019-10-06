@@ -81,6 +81,54 @@ void Level::center()
 }
 
 /*!
+  Inserts columns into the Level.
+  
+  @param[in] colNum The number of the column at which to begin insertion.
+  @param[in] count The number of columns to insert.
+**/
+void Level::insertColumns(int colNum, int count)
+{
+  //reset size request of tile 0
+  int s;
+  tile[0]->get_size_request(s, s);
+  tile[0]->set_size_request();
+  
+  //update width
+  width += count;
+
+  //insert count number of columns into grid
+  for(int j = 0; j < count; j++)
+  {
+    insert_column(colNum+j);
+  }
+
+  for(int i = 0; i < height; i++)
+  {
+    for(int j = 0; j < width; j++)
+    {
+      int k = j+i*width; //the tile index
+
+      //fill columns with new tiles
+      if(j >= colNum && j < colNum + count)
+      {
+        createNewTile(k);   
+      }
+      //update preceding and following columns' tiles' gridWidth, gridId, and signals
+      else
+      {
+        tile[k]->gridWidth = width;
+        tile[k]->gridId = k;
+        tile[k]->clickSig.disconnect();
+        tile[k]->clickSig = tile[k]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[k]->gridId), false);
+      } 
+    }
+  }
+
+  //set size of tile 0
+  tile[0]->set_size_request(s, s);
+}
+
+/*!
   Inserts rows into the Level.
 
   @param[in] rowNum The index of the row at which to begin insertion.
@@ -95,37 +143,37 @@ void Level::insertRows(int rowNum, int count)
 
   //update height
   height += count;
-  //update leading tiles gridHeight values
-  for(int j = 0; j < width*rowNum; j += width*rowNum)
-  {
-    for(int i = 0; i < width; i++)
-    {
-      tile[j+i]->gridHeight = height;
-    }
-  }
-
   //insert count number of rows
   for(int j = 0; j < count; j++)
   {
     //insert row in grid
-    insert_row(rowNum);
-
-    //add new tiles to new row
-    for(int i = 0; i < width; i++)
-    {
-      createNewTile(width*rowNum+i);
-    }
-
-    rowNum++;
+    insert_row(rowNum+j);
   }
 
-  //update tile gridIds, height and signals below inserted rows
-  for(int i = width*rowNum; i < width*height; i++)
+  for(int i = 0; i < height; i++)
   {
-    tile[i]->gridId = i;
-    tile[i]->gridHeight = height;
-    tile[i]->clickSig.disconnect();
-    tile[i]->clickSig = tile[i]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[i]->gridId), false);
+    for(int j = 0; j < width; j++)
+    {
+      int k = j+i*width; //the tile index
+
+      //add new tiles to new row
+      if(i >= rowNum && i < rowNum + count)
+      {
+        createNewTile(k);
+      }
+      //update tile's gridHeight, gridId, and signals
+      else
+      {
+        tile[k]->gridHeight = height;
+
+        if(i >= rowNum + count)
+        {
+          tile[k]->gridId = k;
+          tile[k]->clickSig.disconnect();
+          tile[k]->clickSig = tile[k]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[k]->gridId), false);
+        }
+      }
+    }
   }
 
   //set size of tile 0
@@ -134,6 +182,8 @@ void Level::insertRows(int rowNum, int count)
 
 /*!
   Sets all the tiles back to background clearing the Level.
+
+  @bug This should be replaced by a clear function, reset should reset to default size as well.
 **/
 void Level::reset()
 {

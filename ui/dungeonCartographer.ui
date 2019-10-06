@@ -133,7 +133,7 @@
 									</object>
 								</child>
 								<child>
-									<object id="menu_insertColumn" class="GtkImageMenuItem">
+									<object id="menu_insertColumns" class="GtkImageMenuItem">
 										<property name="label">Insert _Column</property>
 										<property name="use_underline">true</property>
 									</object>

@@ -121,6 +121,9 @@ UI::UI(Settings* settings, Map* map)
 	builder->get_widget("menu_insertRows", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &UI::insertRows));
 
+  builder->get_widget("menu_insertColumns", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &UI::insertColumns));
+
   builder->get_widget("menu_center", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &UI::centerLevel));
 
@@ -164,6 +167,40 @@ UI::~UI()
 **/
 void UI::centerLevel()
   {map->centerLevel(currPage);}
+
+/*!
+  Displays an insert columns dialog. Inserts the number of specified columns starting
+  at a speccified column number.
+**/
+void UI::insertColumns()
+{
+	//create dialog
+  auto insertDialog = Gtk::Dialog("Insert Columns", *this, Gtk::DialogFlags::DIALOG_MODAL|Gtk::DialogFlags::DIALOG_DESTROY_WITH_PARENT);
+  insertDialog.add_button("Accept", 1)->grab_default();
+  insertDialog.add_button("Cancel", 0);
+
+  auto dialogBuilder = Gtk::Builder::create_from_resource(uiInsertColumn);
+  auto content = insertDialog.get_content_area();
+  Gtk::Box* spinners;
+  dialogBuilder->get_widget("spinners", spinners);
+  content->add(*spinners);
+
+  insertDialog.show_all_children();
+
+  //set upper for adjustment
+  auto adjustment_colNum = (Gtk::Adjustment*)dialogBuilder->get_object("adjustment_colNum").get();
+  adjustment_colNum->set_upper(map->getLevelWidth(currPage));
+
+  if(insertDialog.run())
+  {
+    auto adjustment_count = (Gtk::Adjustment*)dialogBuilder->get_object("adjustment_count").get();
+
+    map->insertColumns(currPage, (int)adjustment_colNum->get_value(), (int)adjustment_count->get_value());
+  
+    //update refgrid
+    refgrid[currPage].setSize(map->getLevelWidth(currPage), map->getLevelHeight(currPage));
+  }
+}
 
 /*!
   Displays an insert rows dialog. Inserts the number of specified rows starting at

@@ -39,6 +39,7 @@ struct Level : public Gtk::Grid
   Level(Tileset* tileset, std::ifstream& file);
 
   void center();
+  void insertColumns(int colNum, int count);
   void insertRows(int rowNum, int count);
   void reset();
   void shift(int x, int y);

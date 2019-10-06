@@ -40,6 +40,7 @@ class Map
 
     void appendLevel();
     void centerLevel(int levelIndex);
+    void insertColumns(int levelIndex, int colNum, int count);
     void insertRows(int levelIndex, int rowNum, int count);
     bool loadFile(std::string filepath);
     void newMap(Tileset* mapTileset, int mapWidth, int mapHeight);

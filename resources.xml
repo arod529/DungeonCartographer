@@ -22,6 +22,7 @@
     <file preprocess="xml-stripblanks">dungeonCartographer.ui</file>
     <file preprocess="xml-stripblanks">tab.ui</file>
     <file preprocess="xml-stripblanks">shiftLevel.ui</file>
+    <file preprocess="xml-stripblanks">insertColumn.ui</file>
     <file preprocess="xml-stripblanks">insertRow.ui</file>
     <file>dungeonCartographer.css</file>
     <file alias="icon_grid.svg">icons/icon_grid.svg</file>
