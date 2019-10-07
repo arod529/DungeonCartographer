@@ -42,6 +42,7 @@ class Map
     void centerLevel(int levelIndex);
     void deleteColumns(int levelIndex, int colNum, int count);
     void deleteRows(int levelIndex, int rowNum, int count);
+    void fitLevel(int levelIndex, int borderWidth);
     void insertColumns(int levelIndex, int colNum, int count);
     void insertRows(int levelIndex, int rowNum, int count);
     bool loadFile(std::string filepath);

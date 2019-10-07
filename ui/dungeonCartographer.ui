@@ -143,13 +143,13 @@
 								</child>
 								<child>
 									<object id="menu_deleteRows" class="GtkImageMenuItem">
-										<property name="label">Delete Rows</property>
+										<property name="label">Delete _Rows</property>
 										<property name="use_underline">true</property>
 									</object>
 								</child>
 								<child>
 									<object id="menu_deleteColumns" class="GtkImageMenuItem">
-										<property name="label">Delete Columns</property>
+										<property name="label">Delete _Columns</property>
 										<property name="use_underline">true</property>
 									</object>
 								</child>

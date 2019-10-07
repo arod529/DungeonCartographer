@@ -16,17 +16,34 @@
 | along with this program.  If not, see <https://www.gnu.org/licenses/>. |
 ***********************************************************************-->
 
-<?xml version="1.0" encoding="UTF-8"?>
-<gresources>
-  <gresource prefix="/DungeonCartographer">
-    <file preprocess="xml-stripblanks">dungeonCartographer.ui</file>
-    <file preprocess="xml-stripblanks">tab.ui</file>
-    <file preprocess="xml-stripblanks">shiftLevel.ui</file>
-    <file preprocess="xml-stripblanks">fitLevel.ui</file>
-    <file preprocess="xml-stripblanks">insertColumn.ui</file>
-    <file preprocess="xml-stripblanks">insertRow.ui</file>
-    <file>dungeonCartographer.css</file>
-    <file alias="icon_grid.svg">icons/icon_grid.svg</file>
-    <file alias="icon_dc.png">icons/icon_dc.png</file>
-  </gresource>
-</gresources>
+<interface>
+  <object class="GtkAdjustment" id="adjustment_border">
+    <property name="lower">0</property>
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">5</property>
+  </object>
+    
+  <object id="spinners" class="GtkBox">
+    <property name="border_width">5</property>
+    <property name="orientation">vertical</property>
+    <property name="spacing">5</property>
+    <child>
+      <object class="GtkBox">
+        <property name="spacing">5</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="label">Border Width:</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSpinButton">
+            <property name="tooltip_text">The number of empty tiles to border the Level.</property>
+            <property name="adjustment">adjustment_border</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+
+</interface>

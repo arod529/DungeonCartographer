@@ -41,6 +41,7 @@ struct Level : public Gtk::Grid
   void center();
   void deleteColumns(int colNum, int count);
   void deleteRows(int rowNum, int count);
+  void fit(int borderWidth);
   void insertColumns(int colNum, int count);
   void insertRows(int rowNum, int count);
   void reset();

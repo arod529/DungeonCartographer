@@ -68,6 +68,15 @@ void Map::deleteRows(int levelIndex, int rowNum, int count)
   {level[levelIndex]->deleteRows(rowNum, count);}
 
 /*!
+  Fits a Level to its drawn portion with a given border width.
+
+  @param[in] levelIndex the index of the Level to fit.
+  @param[in] borderWidth The width of the border in number of tiles.
+**/
+void Map::fitLevel(int levelIndex, int borderWidth)
+  {level[levelIndex]->fit(borderWidth);}
+
+/*!
   Inserts columns into the Level.
 
   @param[in] levelIndex The index of the Level to insert rows into.

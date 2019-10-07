@@ -72,6 +72,9 @@ void Level::center()
   int extents[4];
   getExtents(extents);
 
+  //do nothing if the Level is empty
+  if(extents[0] == -1) return;
+
   //calculate the x shift
   int x = (extents[2]+(width-1-extents[0]))/2 - extents[2];
   //calculate the y shift
@@ -171,6 +174,37 @@ void Level::deleteRows(int rowNum, int count)
 
   //set size of tile 0
   tile[0]->set_size_request(s, s);
+}
+
+/*!
+  Fits the Level to the drawn portion with a given border width
+
+  @param[in] borderWidth The width of the Level's border in number of tiles.
+**/
+void Level::fit(int borderWidth)
+{
+  //get extents of level
+  int extents[4];
+  getExtents(extents);
+
+  //do nothing if the Level is empty
+  if(extents[0] == -1) return;
+
+  //calculate shift values
+  int x = -extents[2]+borderWidth;
+  int y = extents[1]-borderWidth;
+  //calculate new width and height
+  int newWidth = (extents[0]-extents[2]+1)+borderWidth*2;
+  int newHeight = (extents[3]-extents[1]+1)+borderWidth*2;
+
+  //if width or height needs to be increased, do first
+  if(newWidth > width) insertColumns(width, newWidth-width);
+  if(newHeight > height) insertRows(height, newHeight-height);
+  //shift the level to center
+  shift(x,y);
+  //reduce width or height if necessary
+  if(newWidth < width) deleteColumns(width-(width-newWidth), width-newWidth);
+  if(newHeight < height) deleteRows(height-(height-newHeight), height-newHeight);
 }
 
 /*!
@@ -504,7 +538,11 @@ void Level::getExtents(int* extents)
     j++;
   } while(ext[0] == -1 && j <= width); 
 
-  if(ext[0] == -1) return; //there are no rooms, stop search
+  if(ext[0] == -1) //there are no rooms, stop search
+  {
+    std::copy(ext, ext+4, extents);
+    return;
+  }
 
   //find max north extents by scanning north to south
   for(i = 0; i < width*height; i++)

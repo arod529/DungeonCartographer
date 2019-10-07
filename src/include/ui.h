@@ -49,6 +49,7 @@ public:
 	void centerLevel();
 	void deleteColumns();
 	void deleteRows();
+	void fitLevel();
 	void insertColumns();
 	void insertRows();
 	void open();
@@ -74,10 +75,14 @@ private:
 	int currPage{0};
 	std::vector<RefGrid> refgrid;
 
-	const char* uiCSS          = (char*)"/DungeonCartographer/dungeonCartographer.css";
-	const char* uiMain         = (char*)"/DungeonCartographer/dungeonCartographer.ui";
-	const char* uiTab          = (char*)"/DungeonCartographer/tab.ui";
-	const char* uiIconMain     = (char*)"/DungeonCartographer/icon_dc.png";
+	//main ui
+	const char* uiCSS      = (char*)"/DungeonCartographer/dungeonCartographer.css";
+	const char* uiMain     = (char*)"/DungeonCartographer/dungeonCartographer.ui";
+	const char* uiTab      = (char*)"/DungeonCartographer/tab.ui";
+	const char* uiIconMain = (char*)"/DungeonCartographer/icon_dc.png";
+
+	//dialogs
+	const char* uiFitLevel     = (char*)"/DungeonCartographer/fitLevel.ui";
 	const char* uiInsertColumn = (char*)"/DungeonCartographer/insertColumn.ui";
 	const char* uiInsertRow    = (char*)"/DungeonCartographer/insertRow.ui";
 	const char* uiShiftLevel   = (char*)"/DungeonCartographer/shiftLevel.ui";

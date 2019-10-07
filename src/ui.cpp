@@ -133,8 +133,8 @@ UI::UI(Settings* settings, Map* map)
   builder->get_widget("menu_center", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &UI::centerLevel));
 
-  builder->get_widget("menu_center", menu);
-  menu->signal_activate().connect(sigc::mem_fun(*this, &UI::centerLevel));
+  builder->get_widget("menu_fit", menu);
+  menu->signal_activate().connect(sigc::mem_fun(*this, &UI::fitLevel));
 
   builder->get_widget("menu_shift", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &UI::shiftLevel));
@@ -239,6 +239,35 @@ void UI::deleteRows()
   
     //update refgrid
     refgrid[currPage].setSize(map->getLevelWidth(currPage), map->getLevelHeight(currPage));
+  }
+}
+
+/*!
+  Displays a Fit Level dialog. Fits the Level to the drawing with the specified border.
+**/
+void UI::fitLevel()
+{
+	//create dialog
+	auto dialog = Gtk::Dialog("Fit Level", *this, Gtk::DialogFlags::DIALOG_MODAL|Gtk::DialogFlags::DIALOG_DESTROY_WITH_PARENT);
+  dialog.add_button("Accept", 1)->grab_default();
+  dialog.add_button("Cancel", 0);
+
+  auto dialogBuilder = Gtk::Builder::create_from_resource(uiFitLevel);
+  auto content = dialog.get_content_area();
+  Gtk::Box* spinners;
+  dialogBuilder->get_widget("spinners", spinners);
+  content->add(*spinners);
+
+  dialog.show_all_children();
+
+  if(dialog.run())
+  {
+		auto adjustment_border = (Gtk::Adjustment*)dialogBuilder->get_object("adjustment_border").get();
+
+		map->fitLevel(currPage, (int)adjustment_border->get_value());
+
+		//update refgrid
+		refgrid[currPage].setSize(map->getLevelWidth(currPage), map->getLevelHeight(currPage));
   }
 }
 
