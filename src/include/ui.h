@@ -47,6 +47,7 @@ public:
 	~UI();
 
 	void centerLevel();
+	void deleteColumns();
 	void deleteRows();
 	void insertColumns();
 	void insertRows();
