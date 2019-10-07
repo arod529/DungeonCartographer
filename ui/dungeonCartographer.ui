@@ -134,7 +134,22 @@
 								</child>
 								<child>
 									<object id="menu_insertColumns" class="GtkImageMenuItem">
-										<property name="label">Insert _Column</property>
+										<property name="label">Insert _Columns</property>
+										<property name="use_underline">true</property>
+									</object>
+								</child>
+								<child>
+								  <object class="GtkSeparatorMenuItem"></object>
+								</child>
+								<child>
+									<object id="menu_deleteRows" class="GtkImageMenuItem">
+										<property name="label">Delete Rows</property>
+										<property name="use_underline">true</property>
+									</object>
+								</child>
+								<child>
+									<object id="menu_deleteColumns" class="GtkImageMenuItem">
+										<property name="label">Delete Columns</property>
 										<property name="use_underline">true</property>
 									</object>
 								</child>

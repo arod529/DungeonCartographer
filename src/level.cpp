@@ -81,6 +81,53 @@ void Level::center()
 }
 
 /*!
+  Deletes rows from the Level.
+
+  @param[in] rowNum The row at which to begin removal.
+  @param[in] count The number of rows to remove.
+**/
+void Level::deleteRows(int rowNum, int count)
+{
+  //reset size request of tile 0
+  int s;
+  tile[0]->get_size_request(s, s);
+  tile[0]->set_size_request();
+
+  //delete rows from grid
+  for(int i = 0; i < count; i++)
+  {
+    remove_row(rowNum);
+  }
+  //delete rows from tile array
+  auto iterFirst = tile.begin() + rowNum*width;
+  auto iterLast = tile.begin() + ((rowNum+count)*width);
+  tile.erase(iterFirst, iterLast);
+  //update height
+  height -= count;
+
+  //update height, gridId, and signals of tiles
+  for(int i = 0; i < height; i++)
+  {
+    for(int j = 0; j < width; j++)
+    {
+      int k = j+i*width; //tile index
+
+      tile[k]->gridHeight = height;
+      
+      if(i >= rowNum)
+      {
+        tile[k]->gridId = k;
+        tile[k]->clickSig.disconnect();
+        tile[k]->clickSig = tile[k]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[k]->gridId), false); 
+      }
+    }
+  }
+
+  //set size of tile 0
+  tile[0]->set_size_request(s, s);
+}
+
+/*!
   Inserts columns into the Level.
   
   @param[in] colNum The number of the column at which to begin insertion.
@@ -123,9 +170,6 @@ void Level::insertColumns(int colNum, int count)
       } 
     }
   }
-
-  //set size of tile 0
-  tile[0]->set_size_request(s, s);
 }
 
 /*!

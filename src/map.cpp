@@ -48,6 +48,16 @@ void Map::centerLevel(int levelIndex)
   {level[levelIndex]->center();}
 
 /*!
+  Deletes rows from the Level
+
+  @param[in] levelIndex The index of the Level to insert rows into.
+  @param[in] rowNum The index of the row at which to begin removal.
+  @param[in] count The number of rows to remove.
+**/
+void Map::deleteRows(int levelIndex, int rowNum, int count)
+  {level[levelIndex]->deleteRows(rowNum, count);}
+
+/*!
   Inserts columns into the Level.
 
   @param[in] levelIndex The index of the Level to insert rows into.
