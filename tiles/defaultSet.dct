@@ -6,7 +6,7 @@ Default Dungeon Cartographer Tileset
 2,N Wall,./tiles/nWall.svg
 34,N Wall SE Corner,./tiles/nWall_seCorner.svg
 66,N Wall SW Corner,./tiles/nWall_swCorner.svg
-98,N Wall SE-SW Corner,./tiles/nWall_sw-seCorner.svg
+98,N Wall SE-SW Corner,./tiles/nWall_se-swCorner.svg
 4,W Wall,./tiles/wWall.svg
 132,W Wall NE Corner,./tiles/wWall_neCorner.svg
 68,W Wall SE Corner,./tiles/wWall_seCorner.svg

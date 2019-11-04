@@ -15,7 +15,7 @@
    version="1.1"
    id="svg1805"
    inkscape:version="0.92.4 5da689c313, 2019-01-14"
-   sodipodi:docname="baseTileset.svg"
+   sodipodi:docname="eWall_swCorner_eDoor.svg"
    enable-background="new">
   <defs
      id="defs1799">
@@ -185,7 +185,7 @@
        id="g2829"
        inkscape:groupmode="layer"
        sodipodi:insensitive="true"
-       style="display:inline">
+       style="display:none">
       <rect
          rx="6.965183e-17"
          y="9"
@@ -214,7 +214,7 @@
        inkscape:label="ne"
        id="g2837"
        inkscape:groupmode="layer"
-       style="display:none"
+       style="display:inline"
        sodipodi:insensitive="true">
       <rect
          rx="6.965183e-17"
@@ -248,7 +248,7 @@
        inkscape:label="w"
        id="g2405"
        inkscape:groupmode="layer"
-       style="display:inline"
+       style="display:none"
        sodipodi:insensitive="true">
       <path
          inkscape:connector-curvature="0"
@@ -260,7 +260,7 @@
        inkscape:groupmode="layer"
        id="layer10"
        inkscape:label="n"
-       style="display:inline"
+       style="display:none"
        sodipodi:insensitive="true">
       <path
          style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -325,7 +325,7 @@
        inkscape:groupmode="layer"
        id="g2506"
        inkscape:label="sw"
-       style="display:none"
+       style="display:inline"
        sodipodi:insensitive="true">
       <path
          style="display:inline;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -434,7 +434,7 @@
        inkscape:groupmode="layer"
        id="layer17"
        inkscape:label="se"
-       style="display:none"
+       style="display:inline"
        sodipodi:insensitive="true">
       <rect
          style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers stroke fill"
@@ -464,7 +464,7 @@
        inkscape:groupmode="layer"
        id="g2612"
        inkscape:label="nw"
-       style="display:inline"
+       style="display:none"
        sodipodi:insensitive="true">
       <rect
          style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers stroke fill"
@@ -498,17 +498,6 @@
      style="display:inline">
     <g
        inkscape:groupmode="layer"
-       id="layer4"
-       inkscape:label="s"
-       style="display:none">
-      <path
-         style="display:inline;fill:none;stroke:#fcffff;stroke-width:1;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 3.4999999,9.5 H 6.5000002"
-         id="path12081-8"
-         inkscape:connector-curvature="0" />
-    </g>
-    <g
-       inkscape:groupmode="layer"
        id="layer6"
        inkscape:label="w"
        style="display:none;opacity:1">
@@ -520,6 +509,28 @@
     </g>
     <g
        inkscape:groupmode="layer"
+       id="layer5"
+       inkscape:label="e"
+       style="display:inline">
+      <path
+         style="display:inline;fill:none;stroke:#fcffff;stroke-width:1;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 9.4999998,6.5000003 V 3.5000001"
+         id="path12081-0"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="layer4"
+       inkscape:label="s"
+       style="display:none">
+      <path
+         style="display:inline;fill:none;stroke:#fcffff;stroke-width:1;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 3.4999999,9.5 H 6.5000002"
+         id="path12081-8"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       inkscape:groupmode="layer"
        id="layer2"
        inkscape:label="n"
        style="display:none">
@@ -527,17 +538,6 @@
          style="fill:none;stroke:#fcffff;stroke-width:1;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          d="M 3.4999998,0.50000018 H 6.4999999"
          id="path12081"
-         inkscape:connector-curvature="0" />
-    </g>
-    <g
-       inkscape:groupmode="layer"
-       id="layer5"
-       inkscape:label="e"
-       style="display:none">
-      <path
-         style="display:inline;fill:none;stroke:#fcffff;stroke-width:1;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 9.4999998,6.5000003 V 3.5000001"
-         id="path12081-0"
          inkscape:connector-curvature="0" />
     </g>
   </g>
