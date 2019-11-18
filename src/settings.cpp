@@ -27,8 +27,12 @@ Settings::Settings()
 	if(!loadSettingsFile(defaultSettingsFile))
 		{writeDefaultSettingsFile();}
 
-	//init global tileset
-	tileset.loadFile(tilesetFile);
+	//try loading default tileset file
+	if(!tileset.loadFile(tilesetFile))
+	{
+		tileset.writeDefaultTilesetFile(tilesetFile);
+		tileset.loadFile(tilesetFile);
+	}
 }
 
 /*!

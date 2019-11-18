@@ -58,10 +58,13 @@ struct Level : public Gtk::Grid
   friend std::istream& operator>>(std::istream& in, Level& level);
 
 private:
+  int largestRoomId;                       // The largest room id of the Level
+  int lastRoomId;                          // The last used room id of the Level
+  int height;                              // The Level;s height
   int id;                                  // The Level's id
-  int width, height;                       // The Level's size
-  Tileset* tileset;                        // The Tileset that the Level uses
   std::vector<std::unique_ptr<Tile>> tile; // The Tiles in the Level
+  Tileset* tileset;                        // The Tileset that the Level uses
+  int width;                               // The Level's size
   
   void createNewTile(int i = -1);
   void getExtents(int* extents);

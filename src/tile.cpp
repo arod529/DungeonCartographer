@@ -23,12 +23,13 @@
 /*!
   Initilizes a Tile, adds mouse click mask, and makes visible.
 **/
-Tile::Tile(Tileset* tileset, uint tileId, int gridId, int gridWidth, int gridHeight)
+Tile::Tile(Tileset* tileset, uint16 tileId, int gridId, int gridWidth, int gridHeight)
 : tileset{tileset}
 , tileId{tileId}
 , gridId{gridId}
 , gridWidth{gridWidth}
 , gridHeight{gridHeight}
+, roomId{-1}
 {
   //set drawing area properties
   set_can_focus(true);

@@ -105,7 +105,7 @@ UI::UI(Settings* settings, Map* map)
   //menus
   Gtk::MenuItem* menu;
   builder->get_widget("menu_new", menu);
-  menu->signal_activate().connect(sigc::bind<Tileset*, uint>(sigc::mem_fun(*map, &Map::newMap), &settings->tileset, settings->mapWidth, settings->mapHeight));
+  menu->signal_activate().connect(sigc::bind<Tileset*, uint16>(sigc::mem_fun(*map, &Map::newMap), &settings->tileset, settings->mapWidth, settings->mapHeight));
 
   builder->get_widget("menu_open", menu);
   menu->signal_activate().connect(sigc::mem_fun(*this, &UI::open));
@@ -538,7 +538,7 @@ void UI::clearTabs()
 
   \bug doesn't sync the grid color selector.
 **/
-void UI::pageSwitch(Gtk::Widget* page, uint pageNum)
+void UI::pageSwitch(Gtk::Widget* page, uint16 pageNum)
 {
   //triggered by tab change && (is only page || tab not newtab)
   if(!(page != NULL && (pageNum == 0 || ((Gtk::Label*)notebook->get_tab_label(*page))->get_text() != "+")))

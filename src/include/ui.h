@@ -89,7 +89,7 @@ private:
 	
 	void addTab(int levelId, Level* level);
 	void clearTabs();
-	void pageSwitch(Gtk::Widget* page, uint pageNum);
+	void pageSwitch(Gtk::Widget* page, uint16 pageNum);
 	void scroll(double dx, double dy);
 	bool scrollEvent(GdkEventScroll* scroll_event);
 	void setGridColor();

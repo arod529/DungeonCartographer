@@ -18,14 +18,16 @@
 
 #include "level.h"
 
-#include <limits> //operator>>
-#include <string> //operator>>
+#include <algorithm> //std::max
+#include <limits>    //operator>>
+#include <string>    //operator>>
 
 /*!
   Initializes a level from a file
 **/
 Level::Level(Tileset* tileset, std::ifstream& file)
 : tileset{tileset}
+, lastRoomId{-1}
 {
   //initialize properties
   propInit();
@@ -50,6 +52,9 @@ Level::Level(Tileset* tileset, int id, int width, int height)
 , width{width}
 , height{height}
 {
+  largestRoomId = -1;
+  lastRoomId = -1;
+
   //initialize properties
   propInit();
 
@@ -418,6 +423,8 @@ bool Level::updateTile(GdkEventButton* btn, int gridId)
   Tile* tile = this->tile[gridId].get(); //the tile to update
   Tile* aTile = NULL;                    //adjacent tile
 
+printf("ENTER updateTile gridId: %d tileId: %X roomId: %d\n", tile->gridId, tile->tileId, tile->roomId);
+
   //adjacent tile exist truths
   bool tileExists[8];
   tile->getTileExists(tileExists);
@@ -426,12 +433,44 @@ bool Level::updateTile(GdkEventButton* btn, int gridId)
   int a[8];
   tile->getAdjacentIndex(a);
 
-  uint compare = E;      //compare value for wall
+  uint16 compare = E;      //compare value for wall
 
   if(tile->tileId < BACKGROUND)  //this tile is already a room
-    {tile->tileId = BACKGROUND;} //set to background
+  {
+    tile->tileId = BACKGROUND; //set to background
+    tile->roomId = -1;         //set to no roomId
+  } 
   else
-    {tile->tileId = NSEW;}        //new base tile id is closed room
+  {
+    tile->tileId = NSEW; //new base tile id is closed room
+
+    //check the adjacent tiles for roomId
+    for(int i = 0; i < 4; i++)
+    {
+      if(tileExists[i])
+      {
+        //get adjacent tile roomId
+        int adjacentRoomId = this->tile[a[i]].get()->roomId;
+
+        if(adjacentRoomId == lastRoomId) //prioritize lastRoomId
+        {
+          tile->roomId = lastRoomId;
+          break;
+        }
+        else //assign largest adjacent roomId
+        {
+          tile->roomId = std::max(tile->roomId, adjacentRoomId);
+        }
+      }
+    }
+    //no connected rooms
+    if(tile->roomId == -1)
+    {
+      tile->roomId = ++largestRoomId;
+    }
+    //update the last roomId
+    lastRoomId = tile->roomId;
+  }
 
   //check for and update adjacent tile walls
   //cycles through each adjacent tile starting with west tile
@@ -446,14 +485,22 @@ bool Level::updateTile(GdkEventButton* btn, int gridId)
       {
         if(tile->tileId == BACKGROUND) //this tile was a room
         {
-          //add previously shared wall of adjacent tile and remove all corner bits
-          aTile->tileId = (aTile->tileId | compare)&NSEW;
+          //add previously shared wall, remove door of shared wall, and remove all corner bits
+          //of adjacent tile
+          aTile->tileId = ((aTile->tileId | compare) & ~(compare<<DOOR_BIT_OFFSET)) & NSEW_NSEW;
         }
         else //this tile was not a room
         {
-          //remove shared wall of adjacent tile and all corner bits
-          aTile->tileId = (aTile->tileId & ~compare)&NSEW;
-          tile->tileId ^= (1 << (i+2)%4); //remove shared wall of tile
+          if(aTile->roomId != tile->roomId) //adjacent roomId != roomId, add door, remove corner bits
+          { 
+            aTile->tileId = (aTile->tileId | (compare<<DOOR_BIT_OFFSET)) & NSEW_NSEW;
+            tile->tileId |= ((1 << (i+2)%4)<<DOOR_BIT_OFFSET); //add shared door
+          }
+          else //remove wall, remove corner bits
+          {
+            aTile->tileId = (aTile->tileId & ~compare) & NSEW_NSEW;
+            tile->tileId ^= (1 << (i+2)%4); //remove shared wall of tile
+          }
         }
         updateCornerBits(aTile->gridId, false); //re-add valid corner bits
       }
@@ -461,6 +508,9 @@ bool Level::updateTile(GdkEventButton* btn, int gridId)
     compare <<= 1; //shift compare to next wall
   }
   updateCornerBits(tile->gridId, true); //add valid corner bits
+
+printf("EXIT updateTile gridId: %d tileId %X roomId: %d\n\n", tile->gridId, tile->tileId, tile->roomId);
+
   return true; //the event has been fully handled.
 }
 
@@ -653,8 +703,8 @@ void Level::updateCornerBits(int gridId, bool propagate)
   if(tile->locked) return; //don't run if this tile already part of recursion chain
   tile->locked = true;     //lock the function for this tile
 
-  Tile* aTile = NULL;               //adjacent tile
-  uint walls = tile->tileId & NSEW; //the walls of this tile
+  Tile* aTile = NULL;                 //adjacent tile
+  uint16 walls = tile->tileId & NSEW; //the walls of this tile
 
   //adjacent tile exists truths
   bool tileExists[8];
@@ -676,7 +726,7 @@ void Level::updateCornerBits(int gridId, bool propagate)
   else //is double wall (parallel), triple wall, or closed room
   {
     corners = 0;
-    tile->tileId &= NSEW; //remove all corner bits
+    tile->tileId &= NSEW_NSEW; //remove all corner bits
   }
 
   //check corner tiles
@@ -713,7 +763,7 @@ void Level::updateCornerBits(int gridId, bool propagate)
   if(corners <=2 && walls != NSEW) //tile is not background, open room, or closed room
   {
     pow[0] = -1; pow[1] = -1;
-    uint openWalls = ~walls & NSEW;
+    uint16 openWalls = ~walls & NSEW;
     while(openWalls != 0) //there are open walls left
     {
       modf(log(openWalls)/log(2), &pow[0]); //get highest power of empty wall

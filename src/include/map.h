@@ -19,7 +19,7 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "constants.h" //uint
+#include "constants.h" //uint16
 #include "level.h"     //level
 #include "tileset.h"   //tileset
 
@@ -60,7 +60,7 @@ class Map
     void setTileSize(int levelIndex, int tileSize);
 
     //signals
-    sigc::signal<void, uint, Level*> signal_levelCreated; // A level has been created.
+    sigc::signal<void, uint16, Level*> signal_levelCreated; // A level has been created.
     sigc::signal<void> signal_mapCleared; // The map has been cleared. No levels exist.
 
     //overloads
