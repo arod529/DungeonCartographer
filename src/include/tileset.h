@@ -35,7 +35,7 @@
 **/
 struct TilesetTile
 {
-  friend class Tile;
+  friend class Tileset;
 public:
 
   int getSize();
@@ -44,7 +44,7 @@ public:
   friend std::istream& operator>>(std::istream& in, TilesetTile& tilesettile);
 
 private:
-  uint16 id;                          // The id representing the image
+  uint16 id;                        // The id representing the image
   std::string name;                 // The display name of the image
   std::string filePath;             // The path to the image
   Glib::RefPtr<Gdk::Pixbuf> pixbuf; // A pixbuf created from the image
@@ -62,6 +62,7 @@ public:
 
   Tileset(const std::string fpath = "");
 
+  Glib::RefPtr<Gdk::Pixbuf> getPixbuf(int i);
   bool loadFile(const std::string fpath);
   bool reload();
   bool isTileset(const std::string fpath);

@@ -12,8 +12,8 @@ Default Dungeon Cartographer Tileset
 42,N Wall SW Corner,./tiles/nWall_swCorner.svg
 62,N Wall SE-SW Corner,./tiles/nWall_se-swCorner.svg
 202,N Wall N Door,./tiles/nWall_nDoor.svg
-222,N Wall SE Corner N Door,./tiles/nWall_seCorner_nDoor.svg
-242,N Wall SW Corner N Door,./tiles/nWall_swCorner_nDoor.svg
+222,N Wall SW Corner N Door,./tiles/nWall_swCorner_nDoor.svg
+242,N Wall SE Corner N Door,./tiles/nWall_seCorner_nDoor.svg
 262,N Wall SE-SW Corner N Door,./tiles/nWall_se-swCorner_nDoor.svg
 4,W Wall,./tiles/wWall.svg
 84,W Wall NE Corner,./tiles/wWall_neCorner.svg

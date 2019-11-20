@@ -36,6 +36,17 @@ Tileset::Tileset(std::string fpath)
 }
 
 /*!
+  Gets the pixbuf pointer of a given tile id.
+
+  @param[in] i The id of the tile
+  @return The pixbuf
+**/
+Glib::RefPtr<Gdk::Pixbuf> Tileset::getPixbuf(int i)
+{
+  return tile[i].pixbuf;
+}
+
+/*!
   Load a tileset from a file
 
   @param[in] fpath File path for the tile set to load.
@@ -133,8 +144,8 @@ bool Tileset::writeDefaultTilesetFile(std::string fpath)
   << N_SE      << ',' <<           "N Wall SW Corner" << ',' <<          "./tiles/nWall_swCorner.svg" << '\n'
   << N_SW_SE   << ',' <<        "N Wall SE-SW Corner" << ',' <<       "./tiles/nWall_se-swCorner.svg" << '\n'
   << N_N       << ',' <<              "N Wall N Door" << ',' <<             "./tiles/nWall_nDoor.svg" << '\n'
-  << N_SW_N    << ',' <<    "N Wall SE Corner N Door" << ',' <<    "./tiles/nWall_seCorner_nDoor.svg" << '\n'
-  << N_SE_N    << ',' <<    "N Wall SW Corner N Door" << ',' <<    "./tiles/nWall_swCorner_nDoor.svg" << '\n'
+  << N_SW_N    << ',' <<    "N Wall SW Corner N Door" << ',' <<    "./tiles/nWall_swCorner_nDoor.svg" << '\n'
+  << N_SE_N    << ',' <<    "N Wall SE Corner N Door" << ',' <<    "./tiles/nWall_seCorner_nDoor.svg" << '\n'
   << N_SW_SE_N << ',' << "N Wall SE-SW Corner N Door" << ',' << "./tiles/nWall_se-swCorner_nDoor.svg" << '\n'
   
   //West wall variants

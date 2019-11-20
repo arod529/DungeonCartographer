@@ -27,6 +27,7 @@
 **/
 Level::Level(Tileset* tileset, std::ifstream& file)
 : tileset{tileset}
+, largestRoomId{-1}
 , lastRoomId{-1}
 {
   //initialize properties
@@ -40,6 +41,8 @@ Level::Level(Tileset* tileset, std::ifstream& file)
   {
     createNewTile();
     file >> *tile.back();
+    if (tile.back()->roomId > largestRoomId)
+      largestRoomId = tile.back()->roomId;
   }
 }
 
@@ -51,10 +54,9 @@ Level::Level(Tileset* tileset, int id, int width, int height)
 , id{id}
 , width{width}
 , height{height}
+, largestRoomId{-1}
+, lastRoomId{-1}
 {
-  largestRoomId = -1;
-  lastRoomId = -1;
-
   //initialize properties
   propInit();
 
@@ -383,12 +385,12 @@ void Level::shift(int x, int y)
   3) Update corner bits of this tile.
 </pre>
 
-  @param[in] btn unused; gtk_signal requirement.
+  @param[in] event  contains data about the event such as button and modifier masks
   @param[in] gridId The grid id of the tile to update.
 
   @return Indicates that the event has been fully handled; gtk_signal requirement.
 **/
-bool Level::updateTile(GdkEventButton* btn, int* gridId)
+bool Level::updateTile(GdkEventButton* event, int* gridId)
 {
   Tile* tile = this->tile[*gridId].get(); //the tile to update
   Tile* aTile = NULL;                    //adjacent tile
@@ -422,7 +424,7 @@ printf("ENTER updateTile gridId: %d tileId: %X roomId: %d\n", tile->gridId, tile
         //get adjacent tile roomId
         int adjacentRoomId = this->tile[a[i]].get()->roomId;
 
-        if(adjacentRoomId == lastRoomId) //prioritize lastRoomId
+        if(adjacentRoomId == lastRoomId && lastRoomId != -1) //prioritize lastRoomId
         {
           tile->roomId = lastRoomId;
           break;
@@ -463,8 +465,12 @@ printf("ENTER updateTile gridId: %d tileId: %X roomId: %d\n", tile->gridId, tile
         {
           if(aTile->roomId != tile->roomId) //adjacent roomId != roomId, add door, remove corner bits
           { 
-            aTile->tileId = (aTile->tileId | (compare<<DOOR_BIT_OFFSET)) & NSEW_NSEW;
-            tile->tileId |= ((1 << (i+2)%4)<<DOOR_BIT_OFFSET); //add shared door
+            if(event->state == GdkModifierType::GDK_SHIFT_MASK) //add door if shift is pressed
+            {
+              aTile->tileId |= compare<<DOOR_BIT_OFFSET;
+              tile->tileId |= ((1 << (i+2)%4)<<DOOR_BIT_OFFSET); //add shared door
+            }
+            // aTile->tileId &= NSEW_NSEW; //remove corner bits
           }
           else //remove wall, remove corner bits
           {
@@ -718,9 +724,10 @@ void Level::updateCornerBits(int gridId, bool propagate)
       }
       else
       {
-        if(aTile->tileId == BACKGROUND) //corner tile is background
+        //corner tile is background or a different room
+        if(aTile->tileId == BACKGROUND || aTile->roomId != tile->roomId)
           {tile->tileId |= (1<<j);} //add corner bit
-        else //corner tile is room
+        else //corner tile is room with same roomId
         {
           tile->tileId &= ~(1<<j); //remove corner bit
           if(propagate) updateCornerBits(aTile->gridId, true);
