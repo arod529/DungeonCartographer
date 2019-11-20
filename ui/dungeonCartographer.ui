@@ -378,6 +378,7 @@
 				</child>
 				<!-- /SPEED SLIDERS -->
 
+				<!-- GRID -->
 				<child>
 					<object class="GtkToolbar">
 						<property name="icon-size">GTK_ICON_SIZE_SMALL_TOOLBAR</property>
@@ -404,6 +405,7 @@
 							</child>
 					</object>	
 				</child>
+				<!-- /GRID -->
 			
 			</object>
 		</child>
@@ -431,6 +433,214 @@
 			</packing>
 		</child>
 		<!-- /NOTEBOOK -->
+
+		<!-- INFOBAR -->
+		<child>
+			<object class="GtkBox">
+			  <property name="can_focus">False</property>
+			  <child>
+			    <object class="GtkBox">
+			      <property name="can_focus">False</property>
+			      <child>
+			        <object class="GtkLabel">
+			          <property name="can_focus">False</property>
+			          <property name="label">X: </property>
+			          <attributes>
+			            <attribute name="weight" value="bold"/>
+			          </attributes>
+			        </object>
+			        <packing>
+			          <property name="expand">False</property>
+			          <property name="fill">True</property>
+			        </packing>
+			      </child>
+			      <child>
+			        <object class="GtkLabel" id="infoXCoord">
+			          <property name="can_focus">False</property>
+			          <property name="label">10</property>
+			          <property name="justify">right</property>
+			          <property name="width_chars">4</property>
+			          <property name="single_line_mode">True</property>
+			          <property name="max_width_chars">4</property>
+			        </object>
+			        <packing>
+			          <property name="expand">False</property>
+			          <property name="fill">True</property>
+			        </packing>
+			      </child>
+			    </object>
+			    <packing>
+			      <property name="expand">False</property>
+			      <property name="fill">True</property>
+			    </packing>
+			  </child>
+			  <child>
+			    <object class="GtkBox">
+			      <property name="can_focus">False</property>
+			      <child>
+			        <object class="GtkLabel">
+			          <property name="can_focus">False</property>
+			          <property name="label">Y: </property>
+			          <attributes>
+			            <attribute name="weight" value="bold"/>
+			          </attributes>
+			        </object>
+			        <packing>
+			          <property name="expand">False</property>
+			          <property name="fill">True</property>
+			        </packing>
+			      </child>
+			      <child>
+			        <object class="GtkLabel" id="infoYCoord">
+			          <property name="can_focus">False</property>
+			          <property name="label">5</property>
+			          <property name="justify">right</property>
+			          <property name="width_chars">4</property>
+			          <property name="single_line_mode">True</property>
+			          <property name="max_width_chars">4</property>
+			        </object>
+			        <packing>
+			          <property name="expand">False</property>
+			          <property name="fill">True</property>
+			        </packing>
+			      </child>
+			    </object>
+			    <packing>
+			      <property name="expand">False</property>
+			      <property name="fill">True</property>
+			    </packing>
+			  </child>
+			  <child>
+			    <object class="GtkBox">
+			      <property name="can_focus">False</property>
+			      <child>
+			        <object class="GtkLabel">
+			          <property name="can_focus">False</property>
+			          <property name="label">Grid ID: </property>
+			          <attributes>
+			            <attribute name="weight" value="bold"/>
+			          </attributes>
+			        </object>
+			        <packing>
+			          <property name="expand">False</property>
+			          <property name="fill">True</property>
+			        </packing>
+			      </child>
+			      <child>
+			        <object class="GtkLabel" id="infoGridId">
+			          <property name="can_focus">False</property>
+			          <property name="label">24</property>
+			          <property name="justify">right</property>
+			          <property name="width_chars">6</property>
+			          <property name="single_line_mode">True</property>
+			          <property name="max_width_chars">6</property>
+			        </object>
+			        <packing>
+			          <property name="expand">False</property>
+			          <property name="fill">True</property>
+			        </packing>
+			      </child>
+			    </object>
+			    <packing>
+			      <property name="expand">False</property>
+			      <property name="fill">True</property>
+			    </packing>
+			  </child>
+			  <child>
+			    <object class="GtkSeparator">
+			      <property name="can_focus">False</property>
+			    </object>
+			    <packing>
+			      <property name="expand">False</property>
+			      <property name="fill">True</property>
+			      <property name="padding">5</property>
+			    </packing>
+			  </child>
+			  <child>
+			    <object class="GtkBox">
+			      <property name="can_focus">False</property>
+			      <child>
+			        <object class="GtkLabel">
+			          <property name="can_focus">False</property>
+			          <property name="label">Tile ID: </property>
+			          <attributes>
+			            <attribute name="weight" value="bold"/>
+			          </attributes>
+			        </object>
+			        <packing>
+			          <property name="expand">False</property>
+			          <property name="fill">True</property>
+			        </packing>
+			      </child>
+			      <child>
+			        <object class="GtkLabel" id="infoTileId">
+			          <property name="can_focus">False</property>
+			          <property name="label">FFF</property>
+			          <property name="width_chars">3</property>
+			          <property name="max_width_chars">3</property>
+			        </object>
+			        <packing>
+			          <property name="expand">False</property>
+			          <property name="fill">True</property>
+			        </packing>
+			      </child>
+			    </object>
+			    <packing>
+			      <property name="expand">False</property>
+			      <property name="fill">True</property>
+			    </packing>
+			  </child>
+			  <child>
+			    <object class="GtkSeparator">
+			      <property name="can_focus">False</property>
+			    </object>
+			    <packing>
+			      <property name="expand">False</property>
+			      <property name="fill">True</property>
+			      <property name="padding">5</property>
+			    </packing>
+			  </child>
+			  <child>
+			    <object class="GtkBox">
+			      <property name="can_focus">False</property>
+			      <child>
+			        <object class="GtkLabel">
+			          <property name="can_focus">False</property>
+			          <property name="label">Room ID: </property>
+			          <attributes>
+			            <attribute name="weight" value="bold"/>
+			          </attributes>
+			        </object>
+			        <packing>
+			          <property name="expand">False</property>
+			          <property name="fill">True</property>
+			        </packing>
+			      </child>
+			      <child>
+			        <object class="GtkLabel" id="infoRoomId">
+			          <property name="can_focus">False</property>
+			          <property name="label">5</property>
+			          <property name="width_chars">4</property>
+			          <property name="max_width_chars">4</property>
+			        </object>
+			        <packing>
+			          <property name="expand">False</property>
+			          <property name="fill">True</property>
+			        </packing>
+			      </child>
+			    </object>
+			    <packing>
+			      <property name="expand">False</property>
+			      <property name="fill">True</property>
+			    </packing>
+			  </child>
+			</object>
+			<packing>
+			  <property name="expand">False</property>
+			  <property name="fill">False</property>
+			</packing>
+		</child>
+		<!-- /INFOBAR -->
 
 	</object>
 	<!-- /Window Content -->

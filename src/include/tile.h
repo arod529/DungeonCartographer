@@ -41,6 +41,7 @@ struct Tile : public Gtk::DrawingArea
   void getTileExists(bool* tileExists);
   void getAdjacentIndex(int* adjacentIndex);
 
+
   //overloads
   friend std::ostream& operator<<(std::ostream& out, const Tile& tile);
   friend std::istream& operator>>(std::istream& in, Tile& tile);
@@ -55,10 +56,15 @@ private:
   Tileset* tileset;          // The Tileset this tile uses
   bool locked = false;       // Protection against multiple recursion
 
+  virtual bool on_enter_notify_event(GdkEventCrossing* crossing_event);
   void print(Cairo::RefPtr<Cairo::Context>& cr);
+  void reset();
   
   //signal overload
   bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+
+  //operator overload
+  void operator=(const Tile& sourceTile);
 };
 
 #endif

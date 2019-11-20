@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License      |
 # along with this program.  If not, see <https://www.gnu.org/licenses/>. |
 #*************************************************************************
+CPU_COUNT:=$(shell lstopo-no-graphics | grep -c Core)
 
 OBJD=./obj
 SRCD=./src
@@ -33,17 +34,16 @@ OBJS=$(OBJD)/dungeonCartographer.o $(OBJD)/resources.o \
 		 $(OBJD)/settings.o $(OBJD)/ui.o $(OBJD)/refgrid.o \
 		 $(OBJD)/map.o $(OBJD)/level.o $(OBJD)/tile.o $(OBJD)/tileset.o
 
-.PHONY: clean
+.PHONY: clean all dir run
 
-all: dir dungeonCartographer
+all: dir
+	make -j$(CPU_COUNT) dungeonCartographer
 
 #--------
 #Programs
 #--------
 dungeonCartographer: $(OBJS)
-	$(LC) dungeonCartographer $(OBJD)/dungeonCartographer.o $(OBJD)/resources.o \
-														$(OBJD)/settings.o $(OBJD)/ui.o $(OBJD)/refgrid.o \
-														$(OBJD)/map.o $(OBJD)/level.o $(OBJD)/tile.o $(OBJD)/tileset.o
+	$(LC) dungeonCartographer $(OBJS)
 
 #------------
 #Object Files
@@ -75,7 +75,7 @@ $(OBJD)/refgrid.o: $(SRCD)/refgrid.cpp $(INCD)/refgrid.h
 $(OBJD)/resources.o: $(SRCD)/resources.c
 	$(CC) -o $(OBJD)/resources.o $(SRCD)/resources.c
 
-$(SRCD)/resources.c: resources.xml
+$(SRCD)/resources.c: resources.xml ./ui/*.ui ./ui/*.css ./ui/icons/*
 	glib-compile-resources resources.xml --target=$(SRCD)/resources.c --generate-source --sourcedir=ui
 
 #-------

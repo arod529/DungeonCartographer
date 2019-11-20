@@ -63,6 +63,13 @@ UI::UI(Settings* settings, Map* map)
   //get notebook
   builder->get_widget("notebook", notebook);
 
+  //get info bar labels
+  builder->get_widget("infoXCoord", infoXCoord);
+  builder->get_widget("infoYCoord", infoYCoord);
+  builder->get_widget("infoGridId", infoGridId);
+  builder->get_widget("infoTileId", infoTileId);
+  builder->get_widget("infoRoomId", infoRoomId);
+
   //window
   set_title("Dungeon Cartographer");
   iconList.emplace_back(Gdk::Pixbuf::create_from_resource(uiIconMain));

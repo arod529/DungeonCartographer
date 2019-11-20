@@ -67,6 +67,13 @@ private:
 	Gtk::ToggleToolButton* gridToggle;               // grid toggle
 	std::vector<Glib::RefPtr<Gdk::Pixbuf>> iconList; // window icon
 	Gtk::ColorSelection* gridColor;                  // grid color selector
+
+	//info bar labels
+	Gtk::Label* infoXCoord;
+	Gtk::Label* infoYCoord;
+	Gtk::Label* infoGridId;
+	Gtk::Label* infoTileId;
+	Gtk::Label* infoRoomId;
 	
 	sigc::connection pageSwitchCon; //page switch signal
 

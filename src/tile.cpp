@@ -35,8 +35,9 @@ Tile::Tile(Tileset* tileset, uint16 tileId, int gridId, int gridWidth, int gridH
   set_can_focus(true);
   set_size_request(25,25);
 
-  //mouse click mask
-  add_events(Gdk::EventMask::BUTTON_PRESS_MASK);
+  //event masks
+  add_events(Gdk::EventMask::BUTTON_PRESS_MASK); //mouse click
+  add_events(Gdk::EventMask::ENTER_NOTIFY_MASK); //enter
 
   //make visible
   show();
@@ -109,6 +110,15 @@ void Tile::print(Cairo::RefPtr<Cairo::Context>& cr)
   cr->fill();
 }
 
+/*!
+  Resets the tile to a default background tile.
+**/
+void Tile::reset()
+{
+  tileId = BACKGROUND;
+  roomId = -1;
+}
+
 //--------------------------
 //----- Event Handlers -----
 //--------------------------
@@ -128,9 +138,28 @@ bool Tile::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
   return true;
 }
 
+bool Tile::on_enter_notify_event(GdkEventCrossing* crossing_event)
+{
+  printf("gridId: %d\t tileId: %X\t roomId: %d\n", gridId, tileId, roomId);
+
+  return false;
+}
+
 //---------------------
 //----- Overloads -----
 //---------------------
+
+/*!
+  Copies the tileId and roomId.
+
+  @param[in] sourceTile The tile to copy from
+**/
+void Tile::operator=(const Tile& sourceTile)
+{
+  tileId = sourceTile.tileId;
+  roomId = sourceTile.roomId;
+}
+
 std::ostream& operator<<(std::ostream& out, const Tile& tile)
 {
   if(tile.gridId%tile.gridWidth != 0)

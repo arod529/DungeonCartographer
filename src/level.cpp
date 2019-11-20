@@ -116,18 +116,10 @@ void Level::deleteColumns(int colNum, int count)
  //update width
  width -= count;
 
- //update width, gridId, and signals of tiles
- for(int i = 0; i < height; i++)
+ //update grid meta of the tiles
+ for(int i = 0; i < width*height; i++)
  {
-  for(int j = 0; j < width; j++)
-  {
-    int k = j+i*width; //tile index
-
-    tile[k]->gridWidth = width;
-    tile[k]->gridId = k;
-    tile[k]->clickSig.disconnect();
-    tile[k]->clickSig = tile[k]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[k]->gridId), false); 
-  }
+  updateTileGridMeta(i);
  }
 
  //set size of tile 0
@@ -159,22 +151,10 @@ void Level::deleteRows(int rowNum, int count)
   //update height
   height -= count;
 
-  //update height, gridId, and signals of tiles
-  for(int i = 0; i < height; i++)
+  //update grid meta of the tiles
+  for(int i = 0; i < width*height; i++)
   {
-    for(int j = 0; j < width; j++)
-    {
-      int k = j+i*width; //tile index
-
-      tile[k]->gridHeight = height;
-      
-      if(i >= rowNum)
-      {
-        tile[k]->gridId = k;
-        tile[k]->clickSig.disconnect();
-        tile[k]->clickSig = tile[k]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[k]->gridId), false); 
-      }
-    }
+    updateTileGridMeta(i);
   }
 
   //set size of tile 0
@@ -245,13 +225,10 @@ void Level::insertColumns(int colNum, int count)
       {
         createNewTile(k);   
       }
-      //update preceding and following columns' tiles' gridWidth, gridId, and signals
+      //update preceding and following columns' tiles' grid meta
       else
       {
-        tile[k]->gridWidth = width;
-        tile[k]->gridId = k;
-        tile[k]->clickSig.disconnect();
-        tile[k]->clickSig = tile[k]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[k]->gridId), false);
+        updateTileGridMeta(k);
       } 
     }
   }
@@ -290,17 +267,10 @@ void Level::insertRows(int rowNum, int count)
       {
         createNewTile(k);
       }
-      //update tile's gridHeight, gridId, and signals
+      //update preceding and following tiles' grid meta
       else
       {
-        tile[k]->gridHeight = height;
-
-        if(i >= rowNum + count)
-        {
-          tile[k]->gridId = k;
-          tile[k]->clickSig.disconnect();
-          tile[k]->clickSig = tile[k]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[k]->gridId), false);
-        }
+        updateTileGridMeta(k);
       }
     }
   }
@@ -342,7 +312,7 @@ void Level::shift(int x, int y)
 
       do //scan down column
       {
-        tile[i]->tileId = tile[i-x]->tileId; //copy from the column offset by x
+        *tile[i] = *tile[i-x]; //copy from the column offset by x
 
         i += width;
       } while(i < width*height);
@@ -357,7 +327,7 @@ void Level::shift(int x, int y)
 
       do
       {
-        tile[i]->tileId = BACKGROUND;
+        tile[i]->reset();
         i += width;
       } while( i < width*height);
 
@@ -374,7 +344,7 @@ void Level::shift(int x, int y)
     {
       for(i = width*j; i < width*j+width; i++)
       {
-        tile[i]->tileId = tile[i+width*y]->tileId; 
+        *tile[i] = *tile[i+width*y];
       }
 
       (y > 0) ? j++ : j--;
@@ -384,7 +354,7 @@ void Level::shift(int x, int y)
     {
       for(i = width*j; i < width*j+width; i++)
       {
-        tile[i]->tileId = BACKGROUND;
+        tile[i]->reset();
       }
 
       (y > 0) ? j++ : j--;
@@ -782,6 +752,21 @@ void Level::updateCornerBits(int gridId, bool propagate)
 
   tile->queue_draw();
   tile->locked = false;
+}
+
+/*!
+  Updates the Tile's gridId, gridHeight, and gridWidth; resets the signals.
+
+  @param[in] i The index of the tile to update
+**/
+void Level::updateTileGridMeta(int i)
+{
+  tile[i]->gridId = i;
+  tile[i]->gridHeight = height;
+  tile[i]->gridWidth = width;
+
+  tile[i]->clickSig.disconnect();
+  tile[i]->clickSig = tile[i]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), i), false);   
 }
 
 //---------------------

@@ -71,6 +71,7 @@ private:
   void print(Cairo::RefPtr<Cairo::PdfSurface>& surface, Cairo::RefPtr<Cairo::Context>& cr);
   void propInit();
   void updateCornerBits(int gridId, bool propagate);
+  void updateTileGridMeta(int i);
 };
 
 #endif
