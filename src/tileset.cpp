@@ -18,6 +18,8 @@
 
 #include "tileset.h"
 
+#include <ios>
+
 //-------------------
 //----- Tileset -----
 //-------------------
@@ -58,6 +60,7 @@ bool Tileset::loadFile(std::string fpath)
   //get name
   std::getline(file, name);
 
+  file >> std::hex;
   //get tiles
   do
   {
@@ -111,6 +114,7 @@ bool Tileset::writeDefaultTilesetFile(std::string fpath)
   }
 
   //write to file (id,name,filePath\n) for each tile
+  file << std::hex;
   file << "Default Dungeon Cartographer Tileset" << '\n'
   
   //East wall variants

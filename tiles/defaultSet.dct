@@ -1,138 +1,138 @@
 Default Dungeon Cartographer Tileset
 1,E Wall,./tiles/eWall.svg
-17,E Wall NW Corner,./tiles/eWall_nwCorner.svg
-33,E Wall SW Corner,./tiles/eWall_swCorner.svg
-49,E Wall NW-SW Corner,./tiles/eWall_nw-swCorner.svg
-257,E Wall E Door,./tiles/eWall_eDoor.svg
-273,E Wall NW Corner E Door,./tiles/eWall_nwCorner_eDoor.svg
-289,E Wall SW Corner E Door,./tiles/eWall_swCorner_eDoor.svg
-305,E Wall NW-SW Corner E Door,./tiles/eWall_nw-swCorner_eDoor.svg
+11,E Wall NW Corner,./tiles/eWall_nwCorner.svg
+21,E Wall SW Corner,./tiles/eWall_swCorner.svg
+31,E Wall NW-SW Corner,./tiles/eWall_nw-swCorner.svg
+101,E Wall E Door,./tiles/eWall_eDoor.svg
+111,E Wall NW Corner E Door,./tiles/eWall_nwCorner_eDoor.svg
+121,E Wall SW Corner E Door,./tiles/eWall_swCorner_eDoor.svg
+131,E Wall NW-SW Corner E Door,./tiles/eWall_nw-swCorner_eDoor.svg
 2,N Wall,./tiles/nWall.svg
-34,N Wall SE Corner,./tiles/nWall_seCorner.svg
-66,N Wall SW Corner,./tiles/nWall_swCorner.svg
-98,N Wall SE-SW Corner,./tiles/nWall_se-swCorner.svg
-514,N Wall N Door,./tiles/nWall_nDoor.svg
-546,N Wall SE Corner N Door,./tiles/nWall_seCorner_nDoor.svg
-578,N Wall SW Corner N Door,./tiles/nWall_swCorner_nDoor.svg
-610,N Wall SE-SW Corner N Door,./tiles/nWall_se-swCorner_nDoor.svg
+22,N Wall SE Corner,./tiles/nWall_seCorner.svg
+42,N Wall SW Corner,./tiles/nWall_swCorner.svg
+62,N Wall SE-SW Corner,./tiles/nWall_se-swCorner.svg
+202,N Wall N Door,./tiles/nWall_nDoor.svg
+222,N Wall SE Corner N Door,./tiles/nWall_seCorner_nDoor.svg
+242,N Wall SW Corner N Door,./tiles/nWall_swCorner_nDoor.svg
+262,N Wall SE-SW Corner N Door,./tiles/nWall_se-swCorner_nDoor.svg
 4,W Wall,./tiles/wWall.svg
-132,W Wall NE Corner,./tiles/wWall_neCorner.svg
-68,W Wall SE Corner,./tiles/wWall_seCorner.svg
-196,W Wall NE-SE Corner,./tiles/wWall_ne-seCorner.svg
-1028,W Wall W Door,./tiles/wWall_wDoor.svg
-1156,W Wall NE Corner W Door,./tiles/wWall_neCorner_wDoor.svg
-1092,W Wall SE Corner W Door,./tiles/wWall_seCorner_wDoor.svg
-1220,W Wall NE-SE Corner W Door,./tiles/wWall_ne-seCorner_wDoor.svg
+84,W Wall NE Corner,./tiles/wWall_neCorner.svg
+44,W Wall SE Corner,./tiles/wWall_seCorner.svg
+c4,W Wall NE-SE Corner,./tiles/wWall_ne-seCorner.svg
+404,W Wall W Door,./tiles/wWall_wDoor.svg
+484,W Wall NE Corner W Door,./tiles/wWall_neCorner_wDoor.svg
+444,W Wall SE Corner W Door,./tiles/wWall_seCorner_wDoor.svg
+4c4,W Wall NE-SE Corner W Door,./tiles/wWall_ne-seCorner_wDoor.svg
 8,S Wall,./tiles/sWall.svg
-136,S Wall NE Corner,./tiles/sWall_neCorner.svg
-24,S Wall NW Corner,./tiles/sWall_nwCorner.svg
-152,S Wall NE-NW Corner,./tiles/sWall_ne-nwCorner.svg
-2056,S Wall S Door,./tiles/sWall_sDoor.svg
-2184,S Wall NE Corner S Door,./tiles/sWall_neCorner_sDoor.svg
-2072,S Wall NW Corner S Door,./tiles/sWall_nwCorner_sDoor.svg
-2200,S Wall NE-NW Corner S Door,./tiles/sWall_ne-nwCorner_sDoor.svg
+88,S Wall NE Corner,./tiles/sWall_neCorner.svg
+18,S Wall NW Corner,./tiles/sWall_nwCorner.svg
+98,S Wall NE-NW Corner,./tiles/sWall_ne-nwCorner.svg
+808,S Wall S Door,./tiles/sWall_sDoor.svg
+888,S Wall NE Corner S Door,./tiles/sWall_neCorner_sDoor.svg
+818,S Wall NW Corner S Door,./tiles/sWall_nwCorner_sDoor.svg
+898,S Wall NE-NW Corner S Door,./tiles/sWall_ne-nwCorner_sDoor.svg
 3,NE Wall,./tiles/neWall.svg
-259,NE Wall E Door,./tiles/neWall_eDoor.svg
-515,NE Wall N Door,./tiles/neWall_nDoor.svg
-531,NE Wall NE Door,./tiles/neWall_neDoor.svg
-35,NE Wall SW Corner,./tiles/neWall_swCorner.svg
-291,NE Wall SW Corner E Door,./tiles/neWall_swCorner_eDoor.svg
-547,NE Wall SW Corner N Door,./tiles/neWall_swCorner_nDoor.svg
-803,NE Wall SW Corner NE Door,./tiles/neWall_swCorner_neDoor.svg
+103,NE Wall E Door,./tiles/neWall_eDoor.svg
+203,NE Wall N Door,./tiles/neWall_nDoor.svg
+213,NE Wall NE Door,./tiles/neWall_neDoor.svg
+23,NE Wall SW Corner,./tiles/neWall_swCorner.svg
+123,NE Wall SW Corner E Door,./tiles/neWall_swCorner_eDoor.svg
+223,NE Wall SW Corner N Door,./tiles/neWall_swCorner_nDoor.svg
+323,NE Wall SW Corner NE Door,./tiles/neWall_swCorner_neDoor.svg
 9,SE Wall,./tiles/seWall.svg
-265,SE Wall E Door,./tiles/seWall_eDoor.svg
-2057,SE Wall S Door,./tiles/seWall_sDoor.svg
-2313,SE Wall SE Door,./tiles/seWall_seDoor.svg
-25,SE Wall NW Corner,./tiles/seWall_nwCorner.svg
-281,SE Wall NW Corner E Door,./tiles/seWall_nwCorner_eDoor.svg
-2073,SE Wall NW Corner S Door,./tiles/seWall_nwCorner_sDoor.svg
-2329,SE Wall NW Corner SE Door,./tiles/seWall_nwCorner_seDoor.svg
+109,SE Wall E Door,./tiles/seWall_eDoor.svg
+809,SE Wall S Door,./tiles/seWall_sDoor.svg
+909,SE Wall SE Door,./tiles/seWall_seDoor.svg
+19,SE Wall NW Corner,./tiles/seWall_nwCorner.svg
+119,SE Wall NW Corner E Door,./tiles/seWall_nwCorner_eDoor.svg
+819,SE Wall NW Corner S Door,./tiles/seWall_nwCorner_sDoor.svg
+919,SE Wall NW Corner SE Door,./tiles/seWall_nwCorner_seDoor.svg
 6,NW Wall,./tiles/nwWall.svg
-518,NW Wall N Door,./tiles/nwWall_nDoor.svg
-1030,NW Wall W Door,./tiles/nwWall_wDoor.svg
-1542,NW Wall NW Door,./tiles/nwWall_nwDoor.svg
-70,NW Wall SE Corner,./tiles/nwWall_seCorner.svg
-582,NW Wall SE Corner N Door,./tiles/nwWall_seCorner_nDoor.svg
-1094,NW Wall SE Corner W Door,./tiles/nwWall_seCorner_wDoor.svg
-1606,NW Wall SE Corner NW Door,./tiles/nwWall_seCorner_nwDoor.svg
-12,SW Wall,./tiles/swWall.svg
-1036,SW Wall W Wall,./tiles/swWall_wDoor.svg
-2060,SW Wall S Wall,./tiles/swWall_sDoor.svg
-3084,SW Wall SW Wall,./tiles/swWall_swDoor.svg
-140,SW Wall NE Corner,./tiles/swWall_neCorner.svg
-1164,SW Wall NE Corner W Door,./tiles/swWall_neCorner_wDoor.svg
-2188,SW Wall NE Corner S Door,./tiles/swWall_neCorner_sDoor.svg
-3212,SW Wall NE Corner SW Door,./tiles/swWall_neCorner_swDoor.svg
+206,NW Wall N Door,./tiles/nwWall_nDoor.svg
+406,NW Wall W Door,./tiles/nwWall_wDoor.svg
+606,NW Wall NW Door,./tiles/nwWall_nwDoor.svg
+46,NW Wall SE Corner,./tiles/nwWall_seCorner.svg
+246,NW Wall SE Corner N Door,./tiles/nwWall_seCorner_nDoor.svg
+446,NW Wall SE Corner W Door,./tiles/nwWall_seCorner_wDoor.svg
+646,NW Wall SE Corner NW Door,./tiles/nwWall_seCorner_nwDoor.svg
+c,SW Wall,./tiles/swWall.svg
+40c,SW Wall W Wall,./tiles/swWall_wDoor.svg
+80c,SW Wall S Wall,./tiles/swWall_sDoor.svg
+c0c,SW Wall SW Wall,./tiles/swWall_swDoor.svg
+8c,SW Wall NE Corner,./tiles/swWall_neCorner.svg
+48c,SW Wall NE Corner W Door,./tiles/swWall_neCorner_wDoor.svg
+88c,SW Wall NE Corner S Door,./tiles/swWall_neCorner_sDoor.svg
+c8c,SW Wall NE Corner SW Door,./tiles/swWall_neCorner_swDoor.svg
 5,EW Wall,./tiles/ewWall.svg
-261,EW Wall E Door,./tiles/ewWall_eDoor.svg
-1029,EW Wall W Door,./tiles/ewWall_wDoor.svg
-1285,EW Wall EW Door,./tiles/ewWall_ewDoor.svg
-10,NS Wall,./tiles/nsWall.svg
-522,NS Wall N Door,./tiles/nsWall_nDoor.svg
-2058,NS Wall S Door,./tiles/nsWall_sDoor.svg
-2570,NS Wall NS Door,./tiles/nsWall_nsDoor.svg
+105,EW Wall E Door,./tiles/ewWall_eDoor.svg
+405,EW Wall W Door,./tiles/ewWall_wDoor.svg
+505,EW Wall EW Door,./tiles/ewWall_ewDoor.svg
+a,NS Wall,./tiles/nsWall.svg
+20a,NS Wall N Door,./tiles/nsWall_nDoor.svg
+80a,NS Wall S Door,./tiles/nsWall_sDoor.svg
+a0a,NS Wall NS Door,./tiles/nsWall_nsDoor.svg
 7,NEW Wall,./tiles/newWall.svg
-263,NEW Wall E Door,./tiles/newWall_eDoor.svg
-519,NEW Wall N Door,./tiles/newWall_nDoor.svg
-1031,NEW Wall W Door,./tiles/newWall_wDoor.svg
-775,NEW Wall NE Door,./tiles/newWall_neDoor.svg
-1287,NEW Wall EW Door,./tiles/newWall_ewDoor.svg
-1543,NEW Wall NW Door,./tiles/newWall_nwDoor.svg
-1799,NEW Wall NEW Door,./tiles/newWall_newDoor.svg
-11,NSE Wall,./tiles/nseWall.svg
-267,NSE Wall E Door,./tiles/nseWall_eDoor.svg
-523,NSE Wall N Door,./tiles/nseWall_nDoor.svg
-2059,NSE Wall S Door,./tiles/nseWall_sDoor.svg
-779,NSE Wall NE Door,./tiles/nseWall_neDoor.svg
-1291,NSE Wall SE Door,./tiles/nseWall_seDoor.svg
-2571,NSE Wall NS Door,./tiles/nseWall_nsDoor.svg
-2827,NSE Wall NSE Door,./tiles/nseWall_nseDoor.svg
-13,SEW Wall,./tiles/sewWall.svg
-269,SEW Wall E Door,./tiles/sewWall_eDoor.svg
-1037,SEW Wall W Door,./tiles/sewWall_wDoor.svg
-2061,SEW Wall S Door,./tiles/sewWall_sDoor.svg
-1293,SEW Wall EW Door,./tiles/sewWall_ewDoor.svg
-2317,SEW Wall SE Door,./tiles/sewWall_seDoor.svg
-3085,SEW Wall SW Door,./tiles/sewWall_swDoor.svg
-3341,SEW Wall SEW Door,./tiles/sewWall_sewDoor.svg
-14,NSW Wall,./tiles/nswWall.svg
-526,NSW Wall N Door,./tiles/nswWall_nDoor.svg
-1038,NSW Wall W Door,./tiles/nswWall_wDoor.svg
-2062,NSW Wall S Door,./tiles/nswWall_sDoor.svg
-1550,NSW Wall NW Door,./tiles/nswWall_nwDoor.svg
-2574,NSW Wall NS Door,./tiles/nswWall_nsDoor.svg
-3086,NSW Wall SW Door,./tiles/nswWall_swDoor.svg
-3598,NSW Wall NSW Door,./tiles/nswWall_nswDoor.svg
-15,NSEW Wall,./tiles/nsewWall.svg
-271,NSEW Wall E Door,./tiles/nsewWall_eDoor.svg
-527,NSEW Wall N Door,./tiles/nsewWall_nDoor.svg
-1039,NSEW Wall W Door,./tiles/nsewWall_wDoor.svg
-2063,NSEW Wall S Door,./tiles/nsewWall_sDoor.svg
-783,NSEW Wall NE Door,./tiles/nsewWall_neDoor.svg
-1295,NSEW Wall EW Door,./tiles/nsewWall_ewDoor.svg
-2319,NSEW Wall SE Door,./tiles/nsewWall_seDoor.svg
-1551,NSEW Wall NW Door,./tiles/nsewWall_nwDoor.svg
-2575,NSEW Wall NS Door,./tiles/nsewWall_nsDoor.svg
-3087,NSEW Wall SW Door,./tiles/nsewWall_swDoor.svg
-1807,NSEW Wall NEW Door,./tiles/nsewWall_newDoor.svg
-2831,NSEW Wall NSE Door,./tiles/nsewWall_nseDoor.svg
-3599,NSEW Wall NSW Door,./tiles/nsewWall_nswDoor.svg
-3343,NSEW Wall SEW Door,./tiles/nsewWall_sewDoor.svg
-3855,NSEW Wall NSEW Door,./tiles/nsewWall_nsewDoor.svg
+107,NEW Wall E Door,./tiles/newWall_eDoor.svg
+207,NEW Wall N Door,./tiles/newWall_nDoor.svg
+407,NEW Wall W Door,./tiles/newWall_wDoor.svg
+307,NEW Wall NE Door,./tiles/newWall_neDoor.svg
+507,NEW Wall EW Door,./tiles/newWall_ewDoor.svg
+607,NEW Wall NW Door,./tiles/newWall_nwDoor.svg
+707,NEW Wall NEW Door,./tiles/newWall_newDoor.svg
+b,NSE Wall,./tiles/nseWall.svg
+10b,NSE Wall E Door,./tiles/nseWall_eDoor.svg
+20b,NSE Wall N Door,./tiles/nseWall_nDoor.svg
+80b,NSE Wall S Door,./tiles/nseWall_sDoor.svg
+30b,NSE Wall NE Door,./tiles/nseWall_neDoor.svg
+50b,NSE Wall SE Door,./tiles/nseWall_seDoor.svg
+a0b,NSE Wall NS Door,./tiles/nseWall_nsDoor.svg
+b0b,NSE Wall NSE Door,./tiles/nseWall_nseDoor.svg
+d,SEW Wall,./tiles/sewWall.svg
+10d,SEW Wall E Door,./tiles/sewWall_eDoor.svg
+40d,SEW Wall W Door,./tiles/sewWall_wDoor.svg
+80d,SEW Wall S Door,./tiles/sewWall_sDoor.svg
+50d,SEW Wall EW Door,./tiles/sewWall_ewDoor.svg
+90d,SEW Wall SE Door,./tiles/sewWall_seDoor.svg
+c0d,SEW Wall SW Door,./tiles/sewWall_swDoor.svg
+d0d,SEW Wall SEW Door,./tiles/sewWall_sewDoor.svg
+e,NSW Wall,./tiles/nswWall.svg
+20e,NSW Wall N Door,./tiles/nswWall_nDoor.svg
+40e,NSW Wall W Door,./tiles/nswWall_wDoor.svg
+80e,NSW Wall S Door,./tiles/nswWall_sDoor.svg
+60e,NSW Wall NW Door,./tiles/nswWall_nwDoor.svg
+a0e,NSW Wall NS Door,./tiles/nswWall_nsDoor.svg
+c0e,NSW Wall SW Door,./tiles/nswWall_swDoor.svg
+e0e,NSW Wall NSW Door,./tiles/nswWall_nswDoor.svg
+f,NSEW Wall,./tiles/nsewWall.svg
+10f,NSEW Wall E Door,./tiles/nsewWall_eDoor.svg
+20f,NSEW Wall N Door,./tiles/nsewWall_nDoor.svg
+40f,NSEW Wall W Door,./tiles/nsewWall_wDoor.svg
+80f,NSEW Wall S Door,./tiles/nsewWall_sDoor.svg
+30f,NSEW Wall NE Door,./tiles/nsewWall_neDoor.svg
+50f,NSEW Wall EW Door,./tiles/nsewWall_ewDoor.svg
+90f,NSEW Wall SE Door,./tiles/nsewWall_seDoor.svg
+60f,NSEW Wall NW Door,./tiles/nsewWall_nwDoor.svg
+a0f,NSEW Wall NS Door,./tiles/nsewWall_nsDoor.svg
+c0f,NSEW Wall SW Door,./tiles/nsewWall_swDoor.svg
+70f,NSEW Wall NEW Door,./tiles/nsewWall_newDoor.svg
+b0f,NSEW Wall NSE Door,./tiles/nsewWall_nseDoor.svg
+e0f,NSEW Wall NSW Door,./tiles/nsewWall_nswDoor.svg
+d0f,NSEW Wall SEW Door,./tiles/nsewWall_sewDoor.svg
+f0f,NSEW Wall NSEW Door,./tiles/nsewWall_nsewDoor.svg
 0,Open,./tiles/open.svg
-128,Open NE Corner,./tiles/open_neCorner.svg
-16,Open NW Corner,./tiles/open_nwCorner.svg
-144,Open NE-NW Corner,./tiles/open_ne-nwCorner.svg
-32,Open SW Corner,./tiles/open_swCorner.svg
-160,Open NE-SW Corner,./tiles/open_ne-swCorner.svg
-48,Open NW-SW Corner,./tiles/open_nw-swCorner.svg
-176,Open NE-NW-SW Corner,./tiles/open_ne-nw-swCorner.svg
-64,Open SE Corner,./tiles/open_seCorner.svg
-192,Open NE-SE Corner,./tiles/open_ne-seCorner.svg
-80,Open NW-SE Corner,./tiles/open_nw-seCorner.svg
-208,Open NE-NW-SE Corner,./tiles/open_ne-nw-seCorner.svg
-96,Open SW-SE Corner,./tiles/open_sw-seCorner.svg
-224,Open NE-SW-SE Corner,./tiles/open_ne-sw-seCorner.svg
-112,Open NW-SW-SE Corner,./tiles/open_nw-sw-seCorner.svg
-240,Open NE-NW-SW-SE Corner,./tiles/open_ne-nw-sw-seCorner.svg
-4095,Background,./tiles/bg.svg
+80,Open NE Corner,./tiles/open_neCorner.svg
+10,Open NW Corner,./tiles/open_nwCorner.svg
+90,Open NE-NW Corner,./tiles/open_ne-nwCorner.svg
+20,Open SW Corner,./tiles/open_swCorner.svg
+a0,Open NE-SW Corner,./tiles/open_ne-swCorner.svg
+30,Open NW-SW Corner,./tiles/open_nw-swCorner.svg
+b0,Open NE-NW-SW Corner,./tiles/open_ne-nw-swCorner.svg
+40,Open SE Corner,./tiles/open_seCorner.svg
+c0,Open NE-SE Corner,./tiles/open_ne-seCorner.svg
+50,Open NW-SE Corner,./tiles/open_nw-seCorner.svg
+d0,Open NE-NW-SE Corner,./tiles/open_ne-nw-seCorner.svg
+60,Open SW-SE Corner,./tiles/open_sw-seCorner.svg
+e0,Open NE-SW-SE Corner,./tiles/open_ne-sw-seCorner.svg
+70,Open NW-SW-SE Corner,./tiles/open_nw-sw-seCorner.svg
+f0,Open NE-NW-SW-SE Corner,./tiles/open_ne-nw-sw-seCorner.svg
+fff,Background,./tiles/bg.svg

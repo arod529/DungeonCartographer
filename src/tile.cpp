@@ -18,12 +18,14 @@
 
 #include "tile.h"
 
+#include <ios> //std::hex
+
 #include <gdkmm/general.h> //on_draw()::set_source_pixbuf()
 
 /*!
   Initilizes a Tile, adds mouse click mask, and makes visible.
 **/
-Tile::Tile(Tileset* tileset, uint16 tileId, int gridId, int gridWidth, int gridHeight)
+Tile::Tile(Tileset* tileset, uint16 tileId, int gridId, int* gridWidth, int* gridHeight)
 : tileset{tileset}
 , tileId{tileId}
 , gridId{gridId}
@@ -56,18 +58,18 @@ Tile::Tile(Tileset* tileset, uint16 tileId, int gridId, int gridWidth, int gridH
 **/
 void Tile::getTileExists(bool* tileExists)
 {
-  int c = gridId%gridWidth; // this tile's column number
-  int r = gridId/gridWidth; // this tile's row number
+  int c = gridId % *gridWidth; // this tile's column number
+  int r = gridId / *gridWidth; // this tile's row number
 
   bool tmp[] = {
     (c > 0),            //west tile
-    (r < gridHeight-1), //south tile
-    (c < gridWidth-1),  //east tile
+    (r < *gridHeight-1), //south tile
+    (c < *gridWidth-1),  //east tile
     (r > 0),            //north tile
     (r > 0 && c > 0),                      //northwest tile
-    (c > 0 && r < gridHeight-1),           //southwest tile
-    (c < gridWidth-1 && r < gridHeight-1), //southeast tile
-    (c < gridWidth-1 && r > 0)             //northeast tile
+    (c > 0 && r < *gridHeight-1),           //southwest tile
+    (c < *gridWidth-1 && r < *gridHeight-1), //southeast tile
+    (c < *gridWidth-1 && r > 0)             //northeast tile
   };
 
   std::copy(tmp, tmp+8, tileExists);
@@ -84,13 +86,13 @@ void Tile::getAdjacentIndex(int* adjacentIndex)
 {
   int tmp[] = {
     gridId-1,           //west tile
-    gridId+gridWidth,   //south tile
+    gridId+*gridWidth,   //south tile
     gridId+1,           //east tile
-    gridId-gridWidth,   //north tile
-    gridId-gridWidth-1, //northwest tile
-    gridId+gridWidth-1, //southwest tile
-    gridId+gridWidth+1, //southeast tile
-    gridId-gridWidth+1  //northeast tile
+    gridId-*gridWidth,   //north tile
+    gridId-*gridWidth-1, //northwest tile
+    gridId+*gridWidth-1, //southwest tile
+    gridId+*gridWidth+1, //southeast tile
+    gridId-*gridWidth+1  //northeast tile
   };
 
   std::copy(tmp, tmp+8, adjacentIndex);
@@ -101,8 +103,8 @@ void Tile::print(Cairo::RefPtr<Cairo::Context>& cr)
   //get tile size
   int tilesize = tileset->tile[tileId].pixbuf->get_width();
   //get origin coordinats of this tile
-  int x = (gridId%gridWidth)*tilesize;
-  int y = (gridId/gridWidth)*tilesize;
+  int x = (gridId % *gridWidth)*tilesize;
+  int y = (gridId / *gridWidth)*tilesize;
 
   //paint tile at orign
   Gdk::Cairo::set_source_pixbuf(cr, tileset->tile[tileId].pixbuf, x, y);
@@ -162,20 +164,22 @@ void Tile::operator=(const Tile& sourceTile)
 
 std::ostream& operator<<(std::ostream& out, const Tile& tile)
 {
-  if(tile.gridId%tile.gridWidth != 0)
+  if(tile.gridId % *(tile.gridWidth) != 0)
   {
     out.seekp(-1, std::ios::cur);
     out << '|';
   }
 
-  out << tile.tileId << '\n';
+  out << std::hex << tile.tileId << ':' << std::dec << tile.roomId << '\n';
   out.flush();
   return out;
 }
 
 std::istream& operator>>(std::istream& in, Tile& tile)
 {
-  in >> tile.tileId;
+  in >> std::hex >> tile.tileId;
+  in.get(); //scrap colon
+  in >> std::dec >> tile.roomId;
   if(in.peek() == '|') in.get(); //scrap separator
 
   //leave stream in good state by discarding empty lines

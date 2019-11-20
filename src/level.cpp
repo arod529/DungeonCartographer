@@ -119,7 +119,7 @@ void Level::deleteColumns(int colNum, int count)
  //update grid meta of the tiles
  for(int i = 0; i < width*height; i++)
  {
-  updateTileGridMeta(i);
+  tile[i]->gridId = i;
  }
 
  //set size of tile 0
@@ -154,7 +154,7 @@ void Level::deleteRows(int rowNum, int count)
   //update grid meta of the tiles
   for(int i = 0; i < width*height; i++)
   {
-    updateTileGridMeta(i);
+    tile[i]->gridId = i;
   }
 
   //set size of tile 0
@@ -228,7 +228,7 @@ void Level::insertColumns(int colNum, int count)
       //update preceding and following columns' tiles' grid meta
       else
       {
-        updateTileGridMeta(k);
+        tile[k]->gridId = k;
       } 
     }
   }
@@ -270,7 +270,7 @@ void Level::insertRows(int rowNum, int count)
       //update preceding and following tiles' grid meta
       else
       {
-        updateTileGridMeta(k);
+        tile[k]->gridId = k;
       }
     }
   }
@@ -388,9 +388,9 @@ void Level::shift(int x, int y)
 
   @return Indicates that the event has been fully handled; gtk_signal requirement.
 **/
-bool Level::updateTile(GdkEventButton* btn, int gridId)
+bool Level::updateTile(GdkEventButton* btn, int* gridId)
 {
-  Tile* tile = this->tile[gridId].get(); //the tile to update
+  Tile* tile = this->tile[*gridId].get(); //the tile to update
   Tile* aTile = NULL;                    //adjacent tile
 
 printf("ENTER updateTile gridId: %d tileId: %X roomId: %d\n", tile->gridId, tile->tileId, tile->roomId);
@@ -521,9 +521,9 @@ void Level::createNewTile(int i)
   if(i == -1) i = tile.size();
   auto iter = tile.begin() + i;
   
-  tile.emplace(iter, std::make_unique<Tile>(tileset, BACKGROUND, i, width, height));
+  tile.emplace(iter, std::make_unique<Tile>(tileset, BACKGROUND, i, &width, &height));
   attach(*tile[i], i%width, i/width, 1, 1);
-  tile[i]->clickSig = tile[i]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), tile[i]->gridId), false);
+  tile[i]->clickSig = tile[i]->signal_button_press_event().connect(sigc::bind<int*>(sigc::mem_fun(*this, &Level::updateTile), &(tile[i]->gridId)), false);
 }
 
 /*!
@@ -752,21 +752,6 @@ void Level::updateCornerBits(int gridId, bool propagate)
 
   tile->queue_draw();
   tile->locked = false;
-}
-
-/*!
-  Updates the Tile's gridId, gridHeight, and gridWidth; resets the signals.
-
-  @param[in] i The index of the tile to update
-**/
-void Level::updateTileGridMeta(int i)
-{
-  tile[i]->gridId = i;
-  tile[i]->gridHeight = height;
-  tile[i]->gridWidth = width;
-
-  tile[i]->clickSig.disconnect();
-  tile[i]->clickSig = tile[i]->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &Level::updateTile), i), false);   
 }
 
 //---------------------
