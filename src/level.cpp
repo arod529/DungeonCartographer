@@ -390,10 +390,10 @@ void Level::shift(int x, int y)
 
   @return Indicates that the event has been fully handled; gtk_signal requirement.
 **/
-bool Level::updateTile(GdkEventButton* event, int* gridId)
+void Level::updateTile(int* gridId, guint keyMask)
 {
-  Tile* tile = this->tile[*gridId].get(); //the tile to update
-  Tile* aTile = NULL;                    //adjacent tile
+  Tile* tile = this->tile[*gridId].get(); // the tile to update
+  Tile* aTile = NULL;                     // adjacent tile
 
 printf("ENTER updateTile gridId: %d tileId: %X roomId: %d\n", tile->gridId, tile->tileId, tile->roomId);
 
@@ -465,7 +465,7 @@ printf("ENTER updateTile gridId: %d tileId: %X roomId: %d\n", tile->gridId, tile
         {
           if(aTile->roomId != tile->roomId) //adjacent roomId != roomId, add door, remove corner bits
           { 
-            if(event->state == GdkModifierType::GDK_SHIFT_MASK) //add door if shift is pressed
+            if(keyMask & GdkModifierType::GDK_SHIFT_MASK) //add door if shift is pressed
             {
               aTile->tileId |= compare<<DOOR_BIT_OFFSET;
               tile->tileId |= ((1 << (i+2)%4)<<DOOR_BIT_OFFSET); //add shared door
@@ -486,8 +486,6 @@ printf("ENTER updateTile gridId: %d tileId: %X roomId: %d\n", tile->gridId, tile
   updateCornerBits(tile->gridId, true); //add valid corner bits
 
 printf("EXIT updateTile gridId: %d tileId %X roomId: %d\n\n", tile->gridId, tile->tileId, tile->roomId);
-
-  return true; //the event has been fully handled.
 }
 
 //-------------------
@@ -514,6 +512,15 @@ void Level::setTileSize(int tileSize)
 //----- PRIVATE -----
 //-------------------
 
+bool Level::clickEvent(GdkEventButton* event, int* gridId)
+{
+  //release events so other widgets can receive them
+  gdk_seat_ungrab(gdk_device_get_seat(event->device));
+  
+  updateTile(gridId, event->state);
+  return true; //event fully handled
+}
+
 /*!
   Creates a tile, attaches it to the grid, and connects the button press event.
 
@@ -529,7 +536,18 @@ void Level::createNewTile(int i)
   
   tile.emplace(iter, std::make_unique<Tile>(tileset, BACKGROUND, i, &width, &height));
   attach(*tile[i], i%width, i/width, 1, 1);
-  tile[i]->clickSig = tile[i]->signal_button_press_event().connect(sigc::bind<int*>(sigc::mem_fun(*this, &Level::updateTile), &(tile[i]->gridId)), false);
+  tile[i]->signal_button_press_event().connect(sigc::bind<int*>(sigc::mem_fun(*this, &Level::clickEvent), &(tile[i]->gridId)), false);
+  tile[i]->signal_enter_notify_event().connect(sigc::bind<int*>(sigc::mem_fun(*this, &Level::enterEvent), &(tile[i]->gridId)), false);
+}
+
+bool Level::enterEvent(GdkEventCrossing* event, int* gridId)
+{
+  printf("gridId: %d\t tileId: %X\t roomId: %d\n", *gridId, tile[*gridId]->tileId, tile[*gridId]->roomId);
+
+  //update the tile as if clicked
+  if(event->state & GdkModifierType::GDK_BUTTON1_MASK)
+    updateTile(gridId, event->state);
+  return true; //event fully handled
 }
 
 /*!

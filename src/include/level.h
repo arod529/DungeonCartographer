@@ -46,7 +46,6 @@ struct Level : public Gtk::Grid
   void insertRows(int rowNum, int count);
   void reset();
   void shift(int x, int y);
-  bool updateTile(GdkEventButton* btn, int* gridId);
 
   //utility
   int getTileSize() const;
@@ -66,11 +65,14 @@ private:
   Tileset* tileset;                        // The Tileset that the Level uses
   int width;                               // The Level's width
   
+  bool clickEvent(GdkEventButton* event, int* gridId);
   void createNewTile(int i = -1);
+  bool enterEvent (GdkEventCrossing* event, int* gridId);
   void getExtents(int* extents);
   void print(Cairo::RefPtr<Cairo::PdfSurface>& surface, Cairo::RefPtr<Cairo::Context>& cr);
   void propInit();
   void updateCornerBits(int gridId, bool propagate);
+  void updateTile(int* gridId, guint keyMask);
 };
 
 #endif

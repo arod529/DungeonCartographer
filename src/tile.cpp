@@ -34,7 +34,7 @@ Tile::Tile(Tileset* tileset, uint16 tileId, int gridId, int* gridWidth, int* gri
 , roomId{-1}
 {
   //set drawing area properties
-  set_can_focus(true);
+  set_can_focus(false);
   set_size_request(25,25);
 
   //event masks
@@ -138,13 +138,6 @@ bool Tile::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
   cr->paint();
 
   return true;
-}
-
-bool Tile::on_enter_notify_event(GdkEventCrossing* crossing_event)
-{
-  printf("gridId: %d\t tileId: %X\t roomId: %d\n", gridId, tileId, roomId);
-
-  return false;
 }
 
 //---------------------

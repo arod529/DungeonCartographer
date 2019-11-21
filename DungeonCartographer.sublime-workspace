@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"lar",
+				"largestRoomId"
+			],
+			[
 				"updateT",
 				"updateTileGridMeta"
 			],
@@ -510,15 +514,19 @@
 			[
 				"child",
 				"children"
-			],
-			[
-				"AR",
-				"Arithmatic"
 			]
 		]
 	},
 	"buffers":
 	[
+		{
+			"file": "src/include/settings.h",
+			"settings":
+			{
+				"buffer_size": 2106,
+				"line_ending": "Unix"
+			}
+		},
 		{
 			"file": "src/ui.cpp",
 			"settings":
@@ -556,10 +564,13 @@
 			}
 		},
 		{
+			"contents": "/*************************************************************************\n| Dungeon Cartographer, a grid based map drawing program.                |\n| Copyright (C) 2019  Alexander L. Hopper                                |\n|                                                                        |\n| This program is free software: you can redistribute it and/or modify   |\n| it under the terms of the GNU General Public License as published by   |\n| the Free Software Foundation, either version 3 of the License, or      |\n| (at your option) any later version.                                    |\n|                                                                        |\n| This program is distributed in the hope that it will be useful,        |\n| but WITHOUT ANY WARRANTY; without even the implied warranty of         |\n| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          |\n| GNU General Public License for more details.                           |\n|                                                                        |\n| You should have received a copy of the GNU General Public License      |\n| along with this program.  If not, see <https://www.gnu.org/licenses/>. |\n*************************************************************************/\n\n#include \"level.h\"\n\n#include <algorithm> //std::max\n#include <limits>    //operator>>\n#include <string>    //operator>>\n\n/*!\n  Initializes a level from a file\n**/\nLevel::Level(Tileset* tileset, std::ifstream& file)\n: tileset{tileset}\n, largestRoomId{-1}\n, lastRoomId{-1}\n{\n  //initialize properties\n  propInit();\n\n  //get level from file\n  file >> *this;\n\n  //fill with tiles\n  for(int i = 0; i < width*height; i++)\n  {\n    createNewTile();\n    file >> *tile.back();\n    if (tile.back()->roomId > largestRoomId)\n      largestRoomId = tile.back()->roomId;\n  }\n}\n\n/*!\n  Initializes a level and fills it with background tiles.\n**/\nLevel::Level(Tileset* tileset, int id, int width, int height)\n: tileset{tileset}\n, id{id}\n, width{width}\n, height{height}\n, largestRoomId{-1}\n, lastRoomId{-1}\n{\n  //initialize properties\n  propInit();\n\n  //Fill level with background tiles\n  for(int i = 0; i < width*height; i++)\n  {\n    createNewTile();\n  }\n}\n\n//------------------\n//----- PUBLIC -----\n//------------------\n\n/*!\n  Centers the Level with an affinity for the NW corner if odd spacing.\n**/\nvoid Level::center()\n{\n  int extents[4];\n  getExtents(extents);\n\n  //do nothing if the Level is empty\n  if(extents[0] == -1) return;\n\n  //calculate the x shift\n  int x = (extents[2]+(width-1-extents[0]))/2 - extents[2];\n  //calculate the y shift\n  int y = -((extents[1]+(height-1-extents[3]))/2 - extents[1]);\n\n  shift(x, y);\n}\n\n/*!\n  Deletes columns from the Level.\n\n  @param[in] colNum The column at which to begin removal.\n  @param[in] count The number of columns to remove.\n**/\nvoid Level::deleteColumns(int colNum, int count)\n{\n //reset size request of tile 0\n int s;\n tile[0]->get_size_request(s, s);\n tile[0]->set_size_request();\n \n //delete columns from grid\n for(int i = 0; i < count; i++)\n {\n  remove_column(colNum);\n }\n //delete columns from tile array\n for(int i = height-1; i >=0; i--)\n {\n  auto iterFirst = tile.begin() + i*width+colNum;\n  auto iterLast = iterFirst + count;\n  tile.erase(iterFirst, iterLast);\n }\n //update width\n width -= count;\n\n //update grid meta of the tiles\n for(int i = 0; i < width*height; i++)\n {\n  tile[i]->gridId = i;\n }\n\n //set size of tile 0\n tile[0]->set_size_request(s, s); \n}\n\n/*!\n  Deletes rows from the Level.\n\n  @param[in] rowNum The row at which to begin removal.\n  @param[in] count The number of rows to remove.\n**/\nvoid Level::deleteRows(int rowNum, int count)\n{\n  //reset size request of tile 0\n  int s;\n  tile[0]->get_size_request(s, s);\n  tile[0]->set_size_request();\n\n  //delete rows from grid\n  for(int i = 0; i < count; i++)\n  {\n    remove_row(rowNum);\n  }\n  //delete rows from tile array\n  auto iterFirst = tile.begin() + rowNum*width;\n  auto iterLast = tile.begin() + ((rowNum+count)*width);\n  tile.erase(iterFirst, iterLast);\n  //update height\n  height -= count;\n\n  //update grid meta of the tiles\n  for(int i = 0; i < width*height; i++)\n  {\n    tile[i]->gridId = i;\n  }\n\n  //set size of tile 0\n  tile[0]->set_size_request(s, s);\n}\n\n/*!\n  Fits the Level to the drawn portion with a given border width\n\n  @param[in] borderWidth The width of the Level's border in number of tiles.\n**/\nvoid Level::fit(int borderWidth)\n{\n  //get extents of level\n  int extents[4];\n  getExtents(extents);\n\n  //do nothing if the Level is empty\n  if(extents[0] == -1) return;\n\n  //calculate shift values\n  int x = -extents[2]+borderWidth;\n  int y = extents[1]-borderWidth;\n  //calculate new width and height\n  int newWidth = (extents[0]-extents[2]+1)+borderWidth*2;\n  int newHeight = (extents[3]-extents[1]+1)+borderWidth*2;\n\n  //if width or height needs to be increased, do first\n  if(newWidth > width) insertColumns(width, newWidth-width);\n  if(newHeight > height) insertRows(height, newHeight-height);\n  //shift the level to center\n  shift(x,y);\n  //reduce width or height if necessary\n  if(newWidth < width) deleteColumns(width-(width-newWidth), width-newWidth);\n  if(newHeight < height) deleteRows(height-(height-newHeight), height-newHeight);\n}\n\n/*!\n  Inserts columns into the Level.\n  \n  @param[in] colNum The number of the column at which to begin insertion.\n  @param[in] count The number of columns to insert.\n**/\nvoid Level::insertColumns(int colNum, int count)\n{\n  //reset size request of tile 0\n  int s;\n  tile[0]->get_size_request(s, s);\n  tile[0]->set_size_request();\n  \n  //update width\n  width += count;\n\n  //insert count number of columns into grid\n  for(int j = 0; j < count; j++)\n  {\n    insert_column(colNum+j);\n  }\n\n  for(int i = 0; i < height; i++)\n  {\n    for(int j = 0; j < width; j++)\n    {\n      int k = j+i*width; //the tile index\n\n      //fill columns with new tiles\n      if(j >= colNum && j < colNum + count)\n      {\n        createNewTile(k);   \n      }\n      //update preceding and following columns' tiles' grid meta\n      else\n      {\n        tile[k]->gridId = k;\n      } \n    }\n  }\n}\n\n/*!\n  Inserts rows into the Level.\n\n  @param[in] rowNum The index of the row at which to begin insertion.\n  @param[in] count The number of rows to insert.\n**/\nvoid Level::insertRows(int rowNum, int count)\n{\n  //reset size request of tile 0\n  int s;\n  tile[0]->get_size_request(s, s);\n  tile[0]->set_size_request();\n\n  //update height\n  height += count;\n  //insert count number of rows\n  for(int j = 0; j < count; j++)\n  {\n    //insert row in grid\n    insert_row(rowNum+j);\n  }\n\n  for(int i = 0; i < height; i++)\n  {\n    for(int j = 0; j < width; j++)\n    {\n      int k = j+i*width; //the tile index\n\n      //add new tiles to new row\n      if(i >= rowNum && i < rowNum + count)\n      {\n        createNewTile(k);\n      }\n      //update preceding and following tiles' grid meta\n      else\n      {\n        tile[k]->gridId = k;\n      }\n    }\n  }\n\n  //set size of tile 0\n  tile[0]->set_size_request(s, s);\n}\n\n/*!\n  Sets all the tiles back to background clearing the Level.\n\n  @bug This should be replaced by a clear function, reset should reset to default size as well.\n**/\nvoid Level::reset()\n{\n  for(int i = 0; i < width*height; i++)\n    tile[i]->tileId = BACKGROUND;\n\n  queue_draw();\n}\n\n/*!\n  Shifts the Level by n tiles in the specified direction and magnitude.\n\n  @param[in] x The direction and magnitude to shift horizontally.\n  @param[in] y The direction and magnitude to shift vertically.\n**/\nvoid Level::shift(int x, int y)\n{\n  int i{0}; //tile grid index\n  int j{0}; //column offset\n\n  //shift the level in the x axis \n  if(x != 0)\n  {\n    do //shift by copying the tiles in column offset by x\n    {\n      i = (x > 0) ? width-j-1 : j;\n\n      do //scan down column\n      {\n        *tile[i] = *tile[i-x]; //copy from the column offset by x\n\n        i += width;\n      } while(i < width*height);\n\n      j++;\n    } while(j < width-abs(x)); //the column to copy is in bounds\n\n    \n    do //set the remaining tiles to background\n    {\n      i = (x > 0) ? width-j-1 : j; //tile grid index \n\n      do\n      {\n        tile[i]->reset();\n        i += width;\n      } while( i < width*height);\n\n      j++;\n    } while(j < width); //the column is in bounds\n  }\n\n  //shift the level in the y axis\n  if(y != 0)\n  {\n    j = (y > 0) ? 0 : height-1; //row offset\n\n    do\n    {\n      for(i = width*j; i < width*j+width; i++)\n      {\n        *tile[i] = *tile[i+width*y];\n      }\n\n      (y > 0) ? j++ : j--;\n    } while(j+y < height && j+y >= 0); //the row to copy is in bounds\n\n    do //set the remaining tiles to background\n    {\n      for(i = width*j; i < width*j+width; i++)\n      {\n        tile[i]->reset();\n      }\n\n      (y > 0) ? j++ : j--;\n    } while(j < height && j >= 0);\n  }\n\n  queue_draw();\n}\n\n/*!\n  Updates the tile by either making it a room or a background tile based\n  on its previous state. Updates the shared walls of the adjacent tiles\n  and calls a non-propagating updateCornerBits() on them. Calls a\n  propagating updateCornerBits() on self.\n\n<pre>\n  1) Sets the new tile id to an enclosed room.\n    1a) Changes the new tile id to background if it was already a room.\n  2) For each adjacent tile in cardinal directions.\n    2a) If the adjacent tile exists and is a room.\n      2a1.1) If this tile was a room (is now background), add shared wall to adjacent tile.\n      2a1.2) If the tile was background (is now a room), remove shared wall of this tile\n               and adjacent tile.\n      2a2) Add adjacent tile to draw queue.\n  ^<-\n  3) Update corner bits of this tile.\n</pre>\n\n  @param[in] event  contains data about the event such as button and modifier masks\n  @param[in] gridId The grid id of the tile to update.\n\n  @return Indicates that the event has been fully handled; gtk_signal requirement.\n**/\nbool Level::updateTile(GdkEventButton* event, int* gridId)\n{\n  Tile* tile = this->tile[*gridId].get(); // the tile to update\n  Tile* aTile = NULL;                     // adjacent tile\n\nprintf(\"ENTER updateTile gridId: %d tileId: %X roomId: %d\\n\", tile->gridId, tile->tileId, tile->roomId);\n\n  //adjacent tile exist truths\n  bool tileExists[8];\n  tile->getTileExists(tileExists);\n\n  //adjacent tile index\n  int a[8];\n  tile->getAdjacentIndex(a);\n\n  uint16 compare = E;      //compare value for wall\n\n  if(tile->tileId < BACKGROUND)  //this tile is already a room\n  {\n    tile->tileId = BACKGROUND; //set to background\n    tile->roomId = -1;         //set to no roomId\n  } \n  else\n  {\n    tile->tileId = NSEW; //new base tile id is closed room\n\n    //check the adjacent tiles for roomId\n    for(int i = 0; i < 4; i++)\n    {\n      if(tileExists[i])\n      {\n        //get adjacent tile roomId\n        int adjacentRoomId = this->tile[a[i]].get()->roomId;\n\n        if(adjacentRoomId == lastRoomId && lastRoomId != -1) //prioritize lastRoomId\n        {\n          tile->roomId = lastRoomId;\n          break;\n        }\n        else //assign largest adjacent roomId\n        {\n          tile->roomId = std::max(tile->roomId, adjacentRoomId);\n        }\n      }\n    }\n    //no connected rooms\n    if(tile->roomId == -1)\n    {\n      tile->roomId = ++largestRoomId;\n    }\n    //update the last roomId\n    lastRoomId = tile->roomId;\n  }\n\n  //check for and update adjacent tile walls\n  //cycles through each adjacent tile starting with west tile\n  //compare and adjacent tile are opposites\n  for(int i = 0; i < 4; i++)\n  {\n    if(tileExists[i]) //adjacent tile exists\n    {\n      aTile = this->tile[a[i]].get(); //get adjacent tile\n\n      if (aTile->tileId < BACKGROUND) //adjacent tile is a room\n      {\n        if(tile->tileId == BACKGROUND) //this tile was a room\n        {\n          //add previously shared wall, remove door of shared wall, and remove all corner bits\n          //of adjacent tile\n          aTile->tileId = ((aTile->tileId | compare) & ~(compare<<DOOR_BIT_OFFSET)) & NSEW_NSEW;\n        }\n        else //this tile was not a room\n        {\n          if(aTile->roomId != tile->roomId) //adjacent roomId != roomId, add door, remove corner bits\n          { \n            if(event->state == GdkModifierType::GDK_SHIFT_MASK) //add door if shift is pressed\n            {\n              aTile->tileId |= compare<<DOOR_BIT_OFFSET;\n              tile->tileId |= ((1 << (i+2)%4)<<DOOR_BIT_OFFSET); //add shared door\n            }\n            // aTile->tileId &= NSEW_NSEW; //remove corner bits\n          }\n          else //remove wall, remove corner bits\n          {\n            aTile->tileId = (aTile->tileId & ~compare) & NSEW_NSEW;\n            tile->tileId ^= (1 << (i+2)%4); //remove shared wall of tile\n          }\n        }\n        updateCornerBits(aTile->gridId, false); //re-add valid corner bits\n      }\n    }\n    compare <<= 1; //shift compare to next wall\n  }\n  updateCornerBits(tile->gridId, true); //add valid corner bits\n\nprintf(\"EXIT updateTile gridId: %d tileId %X roomId: %d\\n\\n\", tile->gridId, tile->tileId, tile->roomId);\n\n  return true; //the event has been fully handled.\n}\n\n//-------------------\n//----- Utility -----\n//-------------------\n\n/*!\n  Gets the render size of the tile.\n\n  @return The render size of the tile in pixels.\n**/\nint Level::getTileSize() const\n  {return tile[0]->get_allocated_width();}\n\n/*!\n  Sets the render size of the tile.\n\n  @param[in] tileSize The render size of the tile in pixels.\n**/\nvoid Level::setTileSize(int tileSize)\n  {tile[0]->set_size_request(tileSize, tileSize);}\n\n//-------------------\n//----- PRIVATE -----\n//-------------------\n\n/*!\n  Creates a tile, attaches it to the grid, and connects the button press event.\n\n  The tile is placed in the Level at the given index. If no index is given, it\n  is appended.\n\n  @param[in] i The grid index of the tile to create\n**/\nvoid Level::createNewTile(int i)\n{\n  if(i == -1) i = tile.size();\n  auto iter = tile.begin() + i;\n  \n  tile.emplace(iter, std::make_unique<Tile>(tileset, BACKGROUND, i, &width, &height));\n  attach(*tile[i], i%width, i/width, 1, 1);\n  tile[i]->clickSig = tile[i]->signal_button_press_event().connect(sigc::bind<int*>(sigc::mem_fun(*this, &Level::updateTile), &(tile[i]->gridId)), false);\n}\n\n/*!\n  Searches for the Level extents by scanline.\n\n  @param[in/out] extents The extents of the Level; size of 4.\n**/\nvoid Level::getExtents(int* extents)\n{\n  //level extents {e, n, w, s}\n  int ext[4]{-1, -1, -1, -1};\n\n  int j = 1; //column offset\n  int i; \n\n  //find max east extents by scanning east to west\n  do\n  {\n    i = width-j; //tile gridId\n    do\n    {\n      //the tile is a room, save the row number and end search\n      if(tile[i]->tileId != BACKGROUND)\n      {\n        ext[0] = i%width;\n        break;\n      } \n\n      i += width;\n    } while(i < width*height);\n\n    j++;\n  } while(ext[0] == -1 && j <= width); \n\n  if(ext[0] == -1) //there are no rooms, stop search\n  {\n    std::copy(ext, ext+4, extents);\n    return;\n  }\n\n  //find max north extents by scanning north to south\n  for(i = 0; i < width*height; i++)\n  {\n    //the tile is a room, save the row number and end search\n    if(tile[i]->tileId != BACKGROUND)\n    {\n      ext[1] = i/width;\n      break;\n    } \n  }\n\n  //find max west column by scanning west to east\n  j = 0;\n  do\n  {\n    i = j;\n    do\n    {\n      //the tile is a room, save the row number and end search\n      if(tile[i]->tileId != BACKGROUND)\n      {\n        ext[2] = i%width;\n        break;\n      }\n\n      i += width;\n    } while(i < width*height);\n\n    j++;\n  } while(ext[2] == -1 && j < width);\n\n  //find max south extents by scanning south to north\n  for(i = width*height-1; i >= 0; i--)\n  {\n    //the tile is a room, save the row number and end search\n    if(tile[i]->tileId != BACKGROUND)\n    {\n      ext[3] = i/width;\n      break;\n    }\n  }\n\n  std::copy(ext, ext+4, extents);\n}\n\nvoid Level::print(Cairo::RefPtr<Cairo::PdfSurface>& surface, Cairo::RefPtr<Cairo::Context>& cr)\n{\n  //set page size to tile size * num of tiles for width and height\n  int tileSize = tileset->tile[BACKGROUND].getSize();\n  surface->set_size(tileSize*width, tileSize*height);\n\n  //print tiles\n  for(int i = 0; i < width*height; i++)\n  {\n    tile[i]->print(cr);\n  }\n}\n\n/*!\n  Initializes Level Grid properties\n**/\nvoid Level::propInit()\n{\n  //set grid properties\n  set_row_homogeneous(true); set_column_homogeneous(true);\n  set_row_spacing(0); set_column_spacing(0);\n}\n\n/*!\n  Updates the corner bits of the calling tile, recursively updates the corner bits\n  of the diagonal tiles, and non-recursively updates the tiles cardinally adjacent.\n  Locks the tile when called to prevent recursion double back. Calls queDraw() at end.\n\n<pre>\n  1) Checks if the calling object has already been recursed by the locked property,\n      returns if locked, locks on continue.\n  2.1) If there are no walls or tile is background, 4 corners must be checked.\n  2.2) If remainder is 0, the tile is a single wall tile, 2 corners must be checked.\n  2.3) If the second remainder is 0 AND the sum of the powers is even, the tile\n        is a corner tile, 1 corner must be checked.\n  2.4) No corners must be checked.\n  3) For each corner to be checked.\n    3a) Calculate starting corner bit from largest power with offset, use lowest power for se corner tile.\n    3b) If the corner tile exists.\n      3b1) If this tile is background and the adjacent tile is not background.\n         3b1a) Update the corner bits of the adjacent tile (recurse).\n  ^<-\n      3b2) If this tile is not a background tile.\n         3b2a.1) If the adjacent tile is background, add corner bit.\n   ^<-\n         3b2a.2) If the adjacent tile is a room, add corner bit, update corner bits of adjacent tile (recurse).\n   ^<-\n  4)If tile is not background, open room, or closed room.\n    4a) For each tile adjacent to open walls, if exists, update corner bits (non-recursive).\n    ^<-\n  5) Queue draw for this tile.\n  6) Unlock tile.\n</pre>\n\n  @param[in] gridId The grid id of the tile to update.\n  @param[in] propagate Weather the update should propagate to other tiles.\n**/\nvoid Level::updateCornerBits(int gridId, bool propagate)\n{\n  Tile* tile = this->tile[gridId].get();\n\n  if(tile->locked) return; //don't run if this tile already part of recursion chain\n  tile->locked = true;     //lock the function for this tile\n\n  Tile* aTile = NULL;                 //adjacent tile\n  uint16 walls = tile->tileId & NSEW; //the walls of this tile\n\n  //adjacent tile exists truths\n  bool tileExists[8];\n  tile->getTileExists(tileExists);\n\n  //adjacent tile indexes\n  int a[8];\n  tile->getAdjacentIndex(a);\n\n  double pow[2] = {-1, -1}; //the power of the highest bit aka index bit for tile opposite of wall\n  int corners = 0;          //the number of corners to check\n\n  if(walls == O || tile->tileId == BACKGROUND) //is background tile or open room\n    {corners = 4;}\n  else if(modf(log(walls)/log(2), &pow[0]) == 0) //is single wall tile\n    {corners = 2;}\n  else if (modf(log(walls-exp2(pow[0]))/log(2), &pow[1]) == 0 && (int)(pow[0]+pow[1])%2) //is corner tile\n    {corners = 1;}\n  else //is double wall (parallel), triple wall, or closed room\n  {\n    corners = 0;\n    tile->tileId &= NSEW_NSEW; //remove all corner bits\n  }\n\n  //check corner tiles\n  for(int i = CORNER_BIT_OFFSET; i < CORNER_BIT_OFFSET+corners; i++) //i is index offset for corners\n  {\n    int j = (int)(pow[0]+i)%CORNER_BIT_OFFSET+CORNER_BIT_OFFSET; //the bit for for the corner\n    if(pow[1] == 0 && pow[0] == 3) //bit adjustment for se corner tile\n      {j = (int)(pow[1]+i)%CORNER_BIT_OFFSET+CORNER_BIT_OFFSET;}\n\n    if(tileExists[j]) //corner tile exists\n    {\n      aTile = this->tile[a[j]].get();\n\n      //don't update this tile if it is background AND\n      //update adjacent if not a background tile\n      if(tile->tileId == BACKGROUND && aTile->tileId != BACKGROUND)\n      {\n        if(propagate) updateCornerBits(aTile->gridId, true);\n      }\n      else\n      {\n        //corner tile is background or a different room\n        if(aTile->tileId == BACKGROUND || aTile->roomId != tile->roomId)\n          {tile->tileId |= (1<<j);} //add corner bit\n        else //corner tile is room with same roomId\n        {\n          tile->tileId &= ~(1<<j); //remove corner bit\n          if(propagate) updateCornerBits(aTile->gridId, true);\n        }\n      }\n    }\n  }\n\n  //check tiles opposing walls\n  if(corners <=2 && walls != NSEW) //tile is not background, open room, or closed room\n  {\n    pow[0] = -1; pow[1] = -1;\n    uint16 openWalls = ~walls & NSEW;\n    while(openWalls != 0) //there are open walls left\n    {\n      modf(log(openWalls)/log(2), &pow[0]); //get highest power of empty wall\n\n      if(tileExists[(int)(pow[0]+2)%4]) //the tile adjacent to the empty wall exists\n      {\n        if(propagate)\n        {\n          aTile = this->tile[a[(int)(pow[0]+2)%4]].get(); //get the adjacent tile\n          updateCornerBits(aTile->gridId, false);\n        } \n      }\n      openWalls -= exp2(pow[0]); //remove the tested open wall\n    }\n  }\n\n  tile->queue_draw();\n  tile->locked = false;\n}\n\n//---------------------\n//----- Overloads -----\n//---------------------\nstd::ostream& operator<<(std::ostream& out, const Level& level)\n{\n  out << \"Level[\"\n       << level.id << ','\n       << level.width << ','\n       << level.height << ','\n       << level.tileset->filepath << ']' << '\\n';\n  out.flush();\n  return out;\n}\n\nstd::istream& operator>>(std::istream& in, Level& level)\n{\n  static const std::streamsize MAX = std::numeric_limits<std::streamsize>::max();\n\n  in.ignore(MAX, '[');\n  in >> level.id;\n  in.get(); //discard comma\n  in >> level.width;\n  in.get(); //discard comma\n  in >> level.height;\n  in.get(); //discard comma\n\n\n  std::string tilesetFile = \"\";\n  std::getline(in, tilesetFile, ']');\n  if(!level.tileset->isTileset(tilesetFile))\n    {level.tileset = new Tileset(tilesetFile);}\n\n  in.ignore(MAX, '\\n'); //getline doesn't eat this newline\n\n  //leave stream in good state by discarding empty lines\n  while(in.peek() == '\\n')\n    {in.get();}\n\n  return in;\n}\n",
 			"file": "src/level.cpp",
+			"file_size": 21926,
+			"file_write_time": 132187633289068978,
 			"settings":
 			{
-				"buffer_size": 21528,
+				"buffer_size": 21929,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -577,16 +588,16 @@
 			"file": "src/tile.cpp",
 			"settings":
 			{
-				"buffer_size": 5556,
+				"buffer_size": 5550,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "testing/test.cpp",
+			"file": "src/include/tileset.h",
 			"settings":
 			{
-				"buffer_size": 321,
+				"buffer_size": 2529,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -595,7 +606,7 @@
 			"file": "src/tileset.cpp",
 			"settings":
 			{
-				"buffer_size": 18544,
+				"buffer_size": 18736,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -610,7 +621,7 @@
 			}
 		}
 	],
-	"build_system": "Packages/Makefile/Make.sublime-build",
+	"build_system": "Packages/User/make.sublime-build",
 	"build_system_choices":
 	[
 		[
@@ -725,8 +736,8 @@
 				]
 			],
 			[
-				"Packages/Makefile/Make.sublime-build",
-				""
+				"Packages/User/make.sublime-build",
+				"doxygen"
 			]
 		],
 		[
@@ -1006,7 +1017,7 @@
 			]
 		]
 	],
-	"build_varint": "",
+	"build_varint": "doxygen",
 	"command_palette":
 	{
 		"height": 323.0,
@@ -1428,20 +1439,21 @@
 		"/home/alex/documents/DungeonCartographer",
 		"/home/alex/documents/DungeonCartographer/obj",
 		"/home/alex/documents/DungeonCartographer/src",
-		"/home/alex/documents/DungeonCartographer/src/include"
+		"/home/alex/documents/DungeonCartographer/src/include",
+		"/home/alex/documents/DungeonCartographer/tiles"
 	],
 	"file_history":
 	[
+		"/home/alex/documents/DungeonCartographer/src/include/tileset.h",
+		"/home/alex/documents/DungeonCartographer/src/tileset.cpp",
+		"/home/alex/documents/DungeonCartographer/testing/test.cpp",
 		"/home/alex/documents/DungeonCartographer/test.dcm",
 		"/home/alex/documents/DungeonCartographer/tiles/defaultSet.dct",
-		"/home/alex/documents/DungeonCartographer/testing/test.cpp",
 		"/home/alex/documents/DungeonCartographer/makefile",
-		"/home/alex/documents/DungeonCartographer/src/tileset.cpp",
 		"/home/alex/documents/DungeonCartographer/src/include/constants.h",
 		"/home/alex/documents/DungeonCartographer/ui/dungeonCartographer.ui",
 		"/home/alex/documents/DungeonCartographer/testing/infoBar.ui",
 		"/home/alex/documents/DungeonCartographer/src/settings.cpp",
-		"/home/alex/documents/DungeonCartographer/src/include/tileset.h",
 		"/home/alex/documents/DungeonCartographer/src/resources.c",
 		"/home/alex/documents/DungeonCartographer/diff",
 		"/home/alex/documents/DungeonCartographer/src/dungeonCartographer.cpp",
@@ -1587,6 +1599,11 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"tileset",
+			"\\?",
+			"?",
+			"tileset",
+			"tilesettile",
 			"SW_S",
 			"100000001100",
 			"7.*FFF",
@@ -1709,12 +1726,7 @@
 			"Tileset>",
 			"Tileset",
 			"tileTileset",
-			"tileset",
-			"Tileset",
-			"tile",
-			"tileset",
-			"tileTileset",
-			"tileLvl"
+			"tileset"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1797,11 +1809,189 @@
 	"groups":
 	[
 		{
-			"selected": 6,
+			"selected": 5,
 			"sheets":
 			[
 				{
 					"buffer": 0,
+					"file": "src/include/settings.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2106,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": 27,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"rainbow_inited": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 444.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
 					"file": "src/ui.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1954,61 +2144,61 @@
 							},
 							"bracket_highlighter.regions":
 							[
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
 								"bh_angle_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
 								"bh_tag",
 								"bh_tag_center",
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_single_quote_content"
 							],
 							"history_list_is_closing": true,
 							"rainbow_inited": true,
@@ -2021,11 +2211,11 @@
 						"translation.y": 8870.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
-					"buffer": 1,
+					"buffer": 2,
 					"file": "src/include/ui.h",
 					"semi_transient": false,
 					"settings":
@@ -2165,61 +2355,61 @@
 							},
 							"bracket_highlighter.regions":
 							[
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
 								"bh_angle_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
 								"bh_tag",
 								"bh_tag_center",
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_single_quote_content"
 							],
 							"rainbow_inited": true,
 							"spell_check": true,
@@ -2227,14 +2417,14 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 955.0,
+						"translation.y": 1409.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 3,
 					"file": "src/map.cpp",
 					"semi_transient": false,
 					"settings":
@@ -2359,61 +2549,61 @@
 							},
 							"bracket_highlighter.regions":
 							[
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
 								"bh_angle_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
 								"bh_tag",
 								"bh_tag_center",
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_single_quote_content"
 							],
 							"rainbow_inited": true,
 							"syntax": "Packages/C++/C++.sublime-syntax",
@@ -2424,11 +2614,11 @@
 						"translation.y": 4868.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 4,
 					"file": "src/include/map.h",
 					"semi_transient": false,
 					"settings":
@@ -2568,16 +2758,26 @@
 							},
 							"bracket_highlighter.regions":
 							[
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
 								"bh_angle_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
 								"bh_curly",
 								"bh_curly_center",
 								"bh_curly_open",
@@ -2593,6 +2793,16 @@
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
 								"bh_c_define",
 								"bh_c_define_center",
 								"bh_c_define_open",
@@ -2602,27 +2812,7 @@
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content"
+								"bh_single_quote_content"
 							],
 							"rainbow_inited": true,
 							"syntax": "Packages/C++/C++.sublime-syntax",
@@ -2630,19 +2820,19 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 823.0,
+						"translation.y": 914.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 5,
 					"file": "src/level.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 21528,
+						"buffer_size": 21929,
 						"regions":
 						{
 							"bookmarks":
@@ -2652,8 +2842,8 @@
 								"regions":
 								[
 									[
-										20551,
-										20551
+										20952,
+										20952
 									]
 								],
 								"scope": "bookmarks"
@@ -2662,8 +2852,8 @@
 						"selection":
 						[
 							[
-								21528,
-								21528
+								11687,
+								11687
 							]
 						],
 						"settings":
@@ -2674,12 +2864,27 @@
 							{
 								"close":
 								{
+									"1":
+									[
+										11917,
+										11918
+									]
 								},
 								"icon":
 								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
 								},
 								"open":
 								{
+									"1":
+									[
+										11686,
+										11687
+									]
 								},
 								"unmatched":
 								{
@@ -2687,72 +2892,87 @@
 							},
 							"bracket_highlighter.clone_regions":
 							[
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
 								"bh_angle_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
 								"bh_tag",
 								"bh_tag_center",
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_single_quote_content"
 							],
 							"bracket_highlighter.locations":
 							{
 								"close":
 								{
+									"1":
+									[
+										11917,
+										11918
+									]
 								},
 								"icon":
 								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
 								},
 								"open":
 								{
+									"1":
+									[
+										11686,
+										11687
+									]
 								},
 								"unmatched":
 								{
@@ -2760,61 +2980,61 @@
 							},
 							"bracket_highlighter.regions":
 							[
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
 								"bh_angle_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
 								"bh_tag",
 								"bh_tag_center",
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_single_quote_content"
 							],
 							"rainbow_inited": true,
 							"spell_check": true,
@@ -2823,14 +3043,14 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 13858.0,
+						"translation.y": 8069.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 6,
 					"file": "src/include/level.h",
 					"semi_transient": false,
 					"settings":
@@ -3036,24 +3256,24 @@
 						"translation.y": 809.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 7,
 					"file": "src/tile.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5556,
+						"buffer_size": 5550,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5028,
-								5028
+								1472,
+								1472
 							]
 						],
 						"settings":
@@ -3066,15 +3286,15 @@
 								{
 									"1":
 									[
-										5214,
-										5215
+										4647,
+										4648
 									]
 								},
 								"icon":
 								{
 									"1":
 									[
-										"Packages/BracketHighlighter/icons/single_quote.png",
+										"Packages/BracketHighlighter/icons/double_quote.png",
 										"region.greenish"
 									]
 								},
@@ -3082,8 +3302,8 @@
 								{
 									"1":
 									[
-										5213,
-										5214
+										4608,
+										4609
 									]
 								},
 								"unmatched":
@@ -3092,61 +3312,61 @@
 							},
 							"bracket_highlighter.clone_regions":
 							[
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
 								"bh_angle_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
 								"bh_tag",
 								"bh_tag_center",
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_single_quote_content"
 							],
 							"bracket_highlighter.locations":
 							{
@@ -3154,24 +3374,24 @@
 								{
 									"1":
 									[
-										5236,
-										5237
+										1541,
+										1542
 									]
 								},
 								"icon":
 								{
 									"1":
 									[
-										"Packages/BracketHighlighter/icons/curly_bracket.png",
-										"region.purplish"
+										"Packages/BracketHighlighter/icons/round_bracket.png",
+										"region.yellowish"
 									]
 								},
 								"open":
 								{
 									"1":
 									[
-										5027,
-										5028
+										1464,
+										1465
 									]
 								},
 								"unmatched":
@@ -3180,61 +3400,61 @@
 							},
 							"bracket_highlighter.regions":
 							[
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
 								"bh_angle_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
 								"bh_tag",
 								"bh_tag_center",
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_single_quote_content"
 							],
 							"rainbow_inited": true,
 							"spell_check": true,
@@ -3243,214 +3463,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2796.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "testing/test.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 321,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								321,
-								321
-							]
-						],
-						"settings":
-						{
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.clone": -1,
-							"bracket_highlighter.clone_locations":
-							{
-								"close":
-								{
-									"1":
-									[
-										311,
-										312
-									]
-								},
-								"icon":
-								{
-									"1":
-									[
-										"Packages/BracketHighlighter/icons/curly_bracket.png",
-										"region.purplish"
-									]
-								},
-								"open":
-								{
-									"1":
-									[
-										75,
-										76
-									]
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.clone_regions":
-							[
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
-							],
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-									"1":
-									[
-										320,
-										321
-									]
-								},
-								"icon":
-								{
-									"1":
-									[
-										"Packages/BracketHighlighter/icons/curly_bracket.png",
-										"region.purplish"
-									]
-								},
-								"open":
-								{
-									"1":
-									[
-										75,
-										76
-									]
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
-							],
-							"rainbow_inited": true,
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 176.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 3,
@@ -3458,19 +3471,19 @@
 				},
 				{
 					"buffer": 8,
-					"file": "src/tileset.cpp",
+					"file": "src/include/tileset.h",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 18544,
+						"buffer_size": 2529,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1296,
-								1296
+								2080,
+								2080
 							]
 						],
 						"settings":
@@ -3483,24 +3496,24 @@
 								{
 									"1":
 									[
-										9942,
-										9943
+										2084,
+										2085
 									]
 								},
 								"icon":
 								{
 									"1":
 									[
-										"Packages/BracketHighlighter/icons/double_quote.png",
-										"region.greenish"
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
 									]
 								},
 								"open":
 								{
 									"1":
 									[
-										9917,
-										9918
+										1659,
+										1660
 									]
 								},
 								"unmatched":
@@ -3509,61 +3522,61 @@
 							},
 							"bracket_highlighter.clone_regions":
 							[
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
 								"bh_angle_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
 								"bh_tag",
 								"bh_tag_center",
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_single_quote_content"
 							],
 							"bracket_highlighter.locations":
 							{
@@ -3571,24 +3584,24 @@
 								{
 									"1":
 									[
-										1295,
-										1296
+										2085,
+										2086
 									]
 								},
 								"icon":
 								{
 									"1":
 									[
-										"Packages/BracketHighlighter/icons/double_quote.png",
-										"region.greenish"
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
 									]
 								},
 								"open":
 								{
 									"1":
 									[
-										1285,
-										1286
+										1659,
+										1660
 									]
 								},
 								"unmatched":
@@ -3597,61 +3610,61 @@
 							},
 							"bracket_highlighter.regions":
 							[
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
 								"bh_angle_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
 								"bh_tag",
 								"bh_tag_center",
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_single_quote_content"
 							],
 							"rainbow_inited": true,
 							"syntax": "Packages/C++/C++.sublime-syntax",
@@ -3659,7 +3672,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 710.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
@@ -3667,6 +3680,185 @@
 				},
 				{
 					"buffer": 9,
+					"file": "src/tileset.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 18736,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1676,
+								1676
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"rainbow_inited": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 400.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
 					"file": "src/include/tile.h",
 					"semi_transient": false,
 					"settings":
@@ -3806,61 +3998,61 @@
 							},
 							"bracket_highlighter.regions":
 							[
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
 								"bh_angle_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
 								"bh_tag",
 								"bh_tag_center",
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_single_quote_content"
 							],
 							"rainbow_inited": true,
 							"syntax": "Packages/C++/C++.sublime-syntax",
@@ -3868,10 +4060,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 641.0,
+						"translation.y": 732.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 5,
 					"type": "text"
 				}
 			]

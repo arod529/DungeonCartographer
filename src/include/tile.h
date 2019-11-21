@@ -47,7 +47,6 @@ struct Tile : public Gtk::DrawingArea
   friend std::istream& operator>>(std::istream& in, Tile& tile);
 
 private:
-  sigc::connection clickSig; // The signal connection for the click event
   int gridId;                // The tile's grid location
   int* gridWidth;            // The width of the grid the tile is on
   int* gridHeight;           // The height of the grid the tile is on
@@ -56,7 +55,6 @@ private:
   Tileset* tileset;          // The Tileset this tile uses
   bool locked = false;       // Protection against multiple recursion
 
-  virtual bool on_enter_notify_event(GdkEventCrossing* crossing_event);
   void print(Cairo::RefPtr<Cairo::Context>& cr);
   void reset();
   
